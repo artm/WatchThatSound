@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>460</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">WatchThat</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="Phonon::VideoPlayer" name="videoPlayer">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>10</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="recordButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Record</string>
+         </property>
+         <property name="icon">
+          <iconset resource="WTS3Resources.qrc">
+           <normaloff>:/Resources/record.png</normaloff>:/Resources/record.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="WaveformWidget" name="waveform" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGraphicsView" name="soundBank">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="backgroundBrush">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>198</red>
+            <green>255</green>
+            <blue>213</blue>
+           </color>
+          </brush>
+         </property>
+         <property name="foregroundBrush">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>79</red>
+            <green>187</green>
+            <blue>79</blue>
+           </color>
+          </brush>
+         </property>
+         <property name="renderHints">
+          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::TextAntialiasing</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="SequencerTimeLine" name="timeLine">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="TimeLineWidget" name="score">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="TimeLineWidget" name="tension">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="TimeLineWidget" name="storyboard">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>22</width>
+     <height>22</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>BottomToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPlay"/>
+   <addaction name="separator"/>
+   <addaction name="actionAddScene"/>
+   <addaction name="actionAddMarker"/>
+   <addaction name="separator"/>
+   <addaction name="actionFullscreen"/>
+  </widget>
+  <action name="actionPlay">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/play.png</normaloff>:/Resources/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Afspelen</string>
+   </property>
+   <property name="toolTip">
+    <string>Afspelen</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
+  <action name="actionRecord">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/record.png</normaloff>:/Resources/record.png</iconset>
+   </property>
+   <property name="text">
+    <string>Opnemen</string>
+   </property>
+   <property name="toolTip">
+    <string>Opnemen</string>
+   </property>
+  </action>
+  <action name="actionScreen1">
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/page-1.png</normaloff>:/Resources/page-1.png</iconset>
+   </property>
+   <property name="text">
+    <string>Film</string>
+   </property>
+   <property name="toolTip">
+    <string>Film</string>
+   </property>
+  </action>
+  <action name="actionScreen2">
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/page-2.png</normaloff>:/Resources/page-2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Structuur</string>
+   </property>
+   <property name="toolTip">
+    <string>Structuur</string>
+   </property>
+  </action>
+  <action name="actionScreen3">
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/page-3.png</normaloff>:/Resources/page-3.png</iconset>
+   </property>
+   <property name="text">
+    <string>Spanningslijn</string>
+   </property>
+   <property name="toolTip">
+    <string>Spanningslijn</string>
+   </property>
+  </action>
+  <action name="actionScreen4">
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/page-4.png</normaloff>:/Resources/page-4.png</iconset>
+   </property>
+   <property name="text">
+    <string>Partituur</string>
+   </property>
+   <property name="toolTip">
+    <string>Partituur</string>
+   </property>
+  </action>
+  <action name="actionScreen5">
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/page-5.png</normaloff>:/Resources/page-5.png</iconset>
+   </property>
+   <property name="text">
+    <string>Opname studio</string>
+   </property>
+   <property name="toolTip">
+    <string>Opname studio</string>
+   </property>
+  </action>
+  <action name="actionAddScene">
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/add-scene.png</normaloff>:/Resources/add-scene.png</iconset>
+   </property>
+   <property name="text">
+    <string>Scene</string>
+   </property>
+   <property name="toolTip">
+    <string>Voeg een scene bij</string>
+   </property>
+  </action>
+  <action name="actionAddMarker">
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/add-marker.png</normaloff>:/Resources/add-marker.png</iconset>
+   </property>
+   <property name="text">
+    <string>Marker</string>
+   </property>
+   <property name="toolTip">
+    <string>Voeg een marker bij</string>
+   </property>
+  </action>
+  <action name="actionFullscreen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/view-fullscreen.png</normaloff>:/Resources/view-fullscreen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Fullscreen</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the window fullscreen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Phonon::VideoPlayer</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/videoplayer.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TimeLineWidget</class>
+   <extends>QGraphicsView</extends>
+   <header>timelinewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SequencerTimeLine</class>
+   <extends>QGraphicsView</extends>
+   <header>sequencertimeline.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WaveformWidget</class>
+   <extends>QWidget</extends>
+   <header>waveformwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="WTS3Resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionFullscreen</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFullscreen(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>257</x>
+     <y>222</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionPlay</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onPlay(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>222</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRecord</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>actionPlay</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddMarker</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addMarker()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>222</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAddScene</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addScene()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>222</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>recordButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>actionRecord</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRecord</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>recordButton</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>77</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRecord</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onRecord(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>setFullscreen(bool)</slot>
+  <slot>onPlay(bool)</slot>
+  <slot>addScene()</slot>
+  <slot>addMarker()</slot>
+  <slot>onRecord(bool)</slot>
+ </slots>
+</ui>

@@ -1,0 +1,12 @@
+now:
+
+future:
+- waveform selection (what gets played)
+- small waveforms in the sequencer
+- thickish handles for very short samples
+- SoundBuffer is unnecessary: QVector<float> would be enough (and WtsAudio::BufferAt would become SoundBuffer and SoundBuffer's can share data vectors)
+  (but: need to remember buffer names somewhere)
+- more playback feedback
+  - mark / animate active samples in sequencer timeline
+  - display current output in the waveform (but where do I mix then?)
+

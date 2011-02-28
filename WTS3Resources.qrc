@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Resources/add-marker.png</file>
+        <file>Resources/add-sample.png</file>
+        <file>Resources/add-scene.png</file>
+        <file>Resources/delete.png</file>
+        <file>Resources/page-1.png</file>
+        <file>Resources/page-2.png</file>
+        <file>Resources/page-3.png</file>
+        <file>Resources/page-4.png</file>
+        <file>Resources/page-5.png</file>
+        <file>Resources/play.png</file>
+        <file>Resources/record.png</file>
+        <file>Resources/save.png</file>
+        <file>Resources/stop.png</file>
+        <file>Resources/view-fullscreen.png</file>
+    </qresource>
+</RCC>
