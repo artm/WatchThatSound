@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>460</height>
+    <height>530</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -186,12 +186,18 @@
      </widget>
     </item>
     <item>
-     <widget class="TimeLineWidget" name="storyboard">
+     <widget class="StoryBoard" name="storyboard">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
+        <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>100</height>
+       </size>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -387,6 +393,11 @@
    <header>waveformwidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>StoryBoard</class>
+   <extends>QGraphicsView</extends>
+   <header>storyboard.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="WTS3Resources.qrc"/>
@@ -444,7 +455,7 @@
    <sender>actionAddMarker</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>addMarker()</slot>
+   <slot>addEventMark()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -460,7 +471,7 @@
    <sender>actionAddScene</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>addScene()</slot>
+   <slot>addSceneMark()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -524,8 +535,8 @@
  <slots>
   <slot>setFullscreen(bool)</slot>
   <slot>onPlay(bool)</slot>
-  <slot>addScene()</slot>
-  <slot>addMarker()</slot>
+  <slot>addSceneMark()</slot>
+  <slot>addEventMark()</slot>
   <slot>onRecord(bool)</slot>
  </slots>
 </ui>

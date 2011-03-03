@@ -7,6 +7,7 @@
 
 #include "wtsaudio.h"
 #include "soundbuffer.h"
+#include "videofile.h"
 
 namespace Ui
 {
@@ -26,17 +27,21 @@ public:
     };
 
     struct Marker {
-        MarkerType type;
-        qint64 ms;
-        Marker() : type(NONE), ms(0) {}
-        Marker(MarkerType type, qint64 ms) : type(type), ms(ms) {}
+        MarkerType m_type;
+        qint64 m_ms;
+        QPixmap m_snapshot;
+
+        Marker() : m_type(NONE), m_ms(0) {}
+        Marker(MarkerType type, qint64 ms) : m_type(type), m_ms(ms) {}
+        bool operator<(const Marker& other) const { return m_ms < other.m_ms; }
     };
 
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    QList<Marker> getMarkers(MarkerType type = ANY) const;
+    QList<Marker> getMarkers(MarkerType type = ANY, bool forward = true) const;
     Phonon::MediaObject * mediaObject();
+    void addMarker(MarkerType type, qint64 when = -1);
 
 public slots:
     void setFullscreen(bool fs);
@@ -45,11 +50,13 @@ public slots:
     void tick(qint64 ms);
     void seek(qint64 ms);
 
-    void addScene();
-    void addMarker();
+    void addSceneMark(){ addMarker(SCENE); }
+    void addEventMark(){ addMarker(EVENT); }
+
     void loadMovie(const QString& path);
     void loadToScratch(WtsAudio::BufferAt * bufferAt);
 
+    void resetData();
     void saveData();
     void loadData();
 
@@ -62,19 +69,20 @@ signals:
     void samplerSchedule(WtsAudio::BufferAt * buffer);
     void samplerClear();
 
-
 protected:
     QString makeSampleName();
 
     WtsAudio m_audio;
     Ui::MainWindow *ui;
     QDir m_dataDir;
-    qint64 m_sampleSyncMs;
+    qint64 m_scratchInsertTime;
     SoundBuffer m_scratch;
     QList<WtsAudio::BufferAt *> m_sequence;
     QList<WtsAudio::BufferAt *>::iterator m_sequenceCursor;
     QMap<qint64, Marker> m_markers;
     int m_lastSampleNameNum;
+    VideoFile * m_videoFile;
+    bool m_loading;
 };
 
 #endif // MAINWINDOW_H

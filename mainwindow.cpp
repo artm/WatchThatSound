@@ -8,7 +8,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_lastSampleNameNum(0)
+    m_lastSampleNameNum(0),
+    m_videoFile(0),
+    m_loading(false)
 {
     ui->setupUi(this);
 
@@ -42,6 +44,8 @@ void MainWindow::seek(qint64 ms)
 
 void MainWindow::loadMovie(const QString& path)
 {
+    resetData();
+
     ui->videoPlayer->load(Phonon::MediaSource(path));
     ui->videoPlayer->setVolume(0);
 
@@ -68,11 +72,35 @@ void MainWindow::loadMovie(const QString& path)
         movieDir.mkdir( m_dataDir.dirName() );
     }
 
+    // this should happen before loadData so we know video size and have access to
+    // thumbnails
+    if (m_videoFile) delete m_videoFile;
+    m_videoFile = new VideoFile(path, this);
+    ui->storyboard->setVideoSize(m_videoFile->width(), m_videoFile->height());
+
     loadData();
+}
+
+void MainWindow::resetData()
+{
+    m_dataDir.setPath("");;
+    m_scratchInsertTime = 0;
+    m_scratch = SoundBuffer();
+    m_sequence.clear();;
+    m_sequenceCursor = m_sequence.begin();
+    m_markers.clear();
+    m_lastSampleNameNum = 0;
+    if (m_videoFile) delete m_videoFile;
+    m_videoFile = 0;
+    m_loading = false;
 }
 
 void MainWindow::saveData()
 {
+    // make sure we don't overwrite while loading...
+    if (m_loading)
+        return;
+
     QFile dataFile( m_dataDir.filePath("metadata.xml") );
     dataFile.open(QFile::WriteOnly | QFile::Text);
 
@@ -89,9 +117,9 @@ void MainWindow::saveData()
     foreach(Marker m, m_markers) {
         xml.writeStartElement("marker");
         QString ms;
-        ms.setNum(m.ms);
+        ms.setNum(m.m_ms);
         xml.writeAttribute("ms",ms);
-        xml.writeAttribute("type", m.type == SCENE ? "scene" : "event");
+        xml.writeAttribute("type", m.m_type == SCENE ? "scene" : "event");
         xml.writeEndElement();
     }
     xml.writeEndElement();
@@ -114,21 +142,22 @@ void MainWindow::saveData()
 
 void MainWindow::loadData()
 {
-    // FIXME reset project first
+    m_loading = true;
+
+    // always have a scene starting at 0
+    addMarker(SCENE, 0);
+
     QFile dataFile( m_dataDir.filePath("metadata.xml") );
     dataFile.open(QFile::ReadOnly | QFile::Text);
-
     QRegExp idRe = QRegExp("sample_(\\d+)");
-
     QXmlStreamReader xml( &dataFile );
     xml.readNextStartElement();
     if (xml.name() == "soundtrack") {
         while (xml.readNextStartElement()) {
             if (xml.name() == "storyboard") {
                 while(xml.readNextStartElement()) {
-                    Marker m( xml.attributes().value("type") == "scene" ? SCENE : EVENT,
-                              xml.attributes().value("ms").toString().toLongLong() );
-                    m_markers[m.ms] = m;
+                    addMarker(xml.attributes().value("type") == "scene" ? SCENE : EVENT,
+                              xml.attributes().value("ms").toString().toLongLong());
 
                     // this is one way to read a flat list of <foo/> not recursing
                     xml.readElementText();
@@ -161,6 +190,9 @@ void MainWindow::loadData()
     } else {
         qDebug() << dataFile.fileName() << " is not a soundtrack file";
     }
+
+    m_loading = false;
+
 }
 
 MainWindow::~MainWindow()
@@ -207,12 +239,12 @@ void MainWindow::onRecord(bool record)
         m_scratch.setWritePos(0);
         m_scratch.setColor(Qt::red);
     } else {
-        WtsAudio::BufferAt * newBuff = new WtsAudio::BufferAt( new SoundBuffer(makeSampleName(), m_scratch, m_scratch.m_writePos), m_sampleSyncMs);
+        WtsAudio::BufferAt * newBuff = new WtsAudio::BufferAt( new SoundBuffer(makeSampleName(), m_scratch, m_scratch.m_writePos), m_scratchInsertTime);
         newBuff->m_buffer->setColor( Rainbow::getColor(m_lastSampleNameNum) );
         m_sequence.append(newBuff);
         emit scratchUpdated(false, 0, m_scratch);
         emit newBufferAt(newBuff);
-        ui->videoPlayer->seek(m_sampleSyncMs);
+        ui->videoPlayer->seek(m_scratchInsertTime);
         saveData();
     }
 }
@@ -225,9 +257,9 @@ void MainWindow::tick(qint64 ms)
     if (ui->actionRecord->isChecked()) {
         // recording
         if (m_scratch.m_writePos == 0)
-            m_sampleSyncMs = ms;
+            m_scratchInsertTime = ms;
         if ( m_audio.capture(&m_scratch) > 0) {
-            emit scratchUpdated(true, m_sampleSyncMs, m_scratch);
+            emit scratchUpdated(true, m_scratchInsertTime, m_scratch);
 
             if (m_scratch.freeToWrite() == 0) {
                 ui->actionRecord->setChecked(false);
@@ -244,28 +276,28 @@ void MainWindow::tick(qint64 ms)
     }
 }
 
-void MainWindow::addScene()
+void MainWindow::addMarker(MarkerType type, qint64 when)
 {
-    qint64 now = ui->videoPlayer->mediaObject()->currentTime();
-    m_markers[now] = Marker(SCENE, now);
+    if (when < 0)
+        when = mediaObject()->currentTime();
+    m_markers[when] = Marker(type, when);
+    // load frameshot...
+    m_videoFile->seek(when);
+    m_markers[when].m_snapshot = QPixmap::fromImage(m_videoFile->frame());
+
     emit storyBoardChanged();
     saveData();
 }
 
-void MainWindow::addMarker()
-{
-    qint64 now = ui->videoPlayer->mediaObject()->currentTime();
-    m_markers[now] = Marker(EVENT, now);
-    emit storyBoardChanged();
-    saveData();
-}
-
-QList<MainWindow::Marker> MainWindow::getMarkers(MarkerType type) const
+QList<MainWindow::Marker> MainWindow::getMarkers(MarkerType type, bool forward) const
 {
     QList<Marker> scenes;
     foreach(Marker m, m_markers) {
-        if (type == ANY || m.type == type) {
-            scenes.append(m);
+        if (type == ANY || m.m_type == type) {
+            if (forward)
+                scenes.append(m);
+            else
+                scenes.prepend(m);
         }
     }
 

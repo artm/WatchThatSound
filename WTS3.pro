@@ -16,20 +16,30 @@ SOURCES += main.cpp \
     sequencertimeline.cpp \
     rainbow.cpp \
     waveformwidget.cpp \
-    wtsaudio.cpp
+    wtsaudio.cpp \
+    storyboard.cpp \
+    videofile.cpp
 HEADERS += mainwindow.h \
     timelinewidget.h \
     soundbuffer.h \
     sequencertimeline.h \
     rainbow.h \
     waveformwidget.h \
-    wtsaudio.h
+    wtsaudio.h \
+    storyboard.h \
+    videofile.h
 FORMS += mainwindow.ui
 RESOURCES += WTS3Resources.qrc
 
-INCLUDEPATH += PortAudio/portaudio/include
-LIBS += -LPortAudio/portaudio/lib -lportaudio
+INCLUDEPATH += Shoulders/portaudio/include Shoulders/ffmpeg
+LIBS += -LShoulders/portaudio/lib -lportaudio
+LIBS += -LShoulders/ffmpeg/libavcodec -lavcodec
+LIBS += -LShoulders/ffmpeg/libavformat -lavformat -lz -lbz2
+LIBS += -LShoulders/ffmpeg/libavutil -lavutil
+LIBS += -LShoulders/ffmpeg/libswscale -lswscale
+
 macx:LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices
 
 OTHER_FILES += \
-    PLAN.txt
+    PLAN.txt \
+    MEMO.txt

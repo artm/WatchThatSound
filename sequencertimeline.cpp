@@ -5,9 +5,12 @@
 SequencerTimeLine::SequencerTimeLine(QWidget *parent) :
         TimeLineWidget(parent), m_pen(Qt::black), m_brush(Qt::white), m_dragItem(0)
 {
-    connect(mainWindow,SIGNAL(newBufferAt(WtsAudio::BufferAt*)),SLOT(insertBufferAt(WtsAudio::BufferAt*)));
-    connect(mainWindow,SIGNAL(scratchUpdated(bool,qint64,const SoundBuffer&)),SLOT(showScratch(bool,qint64,const SoundBuffer&)));
-    mainWindow->connect(this, SIGNAL(bufferSelected(WtsAudio::BufferAt*)),SLOT(loadToScratch(WtsAudio::BufferAt *)));
+    connect(mainWindow,SIGNAL(newBufferAt(WtsAudio::BufferAt*)),
+            SLOT(insertBufferAt(WtsAudio::BufferAt*)));
+    connect(mainWindow,SIGNAL(scratchUpdated(bool,qint64,const SoundBuffer&)),
+            SLOT(showScratch(bool,qint64,const SoundBuffer&)));
+    mainWindow->connect(this, SIGNAL(bufferSelected(WtsAudio::BufferAt*)),
+                        SLOT(loadToScratch(WtsAudio::BufferAt *)));
 
     QBrush scratchBrush(QColor(255,200,200,127));
     m_scratchRect = scene()->addRect(0,0,0,0);
@@ -24,7 +27,9 @@ void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * buffer)
     float tt = (float)mainWindow->mediaObject()->totalTime();
     float relX = (float)buffer->m_at / tt;
     float relW = (float)buffer->m_buffer->duration() / tt;
-    QGraphicsItem * item = static_cast<QGraphicsItem*>(scene()->addRect(0, 0, relW, 0.3, m_pen, brush));
+    QGraphicsItem * item =
+            static_cast<QGraphicsItem*>(scene()->addRect(0, 0, relW, 0.3,
+                                                         m_pen, brush));
     item->moveBy(relX, 0);
 
     m_itemToBuffer[item] = buffer;
@@ -113,7 +118,8 @@ void SequencerTimeLine::mouseMoveEvent ( QMouseEvent * event )
             m_dragLastP = newPos;
             m_dragItem->moveBy(dx, 0);
 
-            qint64 newTime = (float)mainWindow->mediaObject()->totalTime() * m_dragItem->x();
+            qint64 newTime = (float)mainWindow->mediaObject()->totalTime() *
+                             m_dragItem->x();
             mainWindow->seek( newTime );
             m_itemToBuffer[m_dragItem]->m_at = newTime;
             return;

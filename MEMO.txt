@@ -1,0 +1,21 @@
+assumed dependency(-ies):
+- Qt (LGPL v2.1 or GPL v3)
+
+dependencies in 'Shoulders' (of giants) subdir:
+
+- PortAudio (MIT, GPL compatible), daily snapshot (see directory name)
+(statically linked, does this break any licensing terms?)
+
+- FFmpeg (GPL/LGPL both v2 and v3), the FFmpeg team's git repository
+configuration:
+./configure \
+--disable-doc \
+--disable-ffmpeg \
+--disable-ffplay \
+--disable-ffprobe \
+--disable-ffserver \
+--disable-avdevice \
+--disable-avfilter \
+--disable-network
+
+(without licensing switches it is LGPL v2)

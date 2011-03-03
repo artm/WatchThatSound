@@ -1,12 +1,38 @@
 now:
 
+- delete
+    - show currently selected thing in one widget
+    - when mouseover a currently selected thing - add [X] for deletion
+    and <-- --> to move framewise
+    - to properly delete we need to remember whose is selection now
+    (make wts widgets participate in qt focus). On the other hand
+    focusable widgets depend on current screen. Think further.
+
 future:
+- framewise motion (including motion with current selection)
 - waveform selection (what gets played)
 - small waveforms in the sequencer
-- thickish handles for very short samples
-- SoundBuffer is unnecessary: QVector<float> would be enough (and WtsAudio::BufferAt would become SoundBuffer and SoundBuffer's can share data vectors)
-  (but: need to remember buffer names somewhere)
+- handles for very short samples
 - more playback feedback
   - mark / animate active samples in sequencer timeline
   - display current output in the waveform (but where do I mix then?)
+- recording: countdown, stop when reached a scene boundary
+- disable some actions in some states
 
+- curve editing: use story board thumbnails to drag the curve
+    - distinguish pinned thumbs and hanging, curve is defined by the pinned ones,
+    the hanging just hang on it
+    - how to unpin?
+    - default line: scene markers = 0, last event = pin to 1.0
+    - how to keep this up to date? remember which pins/unpins are added by whom
+
+screens:
+    - bioscoop: only the movie, stop (space bar) -> next screen
+    - storyboard: storyboard in marker add mode and movie
+    - curve: storyboard in curve editing mode and movie
+    - score: storyboard in nav mode, score(edit), movie
+    - recording: storyboard(nav), score(nav), sequence(edit), movie
+
+    later:
+    - rec studio with sound bank
+    - effects
