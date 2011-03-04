@@ -9,11 +9,38 @@ StoryBoard::StoryBoard(QWidget *parent)
     , m_dragItem(0)
 {
     disconnect(mainWindow, SIGNAL(storyBoardChanged()), this, SLOT(repaint()));
-    connect(mainWindow,SIGNAL(storyBoardChanged()),SLOT(updateSnapshots()));
+    connect(mainWindow,SIGNAL(storyBoardChanged()),SLOT(updateSnapshots()));       
+
+    QFrame * box = new QFrame();
+    box->setFrameShadow( QFrame::Raised );
+    box->setFrameShape( QFrame::Panel );
+    QHBoxLayout * layout = new QHBoxLayout(box);
+    layout->setMargin(0);
+    layout->setSpacing(0);
+
+    QPushButton * b = new QPushButton("<");
+    b->setFlat(true);
+    b->setMaximumSize(QSize(16,16));
+    layout->addWidget(b);
+    b = new QPushButton("x");
+    b->setFlat(true);
+    b->setMaximumSize(QSize(16,16));
+    layout->addWidget(b);
+    b = new QPushButton(">");
+    b->setFlat(true);
+    b->setMaximumSize(QSize(16,16));
+    layout->addWidget(b);
+
+    m_itemPopup = scene()->addWidget(box);
+    m_itemPopup->setZValue(2.0);
+    m_itemPopup->hide();
+    m_popupsItem = 0;
 }
 
-void StoryBoard::drawForeground ( QPainter * painter, const QRectF & rect )
+void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
 {
+    TimeLineWidget::drawBackground(painter, rect);
+
     int maxLines = width() / 5;
 
     float totalMin = (float)mainWindow->mediaObject()->totalTime() / 60000.0f;
@@ -35,13 +62,15 @@ void StoryBoard::drawForeground ( QPainter * painter, const QRectF & rect )
         painter->drawLine(QPointF(x,y),QPointF(x,1.0));
     }
 
-    TimeLineWidget::drawForeground(painter, rect);
 }
 
 void StoryBoard::updateSnapshots()
 {
     float tt = mainWindow->mediaObject()->totalTime();
-    scene()->clear();
+
+    foreach(QGraphicsItem * item, m_msToItem) {
+        scene()->removeItem(item);
+    }
     m_itemToMarker.clear();
     m_msToItem.clear();
     m_dragItem = 0;
@@ -64,7 +93,7 @@ void StoryBoard::updateSnapshots()
                        y - s_marginY,
                        m_thumbWidth + 2.0*m_marginX,
                        m_thumbHeight + s_marginY*2.0),
-                QPen(Qt::NoPen),QBrush(QColor(255,255,255)));
+                QPen(Qt::NoPen),QBrush(QColor(255,255,255,150)));
         QGraphicsPixmapItem * gpi = scene()->addPixmap( m.m_snapshot );
         gpi->setPos(x,y);
         gpi->scale(m_thumbScale/(float)width(), m_thumbScale/(float)height());
@@ -86,6 +115,9 @@ void StoryBoard::resizeEvent ( QResizeEvent * event )
     m_thumbScale = pixH/(float) m_videoHeight;
     m_marginX = s_marginY * (float)height() / (float)width();
 
+    m_itemPopup->setScale(1.0);
+    m_itemPopup->scale(1.0/(qreal)width(),1.0/(qreal)height());
+
     updateSnapshots();
 }
 
@@ -95,57 +127,23 @@ void StoryBoard::mousePressEvent ( QMouseEvent * event )
         m_dragLastP = mapToScene(event->pos());
         m_dragItem  = itemAt( event->pos() );
 
+        if (m_dragItem == m_itemPopup) {
+            QGraphicsView::mousePressEvent( event );
+            return;
+        }
+
         while (m_dragItem) {
-            if (!m_itemToMarker.contains(m_dragItem)) {
-                m_dragItem = m_dragItem->parentItem();
-            } else {
+            if (m_itemToMarker.contains(m_dragItem)) {
                 MainWindow::Marker m = m_itemToMarker[m_dragItem];
                 mainWindow->seek( m.m_ms );
-                event->accept();
+                showItemPopup( m_dragItem );
                 return;
             }
+            m_dragItem = m_dragItem->parentItem();
         }
     }
+    // not drag in thumb - hide popup
     TimeLineWidget::mousePressEvent( event );
-}
-
-/*
-void StoryBoard::mouseReleaseEvent ( QMouseEvent * event )
-{
-    if (event->button() == Qt::LeftButton) {
-        if (m_dragItem) {
-           m_dragItem = 0;
-           restackItems();
-       }
-    }
-    mainWindow->saveData();
-}
-*/
-
-void StoryBoard::mouseMoveEvent ( QMouseEvent * event )
-{
-    if (event->buttons() & Qt::LeftButton) {
-        // FIXME: thumb dragging?
-        /*
-        if (m_dragItem) {
-            QPointF newPos = mapToScene(event->pos());
-            float dx = newPos.x() - m_dragLastP.x();
-            m_dragLastP = newPos;
-            m_dragItem->moveBy(dx, 0);
-
-            qint64 newTime = (float)mainWindow->mediaObject()->totalTime() *
-                             m_dragItem->x();
-            mainWindow->seek( newTime );
-            m_itemToBuffer[m_dragItem]->m_at = newTime;
-            return;
-        }
-        */
-        mousePressEvent(event);
-        if (event->isAccepted())
-            return;
-    }
-
-    TimeLineWidget::mouseMoveEvent( event );
 }
 
 void StoryBoard::setCurrentTime(qint64 time)
@@ -156,8 +154,6 @@ void StoryBoard::setCurrentTime(qint64 time)
     if (iter != m_msToItem.begin())
         iter--;
     QGraphicsItem * lastItem = iter.value();
-
-
 
     if (lastItem != m_selectedThumb) {
 
@@ -172,5 +168,34 @@ void StoryBoard::setCurrentTime(qint64 time)
         m_selectedThumb->setZValue(1.0);
         QGraphicsRectItem * ri = dynamic_cast<QGraphicsRectItem *>(m_selectedThumb);
         if (ri) ri->setPen(QPen(Qt::blue));
+    }
+}
+
+void StoryBoard::showItemPopup( QGraphicsItem * item)
+{
+    if (m_popupsItem != item) {
+        // first click on item: calculate new geometry then hide
+        // have to "show" first to update the bounding rect
+        m_itemPopup->show();
+        m_itemPopup->setPos( item->boundingRect().bottomLeft() );
+
+        QRectF g = m_itemPopup->geometry();
+
+        // keep size to compensate for rounding errors
+        QSizeF keepSize = g.size();
+        qreal w = g.width() / width(), h = g.height() / height();
+        g.setTop( std::min(1.0 - h, g.top()) );
+        g.setLeft( item->boundingRect().right() - w );
+        g.setSize(keepSize);
+
+        m_itemPopup->setGeometry( g );
+
+        // now hide
+        m_itemPopup->hide();
+        // remember the daddy
+        m_popupsItem = item;
+    } else {
+        // not the first click on item - toggle
+        m_itemPopup->setVisible( ! m_itemPopup->isVisible() );
     }
 }

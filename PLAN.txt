@@ -1,12 +1,23 @@
 now:
 
-- delete
+- button bar:
+    - make it a common timeline functionality (but with changeable button selection)
+    - buttons emit some actions that affect data item corresponding to selection
+
+    - look: check out styles (want a flat translucent style)
+    - positioning: center-under or something + be clever at sides window sides
+    - can it go above the foreground?
+        - make storyboard ticks part of its background instead
+    - interaction: how can I make sure clicking in pane disables seek etc?
+        - done for now, this will be even more logical when popups will move to TimeLineWidget
+
+    - should be available for any item
+    - should emit some actions...
+    - start in the storyboard and work our way further
     - show currently selected thing in one widget
-    - when mouseover a currently selected thing - add [X] for deletion
-    and <-- --> to move framewise
-    - to properly delete we need to remember whose is selection now
-    (make wts widgets participate in qt focus). On the other hand
-    focusable widgets depend on current screen. Think further.
+    - show extra panel like:
+        [x] for deletion
+        [<] [>] to move framewise
 
 future:
 - framewise motion (including motion with current selection)

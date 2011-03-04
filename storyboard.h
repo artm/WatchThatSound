@@ -9,8 +9,6 @@ class StoryBoard : public TimeLineWidget
 public:
     explicit StoryBoard(QWidget *parent = 0);
 
-    void drawForeground ( QPainter * painter, const QRectF & rect ) ;
-
 public slots:
     void updateSnapshots();
     virtual void resizeEvent ( QResizeEvent * event );
@@ -31,12 +29,16 @@ protected:
     QGraphicsItem * m_dragItem;
     QPointF m_dragLastP;
 
+    QGraphicsProxyWidget * m_itemPopup;
+    QGraphicsItem * m_popupsItem;
+
     static const int s_levelCount = 5;
     static const float s_marginY = 0.05, s_marginBottom = 0.1;
 
     virtual void mousePressEvent ( QMouseEvent * event );
-    //virtual void mouseReleaseEvent ( QMouseEvent * event );
-    virtual void mouseMoveEvent ( QMouseEvent * event );
+    void drawBackground( QPainter * painter, const QRectF & rect ) ;
+
+    void showItemPopup( QGraphicsItem * item);
 };
 
 #endif // STORYBOARD_H

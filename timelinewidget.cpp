@@ -94,6 +94,7 @@ void TimeLineWidget::seekTo(qint64 x) {
 
 void TimeLineWidget::mousePressEvent ( QMouseEvent * event )
 {
+    QGraphicsView::mousePressEvent(event);
     if (seekOnDrag()) {
         if (event->buttons() & Qt::LeftButton) {
             seekTo(event->x());
@@ -103,6 +104,7 @@ void TimeLineWidget::mousePressEvent ( QMouseEvent * event )
 
 void TimeLineWidget::mouseMoveEvent ( QMouseEvent * event )
 {
+    QGraphicsView::mouseMoveEvent(event);
     if (seekOnDrag()) {
         if (event->buttons() & Qt::LeftButton) {
             seekTo(event->x());
