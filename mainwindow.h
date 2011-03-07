@@ -8,6 +8,7 @@
 #include "wtsaudio.h"
 #include "soundbuffer.h"
 #include "videofile.h"
+#include "synced.h"
 
 namespace Ui
 {
@@ -26,22 +27,26 @@ public:
         ANY,
     };
 
-    struct Marker {
+    class Marker : public WTS::Synced
+    {
+    protected:
         MarkerType m_type;
-        qint64 m_ms;
         QPixmap m_snapshot;
 
-        Marker() : m_type(NONE), m_ms(0) {}
-        Marker(MarkerType type, qint64 ms) : m_type(type), m_ms(ms) {}
-        bool operator<(const Marker& other) const { return m_ms < other.m_ms; }
+    public:
+        Marker(MarkerType type, qint64 ms, QObject * parent) : WTS::Synced(ms, parent), m_type(type) {}
+
+        MarkerType type() const { return m_type; }
+        const QPixmap& snapshot() const { return m_snapshot; }
+        void setSnapshot(const QPixmap& snapshot) { m_snapshot = snapshot; }
     };
 
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    QList<Marker> getMarkers(MarkerType type = ANY, bool forward = true) const;
-    Phonon::MediaObject * mediaObject();
+    QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
     void addMarker(MarkerType type, qint64 when = -1);
+    Phonon::MediaObject * mediaObject();
 
 public slots:
     void setFullscreen(bool fs);
@@ -79,7 +84,7 @@ protected:
     SoundBuffer m_scratch;
     QList<WtsAudio::BufferAt *> m_sequence;
     QList<WtsAudio::BufferAt *>::iterator m_sequenceCursor;
-    QMap<qint64, Marker> m_markers;
+    QMap<qint64, Marker *> m_markers;
     int m_lastSampleNameNum;
     VideoFile * m_videoFile;
     bool m_loading;

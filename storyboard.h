@@ -21,7 +21,7 @@ protected:
     float m_thumbScale;
     float m_marginX;
 
-    QHash<QGraphicsItem *, MainWindow::Marker> m_itemToMarker;
+    QHash<QGraphicsItem *, MainWindow::Marker *> m_itemToMarker;
     QMap<qint64, QGraphicsItem *> m_msToItem;
     QGraphicsItem * m_selectedThumb;
 

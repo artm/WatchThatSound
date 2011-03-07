@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     waveformwidget.cpp \
     wtsaudio.cpp \
     storyboard.cpp \
-    videofile.cpp
+    videofile.cpp \
+    synced.cpp
 HEADERS += mainwindow.h \
     timelinewidget.h \
     soundbuffer.h \
@@ -27,7 +28,8 @@ HEADERS += mainwindow.h \
     waveformwidget.h \
     wtsaudio.h \
     storyboard.h \
-    videofile.h
+    videofile.h \
+    synced.h
 FORMS += mainwindow.ui
 RESOURCES += WTS3Resources.qrc
 

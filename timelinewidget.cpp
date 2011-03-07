@@ -60,8 +60,8 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     };
     int currentColor = 0;
 
-    foreach(MainWindow::Marker scene, mainWindow->getMarkers(MainWindow::SCENE)) {
-        qreal relX2 = (qreal)scene.m_ms / total;
+    foreach(MainWindow::Marker * marker, mainWindow->getMarkers(MainWindow::SCENE)) {
+        qreal relX2 = (qreal)marker->at() / total;
         // draw a rectangle which as tall as a widget and runs from relX1 to relX2
         paintRange(painter, relX1, relX2-relX1, colors[currentColor]);
         currentColor = (currentColor+1) % 2;
@@ -71,8 +71,8 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     paintRange(painter, relX1, 1.0f - relX1, colors[currentColor]);
 
     painter->setPen(QColor(0,0,0,100));
-    foreach(MainWindow::Marker scene, mainWindow->getMarkers(MainWindow::EVENT)) {
-        qreal relX2 = (qreal)scene.m_ms / total;
+    foreach(MainWindow::Marker * marker, mainWindow->getMarkers(MainWindow::EVENT)) {
+        qreal relX2 = (qreal)marker->at() / total;
         painter->drawLine(QPointF(relX2,0.), QPointF(relX2,1.));
     }
 

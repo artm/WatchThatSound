@@ -23,10 +23,10 @@ SequencerTimeLine::SequencerTimeLine(QWidget *parent) :
 
 void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * buffer)
 {
-    QBrush brush(buffer->m_buffer->color());
+    QBrush brush(buffer->buffer()->color());
     float tt = (float)mainWindow->mediaObject()->totalTime();
-    float relX = (float)buffer->m_at / tt;
-    float relW = (float)buffer->m_buffer->duration() / tt;
+    float relX = (float)buffer->at() / tt;
+    float relW = (float)buffer->buffer()->duration() / tt;
     QGraphicsItem * item =
             static_cast<QGraphicsItem*>(scene()->addRect(0, 0, relW, 0.3,
                                                          m_pen, brush));
@@ -90,7 +90,7 @@ void SequencerTimeLine::mousePressEvent ( QMouseEvent * event )
             } else {
                 WtsAudio::BufferAt * buffer = m_itemToBuffer[m_dragItem];
                 emit bufferSelected( buffer );
-                mainWindow->seek( buffer->m_at );
+                mainWindow->seek( buffer->at() );
                 return;
             }
         }
@@ -121,7 +121,7 @@ void SequencerTimeLine::mouseMoveEvent ( QMouseEvent * event )
             qint64 newTime = (float)mainWindow->mediaObject()->totalTime() *
                              m_dragItem->x();
             mainWindow->seek( newTime );
-            m_itemToBuffer[m_dragItem]->m_at = newTime;
+            m_itemToBuffer[m_dragItem]->setAt( newTime );
             return;
         }
     }

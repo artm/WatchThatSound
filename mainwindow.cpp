@@ -114,12 +114,12 @@ void MainWindow::saveData()
     xml.writeAttribute("version", "1.0");
 
     xml.writeStartElement("storyboard");
-    foreach(Marker m, m_markers) {
+    foreach(Marker * m, m_markers) {
         xml.writeStartElement("marker");
         QString ms;
-        ms.setNum(m.m_ms);
+        ms.setNum(m->at());
         xml.writeAttribute("ms",ms);
-        xml.writeAttribute("type", m.m_type == SCENE ? "scene" : "event");
+        xml.writeAttribute("type", m->type() == SCENE ? "scene" : "event");
         xml.writeEndElement();
     }
     xml.writeEndElement();
@@ -128,12 +128,12 @@ void MainWindow::saveData()
     xml.writeAttribute("counter",QString("%1").arg(m_lastSampleNameNum));
     foreach(WtsAudio::BufferAt * buffer, m_sequence) {
         xml.writeStartElement("sample");
-        xml.writeAttribute("ms",QString("%1").arg(buffer->m_at));
-        xml.writeAttribute("id",buffer->m_buffer->name());
+        xml.writeAttribute("ms",QString("%1").arg(buffer->at()));
+        xml.writeAttribute("id",buffer->buffer()->name());
         xml.writeEndElement();
 
-        QFile wav( m_dataDir.filePath( buffer->m_buffer->name() ));
-        buffer->m_buffer->save(wav);
+        QFile wav( m_dataDir.filePath( buffer->buffer()->name() ));
+        buffer->buffer()->save(wav);
     }
 
     xml.writeEndElement();
@@ -165,22 +165,26 @@ void MainWindow::loadData()
             } else if (xml.name() == "sequence") {
                 m_lastSampleNameNum = xml.attributes().value("counter").toString().toInt();
                 while(xml.readNextStartElement()) {
-                    WtsAudio::BufferAt * buffer = new WtsAudio::BufferAt();
                     QString id = xml.attributes().value("id").toString();
                     QFile wav( m_dataDir.filePath( id ));
-                    buffer->m_buffer = new SoundBuffer();
-                    buffer->m_buffer->load(wav);
+
+                    SoundBuffer * sb = new SoundBuffer();
+                    sb->load(wav);
+
+                    WtsAudio::BufferAt * buffer =
+                            new WtsAudio::BufferAt(sb,
+                                                   xml.attributes().value("ms").toString().toLongLong(),
+                                                   this);
+                    m_sequence.append( buffer );
 
                     // find out original number / color
                     if (idRe.indexIn(id) > -1) {
                         int color_index = idRe.cap(1).toInt();
-                        buffer->m_buffer->setColor( Rainbow::getColor( color_index ) );
+                        buffer->buffer()->setColor( Rainbow::getColor( color_index ) );
                     } else {
                         qDebug() << "Color index didn't parse...";
                     }
 
-                    buffer->m_at = xml.attributes().value("ms").toString().toLongLong();
-                    m_sequence.append( buffer );
                     emit newBufferAt(buffer);
                     // finish off the element...
                     xml.readElementText();
@@ -239,8 +243,11 @@ void MainWindow::onRecord(bool record)
         m_scratch.setWritePos(0);
         m_scratch.setColor(Qt::red);
     } else {
-        WtsAudio::BufferAt * newBuff = new WtsAudio::BufferAt( new SoundBuffer(makeSampleName(), m_scratch, m_scratch.m_writePos), m_scratchInsertTime);
-        newBuff->m_buffer->setColor( Rainbow::getColor(m_lastSampleNameNum) );
+        WtsAudio::BufferAt * newBuff = new WtsAudio::BufferAt(
+                    new SoundBuffer(makeSampleName(), m_scratch, m_scratch.m_writePos),
+                    m_scratchInsertTime,
+                    this);
+        newBuff->buffer()->setColor( Rainbow::getColor(m_lastSampleNameNum) );
         m_sequence.append(newBuff);
         emit scratchUpdated(false, 0, m_scratch);
         emit newBufferAt(newBuff);
@@ -269,7 +276,7 @@ void MainWindow::tick(qint64 ms)
 
     // find out which samples to trigger
     if (ui->actionPlay->isChecked()) {
-        while( m_sequenceCursor != m_sequence.end() && (*m_sequenceCursor)->m_at <= ms ) {
+        while( m_sequenceCursor != m_sequence.end() && (*m_sequenceCursor)->at() <= ms ) {
             emit samplerSchedule( *m_sequenceCursor );
             m_sequenceCursor++;
         }
@@ -280,20 +287,20 @@ void MainWindow::addMarker(MarkerType type, qint64 when)
 {
     if (when < 0)
         when = mediaObject()->currentTime();
-    m_markers[when] = Marker(type, when);
+    m_markers[when] = new Marker(type, when, this);
     // load frameshot...
     m_videoFile->seek(when);
-    m_markers[when].m_snapshot = QPixmap::fromImage(m_videoFile->frame());
+    m_markers[when]->setSnapshot( QPixmap::fromImage(m_videoFile->frame()) );
 
     emit storyBoardChanged();
     saveData();
 }
 
-QList<MainWindow::Marker> MainWindow::getMarkers(MarkerType type, bool forward) const
+QList<MainWindow::Marker *> MainWindow::getMarkers(MarkerType type, bool forward) const
 {
-    QList<Marker> scenes;
-    foreach(Marker m, m_markers) {
-        if (type == ANY || m.m_type == type) {
+    QList<Marker *> scenes;
+    foreach(Marker * m, m_markers) {
+        if (type == ANY || m->type() == type) {
             if (forward)
                 scenes.append(m);
             else
@@ -307,7 +314,7 @@ QList<MainWindow::Marker> MainWindow::getMarkers(MarkerType type, bool forward) 
 void MainWindow::loadToScratch(WtsAudio::BufferAt * bufferAt)
 {
     m_scratch.m_writePos = 0;
-    m_scratch.paste(bufferAt->m_buffer);
-    m_scratch.setColor(bufferAt->m_buffer->color());
-    emit scratchUpdated(false, bufferAt->m_at, m_scratch);
+    m_scratch.paste(bufferAt->buffer());
+    m_scratch.setColor(bufferAt->buffer()->color());
+    emit scratchUpdated(false, bufferAt->at(), m_scratch);
 }

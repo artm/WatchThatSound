@@ -78,8 +78,8 @@ void StoryBoard::updateSnapshots()
 
     int n = 0;
 
-    foreach(MainWindow::Marker m, mainWindow->getMarkers(MainWindow::ANY, false)) {
-        float x = (float)m.m_ms / tt - 0.5 * m_thumbWidth;
+    foreach(MainWindow::Marker * m, mainWindow->getMarkers(MainWindow::ANY, false)) {
+        float x = (float)m->at() / tt - 0.5 * m_thumbWidth;
 
         int gapCount = s_levelCount - 1;
         float y = s_marginY
@@ -94,13 +94,13 @@ void StoryBoard::updateSnapshots()
                        m_thumbWidth + 2.0*m_marginX,
                        m_thumbHeight + s_marginY*2.0),
                 QPen(Qt::NoPen),QBrush(QColor(255,255,255,150)));
-        QGraphicsPixmapItem * gpi = scene()->addPixmap( m.m_snapshot );
+        QGraphicsPixmapItem * gpi = scene()->addPixmap( m->snapshot() );
         gpi->setPos(x,y);
         gpi->scale(m_thumbScale/(float)width(), m_thumbScale/(float)height());
         gpi->setParentItem(frameItem);
 
         m_itemToMarker[frameItem] = m;
-        m_msToItem[m.m_ms] = frameItem;
+        m_msToItem[m->at()] = frameItem;
     }
 }
 
@@ -134,8 +134,8 @@ void StoryBoard::mousePressEvent ( QMouseEvent * event )
 
         while (m_dragItem) {
             if (m_itemToMarker.contains(m_dragItem)) {
-                MainWindow::Marker m = m_itemToMarker[m_dragItem];
-                mainWindow->seek( m.m_ms );
+                MainWindow::Marker * m = m_itemToMarker[m_dragItem];
+                mainWindow->seek( m->at() );
                 showItemPopup( m_dragItem );
                 return;
             }

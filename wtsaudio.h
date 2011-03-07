@@ -1,6 +1,8 @@
 #ifndef WTSAUDIO_H
 #define WTSAUDIO_H
 
+#include "synced.h"
+
 #include <portaudio.h>
 #include <QObject>
 #include <QLinkedList>
@@ -11,15 +13,19 @@ class WtsAudio : public QObject
 {
     Q_OBJECT
 public:
-    struct BufferAt {
+    class BufferAt : public WTS::Synced
+    {
+    public:
+        BufferAt(QObject * parent = 0) : WTS::Synced(0, parent), m_buffer(0), m_playOffset(0) {}
+        BufferAt(SoundBuffer * buffer, qint64 at, QObject * parent = 0) : WTS::Synced(at, parent), m_buffer(buffer), m_playOffset(0) {}
+
+        SoundBuffer * buffer() { return m_buffer; }
+        qint64 playOffset() const { return m_playOffset; }
+        void setPlayOffset(qint64 offset) { m_playOffset = offset; }
+
+    protected:
         SoundBuffer * m_buffer;
-        qint64 m_at;
         qint64 m_playOffset;
-
-        BufferAt() : m_buffer(0), m_at(0), m_playOffset(0) {}
-        BufferAt(SoundBuffer * buffer, qint64 at) : m_buffer(buffer), m_at(at), m_playOffset(0) {}
-
-        bool operator<(const BufferAt& other) const { return m_at < other.m_at; }
     };
 
     static bool startsBefore( const BufferAt * a, const BufferAt * b ) { return *a < *b; }

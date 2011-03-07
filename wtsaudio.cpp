@@ -75,21 +75,21 @@ void WtsAudio::samplerClock(qint64 ms)
     QLinkedList< WtsAudio::BufferAt * >::iterator nextBufferIt = m_activeBuffers.begin();
     while( nextBufferIt != m_activeBuffers.end() ) {
         WtsAudio::BufferAt * buffer = *nextBufferIt;
-        qint64 startRead = buffer->m_playOffset;
+        qint64 startRead = buffer->playOffset();
         qint64 startWrite = 0;
         if (startRead < 0) {
             startWrite -= startRead;
             startRead = 0;
         }
 
-        qint64 count = std::min(mixSize - startWrite, buffer->m_buffer->sampleCount() - startRead);
-        float * in = buffer->m_buffer->floatAt( startRead );
+        qint64 count = std::min(mixSize - startWrite, buffer->buffer()->sampleCount() - startRead);
+        float * in = buffer->buffer()->floatAt( startRead );
         for(int i = 0; i<count; ++i) {
             mix[ startWrite+i ] += in[i];
         }
-        buffer->m_playOffset = startRead + count;
+        buffer->setPlayOffset(startRead + count);
 
-        if (buffer->m_playOffset == buffer->m_buffer->sampleCount())
+        if (buffer->playOffset() == buffer->buffer()->sampleCount())
             // deactivate buffer...
             nextBufferIt = m_activeBuffers.erase(nextBufferIt);
         else
@@ -102,14 +102,14 @@ void WtsAudio::samplerClock(qint64 ms)
 void WtsAudio::samplerSchedule(WtsAudio::BufferAt * buffer)
 {
     qint64 t = currentSampleOffset();
-    qint64 bt = msToSampleCount(buffer->m_at);
+    qint64 bt = msToSampleCount(buffer->at());
 
     // ignore if end time before current time
-    if (bt + buffer->m_buffer->sampleCount() < t)
+    if (bt + buffer->buffer()->sampleCount() < t)
         return;
 
     // position buffer's playback offset
-    buffer->m_playOffset = t - bt;
+    buffer->setPlayOffset(t - bt);
 
     // add buffer to the list...
     m_activeBuffers << buffer;
@@ -126,6 +126,6 @@ qint64 WtsAudio::currentSampleOffset() const
         return msToSampleCount(m_clock);
     } else {
         WtsAudio::BufferAt * buffer = m_activeBuffers.first();
-        return msToSampleCount(buffer->m_at) + buffer->m_playOffset;
+        return msToSampleCount(buffer->at()) + buffer->playOffset();
     }
 }
