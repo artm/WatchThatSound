@@ -4,8 +4,8 @@ now:
     - make it a common timeline functionality (but with changeable button selection)
     - buttons emit some actions that affect data item corresponding to selection
 
-    - look: check out styles (want a flat translucent style)
-    - positioning: center-under or something + be clever at sides window sides
+    - button bar look: check out styles (want a flat translucent style)
+    - positioning: center-under or something + be clever at window sides
     - can it go above the foreground?
         - make storyboard ticks part of its background instead
     - interaction: how can I make sure clicking in pane disables seek etc?

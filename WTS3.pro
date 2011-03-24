@@ -1,12 +1,4 @@
-# -------------------------------------------------
-# Project created by QtCreator 2011-02-15T13:57:43
-# -------------------------------------------------
-QT += opengl \
-    script \
-    svg \
-    webkit \
-    phonon \
-    multimedia
+QT += phonon multimedia
 TARGET = WTS3
 TEMPLATE = app
 SOURCES += main.cpp \
@@ -19,7 +11,8 @@ SOURCES += main.cpp \
     wtsaudio.cpp \
     storyboard.cpp \
     videofile.cpp \
-    synced.cpp
+    synced.cpp \
+    exportthread.cpp
 HEADERS += mainwindow.h \
     timelinewidget.h \
     soundbuffer.h \
@@ -29,16 +22,17 @@ HEADERS += mainwindow.h \
     wtsaudio.h \
     storyboard.h \
     videofile.h \
-    synced.h
+    synced.h \
+    exportthread.h
 FORMS += mainwindow.ui
 RESOURCES += WTS3Resources.qrc
 
 INCLUDEPATH += Shoulders/portaudio/include Shoulders/ffmpeg
-LIBS += -LShoulders/portaudio/lib -lportaudio
-LIBS += -LShoulders/ffmpeg/libavcodec -lavcodec
-LIBS += -LShoulders/ffmpeg/libavformat -lavformat -lz -lbz2
-LIBS += -LShoulders/ffmpeg/libavutil -lavutil
-LIBS += -LShoulders/ffmpeg/libswscale -lswscale
+LIBS += -L$$PWD/Shoulders/portaudio/lib -lportaudio
+LIBS += -L$$PWD/Shoulders/ffmpeg/libavcodec -lavcodec
+LIBS += -L$$PWD/Shoulders/ffmpeg/libavformat -lavformat -lz -lbz2
+LIBS += -L$$PWD/Shoulders/ffmpeg/libavutil -lavutil
+LIBS += -L$$PWD/Shoulders/ffmpeg/libswscale -lswscale
 
 macx:LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices
 

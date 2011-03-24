@@ -9,6 +9,7 @@
 #include "soundbuffer.h"
 #include "videofile.h"
 #include "synced.h"
+#include "exportthread.h"
 
 namespace Ui
 {
@@ -65,6 +66,8 @@ public slots:
     void saveData();
     void loadData();
 
+    void exportMovie();
+
 signals:
     void storyBoardChanged();
     void newBufferAt(WtsAudio::BufferAt * bufferAt);
@@ -88,6 +91,7 @@ protected:
     int m_lastSampleNameNum;
     VideoFile * m_videoFile;
     bool m_loading;
+    ExportThread m_exportThread;
 };
 
 #endif // MAINWINDOW_H

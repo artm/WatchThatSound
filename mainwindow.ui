@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>530</height>
+    <height>554</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -207,6 +207,16 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>24</number>
+      </property>
+      <property name="invertedAppearance">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -232,6 +242,8 @@
    <addaction name="separator"/>
    <addaction name="actionAddScene"/>
    <addaction name="actionAddMarker"/>
+   <addaction name="separator"/>
+   <addaction name="actionExport"/>
    <addaction name="separator"/>
    <addaction name="actionFullscreen"/>
   </widget>
@@ -368,6 +380,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/save.png</normaloff>:/Resources/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="toolTip">
+    <string>Opslaan het resultaat</string>
    </property>
   </action>
  </widget>
@@ -531,6 +555,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExport</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportMovie()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>276</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>setFullscreen(bool)</slot>
@@ -538,5 +578,6 @@
   <slot>addSceneMark()</slot>
   <slot>addEventMark()</slot>
   <slot>onRecord(bool)</slot>
+  <slot>exportMovie()</slot>
  </slots>
 </ui>

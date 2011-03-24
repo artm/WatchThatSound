@@ -24,6 +24,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->score->hide();
     ui->soundBank->hide();
 
+    // only show progress bar when necessary...
+    ui->progressBar->hide();
+    connect(&m_exportThread, SIGNAL(started()), ui->progressBar, SLOT(show()));
+    connect(&m_exportThread, SIGNAL(finished()), ui->progressBar, SLOT(hide()));
+    connect(&m_exportThread, SIGNAL(exportProgress(int)), ui->progressBar, SLOT(setValue(int)));
+
     loadMovie(QCoreApplication::applicationDirPath () + "/../../../movie/edje.mov");
 }
 
@@ -55,25 +61,25 @@ void MainWindow::loadMovie(const QString& path)
     connect(mediaObject(), SIGNAL(tick(qint64)), this, SLOT(tick(qint64)));
     mediaObject()->setTickInterval(50);
 
-    ui->waveform->connect(this,SIGNAL(scratchUpdated(bool,qint64,const SoundBuffer&)),SLOT(updateWaveform(bool,qint64,const SoundBuffer&)));
+    ui->waveform->connect(this,
+                          SIGNAL(scratchUpdated(bool, qint64, const SoundBuffer&)),
+                          SLOT(updateWaveform(bool, qint64, const SoundBuffer&)));
 
     // further configuration
     ui->storyboard->setSeekOnDrag(true);
 
     // scratch should be big enough to fit a movie-long sound
-    m_scratch = SoundBuffer( WtsAudio::msToSampleCount(mediaObject()->totalTime()));
+    m_scratch = SoundBuffer( WtsAudio::msToSampleCount(mediaObject()->totalTime()) );
     m_scratch.setColor( Qt::red );
 
     // now setup dataPath and try to load files from there
     QDir movieDir = QFileInfo(path).dir();
-    m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName() + ".data" ) );
+    m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName() + ".data") );
 
-    if (! m_dataDir.exists() ) {
-        movieDir.mkdir( m_dataDir.dirName() );
-    }
+    if (! m_dataDir.exists() ) { movieDir.mkdir( m_dataDir.dirName() ); }
 
-    // this should happen before loadData so we know video size and have access to
-    // thumbnails
+    // this should happen before loadData so we know video size and have
+    // access to thumbnails
     if (m_videoFile) delete m_videoFile;
     m_videoFile = new VideoFile(path, this);
     ui->storyboard->setVideoSize(m_videoFile->width(), m_videoFile->height());
@@ -317,4 +323,10 @@ void MainWindow::loadToScratch(WtsAudio::BufferAt * bufferAt)
     m_scratch.paste(bufferAt->buffer());
     m_scratch.setColor(bufferAt->buffer()->color());
     emit scratchUpdated(false, bufferAt->at(), m_scratch);
+}
+
+void MainWindow::exportMovie()
+{
+    m_exportThread.start();
+    ui->progressBar->show();
 }
