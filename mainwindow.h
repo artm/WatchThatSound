@@ -9,12 +9,13 @@
 #include "soundbuffer.h"
 #include "videofile.h"
 #include "synced.h"
-#include "exportthread.h"
 
 namespace Ui
 {
     class MainWindow;
 }
+
+class ExportThread;
 
 class MainWindow : public QMainWindow
 {
@@ -91,7 +92,7 @@ protected:
     int m_lastSampleNameNum;
     VideoFile * m_videoFile;
     bool m_loading;
-    ExportThread m_exportThread;
+    ExportThread * m_exportThread;
 };
 
 #endif // MAINWINDOW_H

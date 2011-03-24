@@ -1,5 +1,9 @@
 now:
 
+- export:
+[x] export gui
+[ ] ffmpeg based export implementation
+
 - button bar:
     - make it a common timeline functionality (but with changeable button selection)
     - buttons emit some actions that affect data item corresponding to selection
