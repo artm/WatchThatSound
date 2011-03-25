@@ -6,7 +6,7 @@
 struct PortAudioLogger {
     bool operator<<(PaError error) {
         if (error != paNoError) {
-            qDebug() << Pa_GetErrorText(error);
+            qCritical() << Pa_GetErrorText(error);
             return false;
         }
         return true;
@@ -124,7 +124,6 @@ void WtsAudio::samplerMix(qint64 ms, QVector<int16_t>& mix)
         for(int i = 0; i<count; ++i) {
             mix[ startWrite+i ] += (int16_t) (in[i] * 32768.0);
         }
-        qDebug() << "e.g." << mix[startWrite];
         buffer->setPlayOffset(startRead + count);
 
         if (buffer->playOffset() == buffer->buffer()->sampleCount())

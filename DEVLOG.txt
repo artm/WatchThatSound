@@ -55,7 +55,7 @@ now:
 
 - export:
 [x] export gui
-[ ] ffmpeg based export implementation
+[x] ffmpeg based export implementation
 
 notes
 
@@ -66,4 +66,12 @@ this also means that the stream parameters should be copied.
 
 [x] add method to ask video codec from VideoFile.
 [x] copy the rest of the video stream format over.
-[ ] give exporter access to the mixer api
+[x] give exporter access to the mixer api
+
+* * *
+
+[ ] review the exporter: what can go away, what can be improved for better maintainance?
+[ ] review the WtsAudio, there are two nearly identical methods, the common functionality should be moved into its own (template) method.
+[ ] GUI: disable most buttons while exporting
+[ ] usability: export numbers.
+

@@ -127,7 +127,6 @@ void ExportThread::run()
 
                 while( sequenceCursor != m_sequence.end()
                       && (*sequenceCursor)->at() <= ms ) {
-                    qDebug() << "Scheduling buffer @" << (*sequenceCursor)->at();
                     m_audio->samplerSchedule(*sequenceCursor);
                     sequenceCursor++;
                 }
