@@ -32,10 +32,15 @@ ExportThread::ExportThread(QObject *parent)
 {
 }
 
-void ExportThread::configure(const QString& fname, VideoFile * vfile)
+void ExportThread::configure(const QString& fname,
+                             VideoFile * vfile,
+                             const QList<WtsAudio::BufferAt *>& sequence,
+                             WtsAudio * audio)
 {
     m_filename = fname.toLocal8Bit();
     m_originalVideoFile = vfile;
+    m_sequence = sequence;
+    m_audio = audio;
 }
 
 void ExportThread::run()
@@ -87,6 +92,9 @@ void ExportThread::run()
 
         av_write_header(container);
         m_originalVideoFile->seek(0);
+        m_audio->samplerClear();
+        qSort(m_sequence.begin(), m_sequence.end(), WtsAudio::startsBefore);
+        QList<WtsAudio::BufferAt *>::iterator sequenceCursor = m_sequence.begin();
 
         double duration = (double)video_st->duration
                 * video_st->time_base.num
@@ -115,7 +123,16 @@ void ExportThread::run()
 
                 av_init_packet(&packet);
 
-                qDebug() << "FIXME get audio mix";
+                qint64 ms = (qint64)(audio_pts * 1000.0);
+
+                while( sequenceCursor != m_sequence.end()
+                      && (*sequenceCursor)->at() <= ms ) {
+                    qDebug() << "Scheduling buffer @" << (*sequenceCursor)->at();
+                    m_audio->samplerSchedule(*sequenceCursor);
+                    sequenceCursor++;
+                }
+
+                m_audio->samplerMix( ms, m_samples);
 
                 packet.size = avcodec_encode_audio(audio_st->codec,
                                                    m_audioOutbuf.data(),
@@ -175,7 +192,7 @@ AVStream * ExportThread::add_audio_stream(AVFormatContext *oc, enum CodecID code
     c->sample_fmt = AV_SAMPLE_FMT_S16;
     c->bit_rate = 64000;
     c->sample_rate = 44100;
-    c->channels = 2;
+    c->channels = 1;
 
     // some formats want stream headers to be separate
     if(oc->oformat->flags & AVFMT_GLOBALHEADER)

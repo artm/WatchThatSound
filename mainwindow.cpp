@@ -266,6 +266,7 @@ void MainWindow::onRecord(bool record)
 
 void MainWindow::tick(qint64 ms)
 {
+    // FIXME shouldn't this happen AFTER scheduling new samples?
     // sync with the sampler
     emit samplerClock(ms);
 
@@ -329,7 +330,10 @@ void MainWindow::loadToScratch(WtsAudio::BufferAt * bufferAt)
 
 void MainWindow::exportMovie()
 {
-    m_exportThread->configure(m_dataDir.filePath("export.mov"), m_videoFile);
+    m_exportThread->configure(m_dataDir.filePath("export.mov"),
+                              m_videoFile,
+                              m_sequence,
+                              &m_audio);
     m_exportThread->start();
     ui->progressBar->show();
 }

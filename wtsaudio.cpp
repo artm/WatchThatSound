@@ -72,7 +72,8 @@ void WtsAudio::samplerClock(qint64 ms)
     float mix[ mixSize ];
     std::fill(mix, mix+mixSize, 0.0);
 
-    QLinkedList< WtsAudio::BufferAt * >::iterator nextBufferIt = m_activeBuffers.begin();
+    QLinkedList< WtsAudio::BufferAt * >::iterator
+            nextBufferIt = m_activeBuffers.begin();
     while( nextBufferIt != m_activeBuffers.end() ) {
         WtsAudio::BufferAt * buffer = *nextBufferIt;
         qint64 startRead = buffer->playOffset();
@@ -82,7 +83,8 @@ void WtsAudio::samplerClock(qint64 ms)
             startRead = 0;
         }
 
-        qint64 count = std::min(mixSize - startWrite, buffer->buffer()->sampleCount() - startRead);
+        qint64 count = std::min(mixSize - startWrite,
+                                buffer->buffer()->sampleCount() - startRead);
         float * in = buffer->buffer()->floatAt( startRead );
         for(int i = 0; i<count; ++i) {
             mix[ startWrite+i ] += in[i];
@@ -97,6 +99,40 @@ void WtsAudio::samplerClock(qint64 ms)
     }
 
     Pa_WriteStream(m_stream, mix, mixSize);
+}
+
+// FIXME this is mostly the same as samplerClock above, they have to be generalized
+void WtsAudio::samplerMix(qint64 ms, QVector<int16_t>& mix)
+{
+    m_clock = ms;
+    mix.fill(0);
+
+    QLinkedList< WtsAudio::BufferAt * >::iterator
+            nextBufferIt = m_activeBuffers.begin();
+    while( nextBufferIt != m_activeBuffers.end() ) {
+        WtsAudio::BufferAt * buffer = *nextBufferIt;
+        qint64 startRead = buffer->playOffset();
+        qint64 startWrite = 0;
+        if (startRead < 0) {
+            startWrite -= startRead;
+            startRead = 0;
+        }
+
+        qint64 count = std::min(mix.size() - startWrite,
+                                buffer->buffer()->sampleCount() - startRead);
+        float * in = buffer->buffer()->floatAt( startRead );
+        for(int i = 0; i<count; ++i) {
+            mix[ startWrite+i ] += (int16_t) (in[i] * 32768.0);
+        }
+        qDebug() << "e.g." << mix[startWrite];
+        buffer->setPlayOffset(startRead + count);
+
+        if (buffer->playOffset() == buffer->buffer()->sampleCount())
+            // deactivate buffer...
+            nextBufferIt = m_activeBuffers.erase(nextBufferIt);
+        else
+            ++nextBufferIt;
+    }
 }
 
 void WtsAudio::samplerSchedule(WtsAudio::BufferAt * buffer)
@@ -118,6 +154,7 @@ void WtsAudio::samplerSchedule(WtsAudio::BufferAt * buffer)
 void WtsAudio::samplerClear()
 {
     m_activeBuffers.clear();
+    m_clock = 0;
 }
 
 qint64 WtsAudio::currentSampleOffset() const

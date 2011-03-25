@@ -1,6 +1,8 @@
 #ifndef EXPORTTHREAD_H
 #define EXPORTTHREAD_H
 
+#include "wtsaudio.h"
+
 #include <QThread>
 #include <QByteArray>
 #include <QVector>
@@ -18,7 +20,10 @@ class ExportThread : public QThread
 public:
     explicit ExportThread(QObject *parent = 0);
     void run();
-    void configure(const QString& fname, VideoFile * vfile);
+    void configure(const QString& fname,
+                   VideoFile * vfile,
+                   const QList<WtsAudio::BufferAt *>& sequence,
+                   WtsAudio * audio);
 
 signals:
     void exportProgress(int percent);
@@ -35,6 +40,8 @@ protected:
 
     QByteArray m_filename;
     VideoFile * m_originalVideoFile;
+    QList<WtsAudio::BufferAt *> m_sequence;
+    WtsAudio * m_audio;
 
     QVector<int16_t> m_samples;
     QVector<uint8_t> m_audioOutbuf;

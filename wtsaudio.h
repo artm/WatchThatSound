@@ -41,6 +41,9 @@ public:
     static qint64 msToSampleCount(qint64 ms) { return samplingRate() * channelCount() * ms / 1000; }
     static qint64 sampleCountToMs(qint64 count) { return count * 1000 / (samplingRate() * channelCount()); }
     static qint64 byteToSampleCount(qint64 byteCount) { return byteCount / sizeof(float); }
+
+    void samplerMix(qint64 ms, QVector<int16_t>& mix);
+
 signals:
 
 public slots:
@@ -50,7 +53,6 @@ public slots:
     void samplerClock(qint64 ms);
     void samplerSchedule(WtsAudio::BufferAt * buffer);
     void samplerClear();
-
 
 protected:
     PaStream * m_stream;
