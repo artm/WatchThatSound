@@ -1,8 +1,5 @@
-now:
+the latest news is below...
 
-- export:
-[x] export gui
-[ ] ffmpeg based export implementation
 
 - button bar:
     - make it a common timeline functionality (but with changeable button selection)
@@ -51,3 +48,22 @@ screens:
     later:
     - rec studio with sound bank
     - effects
+
+* * *
+
+now:
+
+- export:
+[x] export gui
+[ ] ffmpeg based export implementation
+
+notes
+
+need to be able to copy raw packets from m_videoFile.
+this means there will be no video encoder, but a "copier".
+there is something called "stream_copy" in AVStream, but not sure how to use it.
+this also means that the stream parameters should be copied.
+
+[x] add method to ask video codec from VideoFile.
+[x] copy the rest of the video stream format over.
+[ ] give exporter access to the mixer api

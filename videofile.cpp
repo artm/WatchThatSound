@@ -130,6 +130,17 @@ QImage VideoFile::frame()
     return image;
 }
 
+bool VideoFile::nextPacket(AVPacket& packet)
+{
+    while (av_read_frame(m_formatContext, &packet) >= 0) {
+        if (packet.stream_index == m_streamIndex) {
+            return true;
+        }
+    }
+    // end of stream reached
+    return false;
+}
+
 int VideoFile::width() const
 {
     return m_codecContext->width;
@@ -146,4 +157,23 @@ void VideoFile::seek(qint64 ms)
     AVRational ts = av_div_q(sec,
                              m_formatContext->streams[m_streamIndex]->time_base);
     av_seek_frame(m_formatContext, m_streamIndex, ts.num/ts.den, 0);
+}
+
+CodecID VideoFile::codecId() const
+{
+    Q_ASSERT(m_codec);
+    return m_codec->id;
+}
+
+const AVCodecContext * VideoFile::codec() const
+{
+    Q_ASSERT(m_codecContext);
+    return m_codecContext;
+}
+
+const AVStream * VideoFile::stream() const
+{
+    Q_ASSERT(m_formatContext);
+    Q_ASSERT(m_streamIndex >= 0 && m_streamIndex < m_formatContext->nb_streams);
+    return m_formatContext->streams[m_streamIndex];
 }

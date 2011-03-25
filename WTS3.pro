@@ -37,5 +37,5 @@ LIBS += -L$$PWD/Shoulders/ffmpeg/libswscale -lswscale
 macx:LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices
 
 OTHER_FILES += \
-    PLAN.txt \
-    MEMO.txt
+    MEMO.txt \
+    DEVLOG.txt

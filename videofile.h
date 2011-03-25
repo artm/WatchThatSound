@@ -21,6 +21,11 @@ public:
     int height() const;
     QImage frame();
 
+    bool nextPacket(AVPacket& packet);
+
+    CodecID codecId() const;
+    const AVCodecContext * codec() const;
+    const AVStream * stream() const;
 signals:
 
 public slots:

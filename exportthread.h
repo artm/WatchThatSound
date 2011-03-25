@@ -2,7 +2,8 @@
 #define EXPORTTHREAD_H
 
 #include <QThread>
-#include <QString>
+#include <QByteArray>
+#include <QVector>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -28,21 +29,15 @@ protected:
     AVStream *add_audio_stream(AVFormatContext *oc, enum CodecID codec_id);
     void open_audio(AVFormatContext *oc, AVStream *st);
     void close_audio(AVFormatContext *oc, AVStream *st);
-    AVStream *add_video_stream(AVFormatContext *oc, enum CodecID codec_id);
+    AVStream *add_video_stream(AVFormatContext *oc);
     void open_video(AVFormatContext *oc, AVStream *st);
     void close_video(AVFormatContext *oc, AVStream *st);
 
     QByteArray m_filename;
-    VideoFile * m_videoFile;
+    VideoFile * m_originalVideoFile;
 
-    int16_t *m_samples;
-    uint8_t *m_audio_outbuf;
-    int m_audio_outbuf_size;
-    int m_audio_input_frame_size;
-
-    AVFrame *m_picture, *m_tmp_picture;
-    uint8_t *m_video_outbuf;
-    int m_frame_count, m_video_outbuf_size;
+    QVector<int16_t> m_samples;
+    QVector<uint8_t> m_audioOutbuf;
 };
 
 #endif // EXPORTTHREAD_H
