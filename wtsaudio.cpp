@@ -13,6 +13,9 @@ struct PortAudioLogger {
     }
 };
 
+template<typename T> T audioCast(float v) { return (T)v; }
+template<> int16_t audioCast<int16_t>(float v) { return  (int16_t) (v * 32768.0); }
+
 WtsAudio::WtsAudio(QObject *parent) :
     QObject(parent), m_stream(0)
 {
@@ -67,42 +70,12 @@ qint64 WtsAudio::capture(SoundBuffer * buffer)
 
 void WtsAudio::samplerClock(qint64 ms)
 {
-    m_clock = ms;
-    qint64 mixSize = Pa_GetStreamWriteAvailable(m_stream);
-    float mix[ mixSize ];
-    std::fill(mix, mix+mixSize, 0.0);
-
-    QLinkedList< WtsAudio::BufferAt * >::iterator
-            nextBufferIt = m_activeBuffers.begin();
-    while( nextBufferIt != m_activeBuffers.end() ) {
-        WtsAudio::BufferAt * buffer = *nextBufferIt;
-        qint64 startRead = buffer->playOffset();
-        qint64 startWrite = 0;
-        if (startRead < 0) {
-            startWrite -= startRead;
-            startRead = 0;
-        }
-
-        qint64 count = std::min(mixSize - startWrite,
-                                buffer->buffer()->sampleCount() - startRead);
-        float * in = buffer->buffer()->floatAt( startRead );
-        for(int i = 0; i<count; ++i) {
-            mix[ startWrite+i ] += in[i];
-        }
-        buffer->setPlayOffset(startRead + count);
-
-        if (buffer->playOffset() == buffer->buffer()->sampleCount())
-            // deactivate buffer...
-            nextBufferIt = m_activeBuffers.erase(nextBufferIt);
-        else
-            ++nextBufferIt;
-    }
-
-    Pa_WriteStream(m_stream, mix, mixSize);
+    QVector<float> mix(Pa_GetStreamWriteAvailable(m_stream));
+    samplerMix (ms, mix);
+    Pa_WriteStream(m_stream, mix.data(), mix.size());
 }
 
-// FIXME this is mostly the same as samplerClock above, they have to be generalized
-void WtsAudio::samplerMix(qint64 ms, QVector<int16_t>& mix)
+void WtsAudio::samplerMix(qint64 ms, QVector<float>& mix)
 {
     m_clock = ms;
     mix.fill(0);
@@ -122,7 +95,7 @@ void WtsAudio::samplerMix(qint64 ms, QVector<int16_t>& mix)
                                 buffer->buffer()->sampleCount() - startRead);
         float * in = buffer->buffer()->floatAt( startRead );
         for(int i = 0; i<count; ++i) {
-            mix[ startWrite+i ] += (int16_t) (in[i] * 32768.0);
+            mix[ startWrite+i ] += in[i];
         }
         buffer->setPlayOffset(startRead + count);
 
@@ -131,6 +104,15 @@ void WtsAudio::samplerMix(qint64 ms, QVector<int16_t>& mix)
             nextBufferIt = m_activeBuffers.erase(nextBufferIt);
         else
             ++nextBufferIt;
+    }
+}
+
+void WtsAudio::samplerMix(qint64 ms, QVector<int16_t>& mix)
+{
+    QVector<float> fmix(mix.size());
+    samplerMix(ms, fmix);
+    for(int i=0; i<fmix.size(); ++i) {
+        mix[i] = audioCast<int16_t>(fmix[i]);
     }
 }
 

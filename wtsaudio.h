@@ -28,7 +28,8 @@ public:
         qint64 m_playOffset;
     };
 
-    static bool startsBefore( const BufferAt * a, const BufferAt * b ) { return *a < *b; }
+    static bool startsBefore( const BufferAt * a, const BufferAt * b )
+    { return *a < *b; }
 
     explicit WtsAudio(QObject *parent = 0);
     virtual ~WtsAudio();
@@ -38,10 +39,14 @@ public:
 
     static qint64 samplingRate() { return 44100; }
     static int channelCount() { return 1; }
-    static qint64 msToSampleCount(qint64 ms) { return samplingRate() * channelCount() * ms / 1000; }
-    static qint64 sampleCountToMs(qint64 count) { return count * 1000 / (samplingRate() * channelCount()); }
-    static qint64 byteToSampleCount(qint64 byteCount) { return byteCount / sizeof(float); }
+    static qint64 msToSampleCount(qint64 ms)
+    { return samplingRate() * channelCount() * ms / 1000; }
+    static qint64 sampleCountToMs(qint64 count)
+    { return count * 1000 / (samplingRate() * channelCount()); }
+    static qint64 byteToSampleCount(qint64 byteCount)
+    { return byteCount / sizeof(float); }
 
+    void samplerMix(qint64 ms, QVector<float>& mix);
     void samplerMix(qint64 ms, QVector<int16_t>& mix);
 
 signals:

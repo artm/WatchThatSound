@@ -70,8 +70,12 @@ this also means that the stream parameters should be copied.
 
 * * *
 
+[x] review the WtsAudio, there are two nearly identical methods, the common functionality should be moved into its own (template) method.
+  [x] make a 'mix' function that works on floats
+  [x] mix that fills int16 converts the result of the previous
+  [x] higher level functions (sampler*) use the lower level mix ones
+
 [ ] review the exporter: what can go away, what can be improved for better maintainance?
-[ ] review the WtsAudio, there are two nearly identical methods, the common functionality should be moved into its own (template) method.
 [ ] GUI: disable most buttons while exporting
 [ ] usability: export numbers.
 
