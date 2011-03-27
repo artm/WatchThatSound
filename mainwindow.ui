@@ -67,11 +67,12 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Record</string>
+          <string/>
          </property>
          <property name="icon">
           <iconset resource="WTS3Resources.qrc">
-           <normaloff>:/Resources/record.png</normaloff>:/Resources/record.png</iconset>
+           <normaloff>:/Resources/rec-dim.png</normaloff>
+           <normalon>:/Resources/rec-bright.png</normalon>:/Resources/rec-dim.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -261,7 +262,7 @@
    </property>
    <property name="icon">
     <iconset resource="WTS3Resources.qrc">
-     <normaloff>:/Resources/record.png</normaloff>:/Resources/record.png</iconset>
+     <normaloff>:/Resources/rec-normal.png</normaloff>:/Resources/rec-normal.png</iconset>
    </property>
    <property name="text">
     <string>Opnemen</string>

@@ -14,5 +14,8 @@
         <file>Resources/save.png</file>
         <file>Resources/stop.png</file>
         <file>Resources/view-fullscreen.png</file>
+        <file>Resources/rec-bright.png</file>
+        <file>Resources/rec-dim.png</file>
+        <file>Resources/rec-normal.png</file>
     </qresource>
 </RCC>
