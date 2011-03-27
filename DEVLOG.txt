@@ -81,7 +81,7 @@ this also means that the stream parameters should be copied.
 
 * * *
 
-[ ] precompiled headers
+[x] precompiled headers
 
 * * *
 

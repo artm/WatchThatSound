@@ -85,10 +85,13 @@ VideoFile::VideoFile(QString path, QObject *parent)
                    m_codecContext->height);
 
     int w = m_codecContext->width, h = m_codecContext->height;
+
     // FIXME reimplement using undeprecated API
+    // I can't understand what would be the equivalent to this
     m_convertContext = sws_getContext(w, h, m_codecContext->pix_fmt,
                                       w, h, PIX_FMT_RGB24,
                                       SWS_BICUBIC, 0, 0, 0);
+
     Q_ASSERT(m_convertContext);
 
 }
@@ -110,8 +113,11 @@ QImage VideoFile::frame()
     int done = 0;
     while (av_read_frame(m_formatContext, &packet) >= 0) {
         if (packet.stream_index == m_streamIndex) {
-            avcodec_decode_video(m_codecContext,
-                                 m_frame, &done, packet.data, packet.size);
+            avcodec_decode_video2(
+                        m_codecContext,
+                        m_frame,
+                        &done,
+                        &packet);
             if (done) {
                 sws_scale(m_convertContext,
                           m_frame->data, m_frame->linesize, 0,
