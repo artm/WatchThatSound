@@ -3,7 +3,6 @@
 
 #include "wtsaudio.h"
 
-#include <QThread>
 #include <QByteArray>
 #include <QVector>
 #include <QProgressDialog>

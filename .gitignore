@@ -8,4 +8,5 @@ moc_*
 *.o
 qrc_*.cpp
 ui_mainwindow.h
+/WTS3.gch
 

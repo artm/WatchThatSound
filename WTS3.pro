@@ -23,9 +23,12 @@ HEADERS += mainwindow.h \
     storyboard.h \
     videofile.h \
     synced.h \
-    exporter.h
+    exporter.h \
+    stable.h
 FORMS += mainwindow.ui
 RESOURCES += WTS3Resources.qrc
+CONFIG += precompile_header
+PRECOMPILED_HEADER = stable.h
 
 INCLUDEPATH += Shoulders/portaudio/include Shoulders/ffmpeg
 LIBS += -L$$PWD/Shoulders/portaudio/lib -lportaudio

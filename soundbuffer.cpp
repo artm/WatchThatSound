@@ -1,5 +1,3 @@
-#include <QtCore>
-#include <algorithm>
 #include "soundbuffer.h"
 #include "wtsaudio.h"
 

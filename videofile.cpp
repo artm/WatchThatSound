@@ -174,6 +174,7 @@ const AVCodecContext * VideoFile::codec() const
 const AVStream * VideoFile::stream() const
 {
     Q_ASSERT(m_formatContext);
-    Q_ASSERT(m_streamIndex >= 0 && m_streamIndex < m_formatContext->nb_streams);
+    Q_ASSERT(m_streamIndex >= 0
+             && m_streamIndex < (int)m_formatContext->nb_streams);
     return m_formatContext->streams[m_streamIndex];
 }
