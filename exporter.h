@@ -6,6 +6,7 @@
 #include <QThread>
 #include <QByteArray>
 #include <QVector>
+#include <QProgressDialog>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -14,19 +15,19 @@ extern "C" {
 
 class VideoFile;
 
-class ExportThread : public QThread
+class Exporter : public QObject
 {
     Q_OBJECT
 public:
-    explicit ExportThread(QObject *parent = 0);
+    explicit Exporter(QObject *parent = 0);
     void run();
     void configure(const QString& fname,
                    VideoFile * vfile,
                    const QList<WtsAudio::BufferAt *>& sequence,
-                   WtsAudio * audio);
+                   WtsAudio * audio,
+                   QProgressDialog * progress);
 
 signals:
-    void exportProgress(int percent);
 
 public slots:
 
@@ -41,6 +42,7 @@ protected:
     VideoFile * m_originalVideoFile;
     QList<WtsAudio::BufferAt *> m_sequence;
     WtsAudio * m_audio;
+    QProgressDialog * m_progress;
 
     AVFormatContext * m_container;
     AVStream * m_videoStream;

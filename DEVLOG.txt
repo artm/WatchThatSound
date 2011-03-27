@@ -76,7 +76,12 @@ this also means that the stream parameters should be copied.
   [x] higher level functions (sampler*) use the lower level mix ones
 
 [x] review the exporter: what can go away, what can be improved for better maintainance?
-[ ] GUI: disable most buttons while exporting
+[x] GUI: disable most buttons while exporting
+    this is what modal QProgressDialog is for. let's see if it works for us.
+
+* * *
+
+[ ] precompiled headers
 
 * * *
 

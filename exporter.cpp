@@ -1,4 +1,4 @@
-#include "exportthread.h"
+#include "exporter.h"
 #include "videofile.h"
 
 #include <QtDebug>
@@ -26,8 +26,8 @@ protected:
     do { if (!cond) { throw AssertFailed(#cond, __FILE__, __LINE__, message); \
     } } while (0)
 
-ExportThread::ExportThread(QObject *parent)
-    : QThread(parent)
+Exporter::Exporter(QObject *parent)
+    : QObject(parent)
     , m_originalVideoFile(0)
     , m_audio(0)
     , m_container(0)
@@ -36,18 +36,20 @@ ExportThread::ExportThread(QObject *parent)
 {
 }
 
-void ExportThread::configure(const QString& fname,
+void Exporter::configure(const QString& fname,
                              VideoFile * vfile,
                              const QList<WtsAudio::BufferAt *>& sequence,
-                             WtsAudio * audio)
+                             WtsAudio * audio,
+                             QProgressDialog * progress)
 {
     m_filename = fname.toLocal8Bit();
     m_originalVideoFile = vfile;
     m_sequence = sequence;
     m_audio = audio;
+    m_progress = progress;
 }
 
-void ExportThread::initExport()
+void Exporter::initExport()
 {
     AVOutputFormat * format = av_guess_format(NULL, m_filename.constData(), NULL);
     if (!format) {
@@ -96,7 +98,7 @@ void ExportThread::initExport()
 
 }
 
-void ExportThread::performExport()
+void Exporter::performExport()
 {
     QVector<uint8_t> m_encodedAudio(10000);
 
@@ -181,27 +183,28 @@ void ExportThread::performExport()
             pts = audio_pts;
         }
 
-        emit exportProgress(100 * pts / duration);
+        m_progress->setValue(100 * pts / duration);
     }
 
     av_write_trailer(m_container);
 }
 
-void ExportThread::run()
+void Exporter::run()
 {
     try {
-        emit exportProgress(0);
+        m_progress->setValue(0);
 
         initExport();
         performExport();
         finishUp();
 
+        m_progress->setValue(100);
     } catch (const AssertFailed& e) {
         qCritical() << e.cMessage();
     }
 }
 
-void ExportThread::finishUp()
+void Exporter::finishUp()
 {
     avcodec_close(m_videoStream->codec);
     avcodec_close(m_audioStream->codec);
@@ -216,7 +219,7 @@ void ExportThread::finishUp()
     av_free(m_container);
 }
 
-void ExportThread::initAudioStream(CodecID codec_id)
+void Exporter::initAudioStream(CodecID codec_id)
 {
     AVCodecContext * codecContext;
 
@@ -238,7 +241,7 @@ void ExportThread::initAudioStream(CodecID codec_id)
         codecContext->flags |= CODEC_FLAG_GLOBAL_HEADER;
 }
 
-void ExportThread::initVideoStream()
+void Exporter::initVideoStream()
 {
     // Video output stream is pretty much a copy of the input video
     m_videoStream = av_new_stream(m_container, 0);

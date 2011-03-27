@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "rainbow.h"
-#include "exportthread.h"
+#include "exporter.h"
 
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_lastSampleNameNum(0)
     , m_videoFile(0)
     , m_loading(false)
-    , m_exportThread(new ExportThread(this))
+    , m_exportThread(new Exporter(this))
 {
     ui->setupUi(this);
 
@@ -25,12 +25,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tension->hide();
     ui->score->hide();
     ui->soundBank->hide();
-
-    // only show progress bar when necessary...
-    ui->progressBar->hide();
-    connect(m_exportThread, SIGNAL(started()), ui->progressBar, SLOT(show()));
-    connect(m_exportThread, SIGNAL(finished()), ui->progressBar, SLOT(hide()));
-    connect(m_exportThread, SIGNAL(exportProgress(int)), ui->progressBar, SLOT(setValue(int)));
 
     loadMovie(QCoreApplication::applicationDirPath () + "/../../../movie/edje.mov");
 }
@@ -330,10 +324,14 @@ void MainWindow::loadToScratch(WtsAudio::BufferAt * bufferAt)
 
 void MainWindow::exportMovie()
 {
+    // setting the parent to this makes it a "sheet" dialog on OSX
+    QProgressDialog progress("Opslaan...", "Stop", 0, 100, this);
+    progress.setWindowModality(Qt::WindowModal);
+
     m_exportThread->configure(m_dataDir.filePath("export.mov"),
                               m_videoFile,
                               m_sequence,
-                              &m_audio);
-    m_exportThread->start();
-    ui->progressBar->show();
+                              &m_audio,
+                              &progress);
+    m_exportThread->run();
 }

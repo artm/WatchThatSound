@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>554</height>
+    <height>574</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -204,16 +204,6 @@
       </property>
       <property name="frameShadow">
        <enum>QFrame::Plain</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QProgressBar" name="progressBar">
-      <property name="value">
-       <number>24</number>
-      </property>
-      <property name="invertedAppearance">
-       <bool>false</bool>
       </property>
      </widget>
     </item>

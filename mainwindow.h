@@ -15,7 +15,7 @@ namespace Ui
     class MainWindow;
 }
 
-class ExportThread;
+class Exporter;
 
 class MainWindow : public QMainWindow
 {
@@ -92,7 +92,7 @@ protected:
     int m_lastSampleNameNum;
     VideoFile * m_videoFile;
     bool m_loading;
-    ExportThread * m_exportThread;
+    Exporter * m_exportThread;
 };
 
 #endif // MAINWINDOW_H

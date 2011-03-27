@@ -12,7 +12,7 @@ SOURCES += main.cpp \
     storyboard.cpp \
     videofile.cpp \
     synced.cpp \
-    exportthread.cpp
+    exporter.cpp
 HEADERS += mainwindow.h \
     timelinewidget.h \
     soundbuffer.h \
@@ -23,7 +23,7 @@ HEADERS += mainwindow.h \
     storyboard.h \
     videofile.h \
     synced.h \
-    exportthread.h
+    exporter.h
 FORMS += mainwindow.ui
 RESOURCES += WTS3Resources.qrc
 
