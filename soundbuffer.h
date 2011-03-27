@@ -1,13 +1,11 @@
 #ifndef SOUNDBUFFER_H
 #define SOUNDBUFFER_H
 
-#include <QByteArray>
+#include <QVector>
 #include <QFile>
 #include <QtMultimedia>
 #include <QIODevice>
 #include <QColor>
-
-#include "wtsaudio.h"
 
 class SoundBuffer
 {
@@ -18,9 +16,9 @@ public:
     SoundBuffer& operator= (const SoundBuffer& other);
 
     // in ms
-    qint64 duration() const { return WtsAudio::sampleCountToMs(m_sampleCount); }
+    qint64 duration() const;
     // in samples
-    qint64 sampleCount() const { return m_sampleCount; }
+    qint64 sampleCount() const { return m_data.size(); }
 
     // float * by number ...
     float* floatAt(qint64 pos);
@@ -28,8 +26,8 @@ public:
     float* floatAtWritePos() { return floatAt(m_writePos); }
     float* chunkToWrite(qint64& size);
 
-    qint64 freeToWrite() const { return m_sampleCount - m_writePos; }
-    void setWritePos(qint64 pos) { m_writePos = std::min(pos, m_sampleCount); }
+    qint64 freeToWrite() const { return m_data.size() - m_writePos; }
+    void setWritePos(qint64 pos) { m_writePos = std::min(pos, (qint64)m_data.size()); }
 
     void paste(const SoundBuffer * other);
     QString name() const { return m_name; }
@@ -44,8 +42,7 @@ protected:
     QString m_name;
     bool m_saved;
 
-    QByteArray m_data;
-    qint64 m_sampleCount;
+    QVector<float> m_data;
     QColor m_color;
 
 public:

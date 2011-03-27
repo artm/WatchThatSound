@@ -75,7 +75,12 @@ this also means that the stream parameters should be copied.
   [x] mix that fills int16 converts the result of the previous
   [x] higher level functions (sampler*) use the lower level mix ones
 
-[ ] review the exporter: what can go away, what can be improved for better maintainance?
+[x] review the exporter: what can go away, what can be improved for better maintainance?
 [ ] GUI: disable most buttons while exporting
-[ ] usability: export numbers.
 
+* * *
+
+[ ] Factor out SoundBuffer, use QVector<float> instead. Questions:
+    - name: the project maintains a mapping from sound vectors to names and back
+    - sharing: BufferAt or Synced may refer to the same data
+    - save/load: originals get saved once and are refered to by names
