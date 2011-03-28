@@ -184,3 +184,21 @@ const AVStream * VideoFile::stream() const
              && m_streamIndex < (int)m_formatContext->nb_streams);
     return m_formatContext->streams[m_streamIndex];
 }
+
+qint64 VideoFile::duration() const
+{
+    Q_ASSERT(m_formatContext);
+    Q_ASSERT(m_streamIndex >= 0
+             && m_streamIndex < (int)m_formatContext->nb_streams);
+
+    AVRational q_duration = {
+        m_formatContext->streams[m_streamIndex]->duration,
+        1 };
+
+    AVRational seconds = av_mul_q(
+                q_duration,
+                m_formatContext->streams[m_streamIndex]->time_base );
+
+    return 1000 * (qint64)seconds.num / (qint64)seconds.den;
+
+}

@@ -21,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(samplerClock(qint64)), &m_audio, SLOT(samplerClock(qint64)));
     connect(this, SIGNAL(samplerSchedule(WtsAudio::BufferAt*)), &m_audio, SLOT(samplerSchedule(WtsAudio::BufferAt*)));
 
-    loadMovie(QCoreApplication::applicationDirPath () + "/../../../movie/edje.mov");
+    buildMovieSelector();
+    //loadMovie(QCoreApplication::applicationDirPath () + "/../../../movie/edje.mov");
 
     constructStateMachine();
 }
@@ -49,7 +50,7 @@ void MainWindow::loadMovie(const QString& path)
     ui->videoPlayer->setVolume(0);
 
     // we need to be in pause so the seek bar is always "connected"
-    ui->videoPlayer->pause();
+    //ui->videoPlayer->pause();
 
     connect(mediaObject(), SIGNAL(tick(qint64)), this, SLOT(tick(qint64)));
     mediaObject()->setTickInterval(50);
@@ -78,6 +79,8 @@ void MainWindow::loadMovie(const QString& path)
     ui->storyboard->setVideoSize(m_videoFile->width(), m_videoFile->height());
 
     loadData();
+
+    emit loaded();
 }
 
 void MainWindow::resetData()
@@ -336,19 +339,27 @@ void MainWindow::exportMovie()
 
 void MainWindow::constructStateMachine()
 {
+    QState * selector = new QState();
     QState * firstPlay = new QState();
     m_workshop = new QState();
 
+    selector->addTransition(this,SIGNAL(loaded()), firstPlay);
+    connect(selector, SIGNAL(exited()), ui->movieSelector, SLOT(hide()));
+
     firstPlay->addTransition(this, SIGNAL(stopped()), m_workshop);
+    connect(firstPlay, SIGNAL(entered()), ui->videoPlayer, SLOT(show()));
     connect(firstPlay, SIGNAL(entered()), ui->actionPlay, SLOT(toggle()));
+
     connect(m_workshop, SIGNAL(entered()), ui->toolBar, SLOT(show()));
 
     m_machine.setGlobalRestorePolicy(QStateMachine::RestoreProperties);
     m_machine.addState(firstPlay);
     m_machine.addState(m_workshop);
-    m_machine.setInitialState(firstPlay);
+    m_machine.addState(selector);
+    m_machine.setInitialState(selector);
 
     // first hide all
+    ui->videoPlayer->hide();
     ui->toolBar->hide();
     ui->storyboard->hide();
     ui->timeLine->hide();
@@ -384,4 +395,29 @@ void MainWindow::addPage(const QString& name, QList<QWidget*> widgets)
         m_workshop->setInitialState(state);
         action->setChecked(true);
     }
+}
+
+void MainWindow::buildMovieSelector()
+{
+    QLayout * layout = new QGridLayout;
+    ui->movieSelector->setLayout(layout);
+    QDir movDir(QCoreApplication::applicationDirPath () + "/../../../movie");
+
+    QSignalMapper * mapper = new QSignalMapper(this);
+
+    foreach(QFileInfo fi, movDir.entryInfoList(QStringList() << "*.mov")) {
+        QPushButton * button = new QPushButton( );
+        layout->addWidget( button );
+        button->setFlat(true);
+        mapper->setMapping( button, fi.absoluteFilePath() );
+        connect(button, SIGNAL(clicked()), mapper, SLOT(map()));
+
+        VideoFile vf(fi.absoluteFilePath());
+        vf.seek( vf.duration()/2 );
+        QPixmap thumb = QPixmap::fromImage( vf.frame() );
+        button->setIcon(QIcon(thumb));
+        button->setIconSize(QSize(vf.width(),vf.height()));
+    }
+
+    connect(mapper, SIGNAL(mapped(QString)), SLOT(loadMovie(QString)));
 }

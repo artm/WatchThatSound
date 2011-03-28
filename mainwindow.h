@@ -51,6 +51,8 @@ public:
     Phonon::MediaObject * mediaObject();
     void addPage(const QString& name, QList<QWidget*> widgets);
 
+    void buildMovieSelector();
+
 public slots:
     void setFullscreen(bool fs);
     void onPlay(bool play);
@@ -79,6 +81,7 @@ signals:
     void samplerSchedule(WtsAudio::BufferAt * buffer);
     void samplerClear();
 
+    void loaded();
     void stopped();
 
 protected:

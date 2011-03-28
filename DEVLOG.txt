@@ -109,5 +109,13 @@ each state (at least inside workshop) should have a map of:
 but this can be modelled by connections... except connections allow show/hiding, not more...
 
 [x] use restore policy and set the shown property on uis...
-[ ] some way to add buttons for triggering states
+[x] some way to add buttons for triggering states
     (hard code for now)
+
+* * *
+
+movie selector:
+
+[ ] upon startup - create a container with a button group, each button corresponds to a found movie
+[ ] upon movie selection transite into "first play"
+

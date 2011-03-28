@@ -26,6 +26,8 @@ public:
     CodecID codecId() const;
     const AVCodecContext * codec() const;
     const AVStream * stream() const;
+
+    qint64 duration() const;
 signals:
 
 public slots:

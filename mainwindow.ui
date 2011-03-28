@@ -139,6 +139,9 @@
      </widget>
     </item>
     <item>
+     <widget class="QWidget" name="movieSelector" native="true"/>
+    </item>
+    <item>
      <widget class="SequencerTimeLine" name="timeLine">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
