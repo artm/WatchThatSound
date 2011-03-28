@@ -49,6 +49,7 @@ public:
     QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
     void addMarker(MarkerType type, qint64 when = -1);
     Phonon::MediaObject * mediaObject();
+    void addPage(const QString& name, QList<QWidget*> widgets);
 
 public slots:
     void setFullscreen(bool fs);
@@ -78,8 +79,11 @@ signals:
     void samplerSchedule(WtsAudio::BufferAt * buffer);
     void samplerClear();
 
+    void stopped();
+
 protected:
     QString makeSampleName();
+    void constructStateMachine();
 
     WtsAudio m_audio;
     Ui::MainWindow *ui;
@@ -93,6 +97,9 @@ protected:
     VideoFile * m_videoFile;
     bool m_loading;
     Exporter * m_exporter;
+    QStateMachine m_machine;
+    QState * m_workshop;
+    QActionGroup * m_tabActions;
 };
 
 #endif // MAINWINDOW_H

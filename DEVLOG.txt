@@ -89,3 +89,25 @@ this also means that the stream parameters should be copied.
     - name: the project maintains a mapping from sound vectors to names and back
     - sharing: BufferAt or Synced may refer to the same data
     - save/load: originals get saved once and are refered to by names
+
+* * *
+
+tabs:
+1. movie selector (in stead of "browse...")
+2. first play (just a movie)
+3. story board editing
+- movie
+- story board in edit mode
+4. recording
+(current)
+
+can use QState for state transitions.
+
+each state (at least inside workshop) should have a map of:
+- widget, mode
+
+but this can be modelled by connections... except connections allow show/hiding, not more...
+
+[x] use restore policy and set the shown property on uis...
+[ ] some way to add buttons for triggering states
+    (hard code for now)

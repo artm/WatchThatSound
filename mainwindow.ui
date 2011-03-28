@@ -44,7 +44,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="recorder">
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
@@ -237,6 +237,23 @@
    <addaction name="actionExport"/>
    <addaction name="separator"/>
    <addaction name="actionFullscreen"/>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>640</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFilm">
+    <property name="title">
+     <string>Film</string>
+    </property>
+    <addaction name="actionPlay"/>
+   </widget>
+   <addaction name="menuFilm"/>
   </widget>
   <action name="actionPlay">
    <property name="checkable">

@@ -21,12 +21,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(samplerClock(qint64)), &m_audio, SLOT(samplerClock(qint64)));
     connect(this, SIGNAL(samplerSchedule(WtsAudio::BufferAt*)), &m_audio, SLOT(samplerSchedule(WtsAudio::BufferAt*)));
 
-    // FIXME these are bits in progress....
-    ui->tension->hide();
-    ui->score->hide();
-    ui->soundBank->hide();
-
     loadMovie(QCoreApplication::applicationDirPath () + "/../../../movie/edje.mov");
+
+    constructStateMachine();
 }
 
 QString MainWindow::makeSampleName()
@@ -234,6 +231,7 @@ void MainWindow::onPlay(bool play)
     } else {
         m_audio.stop();
         emit samplerClear();
+        emit stopped();
         ui->videoPlayer->pause();
         ui->actionRecord->setChecked(false);
     }
@@ -335,4 +333,55 @@ void MainWindow::exportMovie()
                               &progress);
     m_exporter->run();
 }
+
+void MainWindow::constructStateMachine()
+{
+    QState * firstPlay = new QState();
+    m_workshop = new QState();
+
+    firstPlay->addTransition(this, SIGNAL(stopped()), m_workshop);
+    connect(firstPlay, SIGNAL(entered()), ui->actionPlay, SLOT(toggle()));
+    connect(m_workshop, SIGNAL(entered()), ui->toolBar, SLOT(show()));
+
+    m_machine.setGlobalRestorePolicy(QStateMachine::RestoreProperties);
+    m_machine.addState(firstPlay);
+    m_machine.addState(m_workshop);
+    m_machine.setInitialState(firstPlay);
+
+    // first hide all
+    ui->toolBar->hide();
+    ui->storyboard->hide();
+    ui->timeLine->hide();
+    ui->recorder->hide();
+    // ...and unfinished widgets...
+    ui->tension->hide();
+    ui->score->hide();
+    ui->soundBank->hide();
+
+    m_tabActions = new QActionGroup(this);
+
+    addPage("1", QList<QWidget*>() << ui->storyboard);
+    addPage("2", QList<QWidget*>()
+            << ui->storyboard
+            << ui->timeLine
+            << ui->recorder);
+
+    m_machine.start();
+}
+
+void MainWindow::addPage(const QString& name, QList<QWidget*> widgets)
+{
+    QState * state = new QState(m_workshop);
+    foreach(QWidget * w, widgets) {
+        state->assignProperty(w, "visible", true);
+    }
+    QAction * action = ui->toolBar->addAction(name);
+    m_tabActions->addAction( action );
+    action->setCheckable(true);
+    m_workshop->addTransition(action, SIGNAL(triggered()), state);
+
+    if (!m_workshop->initialState()) {
+        m_workshop->setInitialState(state);
+        action->setChecked(true);
+    }
 }
