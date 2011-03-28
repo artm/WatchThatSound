@@ -1,4 +1,5 @@
 #include "timelinewidget.h"
+#include "ui_mainwindow.h"
 #include <QMouseEvent>
 
 TimeLineWidget::TimeLineWidget(QWidget *parent) :
@@ -10,10 +11,10 @@ TimeLineWidget::TimeLineWidget(QWidget *parent) :
         iter = iter->parent();
     if (!iter)
         qFatal("TimeLineWidget should be descendant of MainWindow in view hierarchy");
-    mainWindow = qobject_cast<MainWindow *>(iter);
+    m_mainWindow = qobject_cast<MainWindow *>(iter);
 
-    connect(mainWindow,SIGNAL(storyBoardChanged()),SLOT(update()));
-    connect(mainWindow,SIGNAL(samplerClock(qint64)),SLOT(setCurrentTime(qint64)));
+    connect(m_mainWindow,SIGNAL(storyBoardChanged()),SLOT(update()));
+    connect(m_mainWindow,SIGNAL(samplerClock(qint64)),SLOT(setCurrentTime(qint64)));
 
     setScene(new QGraphicsScene(0.0,0.0,1.0,1.0,this));
 }
@@ -25,7 +26,7 @@ void TimeLineWidget::resizeEvent ( QResizeEvent * /*event*/ )
 
 void TimeLineWidget::setCurrentTime(qint64 time)
 {
-    Phonon::MediaObject * mo = mainWindow->mediaObject();
+    Phonon::MediaObject * mo = m_mainWindow->mediaObject();
     if (!mo) return;
 
     if (time != m_currentTime) {
@@ -51,7 +52,7 @@ void TimeLineWidget::paintRange(QPainter * painter, qreal x, qreal w, const QCol
 
 void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*/ )
 {
-    qreal total = mainWindow->mediaObject()->totalTime();
+    qreal total = m_mainWindow->mediaObject()->totalTime();
     qreal relX1 = 0.0f;
 
     QColor colors[] = {
@@ -60,7 +61,7 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     };
     int currentColor = 0;
 
-    foreach(MainWindow::Marker * marker, mainWindow->getMarkers(MainWindow::SCENE)) {
+    foreach(MainWindow::Marker * marker, m_mainWindow->getMarkers(MainWindow::SCENE)) {
         qreal relX2 = (qreal)marker->at() / total;
         // draw a rectangle which as tall as a widget and runs from relX1 to relX2
         paintRange(painter, relX1, relX2-relX1, colors[currentColor]);
@@ -71,25 +72,29 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     paintRange(painter, relX1, 1.0f - relX1, colors[currentColor]);
 
     painter->setPen(QColor(0,0,0,100));
-    foreach(MainWindow::Marker * marker, mainWindow->getMarkers(MainWindow::EVENT)) {
+    foreach(MainWindow::Marker * marker, m_mainWindow->getMarkers(MainWindow::EVENT)) {
         qreal relX2 = (qreal)marker->at() / total;
         painter->drawLine(QPointF(relX2,0.), QPointF(relX2,1.));
     }
+
+    painter->setPen(QColor(255,100,100,127));
+    painter->drawPath( m_mainWindow->tensionCurve() );
 
 }
 
 void TimeLineWidget::drawForeground ( QPainter * painter, const QRectF & rect )
 {
-    float x = (float)m_currentTime / (float)mainWindow->mediaObject()->totalTime();
+    float x = (float)m_currentTime / (float)m_mainWindow->mediaObject()->totalTime();
 
     if (x > rect.x() && x < rect.right()) {
         painter->setPen(QColor(0,0,255,100));
         painter->drawLine(QPointF(x,0),QPointF(x,1));
     }
+
 }
 
 void TimeLineWidget::seekTo(qint64 x) {
-    mainWindow->seek(mainWindow->mediaObject()->totalTime() * x / (qint64)width());
+    m_mainWindow->seek(m_mainWindow->mediaObject()->totalTime() * x / (qint64)width());
 }
 
 void TimeLineWidget::mousePressEvent ( QMouseEvent * event )

@@ -116,6 +116,35 @@ but this can be modelled by connections... except connections allow show/hiding,
 
 movie selector:
 
-[ ] upon startup - create a container with a button group, each button corresponds to a found movie
-[ ] upon movie selection transite into "first play"
+[x] upon startup - create a container with a button group, each button corresponds to a found movie
+[x] upon movie selection transite into "first play"
+
+* * *
+
+curve
+
+[x] curve editing page
+[x] init curve from storyboard if not edited yet
+    [x] reset the curve when regenerating
+[x] curve editor
+    [x] when setting the curve - refresh nodes
+    [x] remember element index in the node
+[x] save curve to xml
+[ ] draw curve in the background
+[ ] when changing story board should change the curve as well
+
+* * *
+
+[ ] re-design: time lines should be: x in ms and y view specific (default 0,1 line now)
+[ ] re-factor: all time lines partially share drag and drop. generalize.
+
+* * *
+
+future improvements:
+
+[ ] support for different numbers of films in movie selector (nice grid fills)
+[ ] support for different resolutions in movie selector
+[ ] caching the thumbnail
+[ ] menu item to override the thumbnail
+[ ] movie import (transcode and cache the result)
 

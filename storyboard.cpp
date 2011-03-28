@@ -8,8 +8,8 @@ StoryBoard::StoryBoard(QWidget *parent)
     , m_selectedThumb(0)
     , m_dragItem(0)
 {
-    disconnect(mainWindow, SIGNAL(storyBoardChanged()), this, SLOT(repaint()));
-    connect(mainWindow,SIGNAL(storyBoardChanged()),SLOT(updateSnapshots()));       
+    disconnect(m_mainWindow, SIGNAL(storyBoardChanged()), this, SLOT(repaint()));
+    connect(m_mainWindow,SIGNAL(storyBoardChanged()),SLOT(updateSnapshots()));       
 
     QFrame * box = new QFrame();
     box->setFrameShadow( QFrame::Raised );
@@ -43,7 +43,7 @@ void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
 
     int maxLines = width() / 5;
 
-    float totalMin = (float)mainWindow->mediaObject()->totalTime() / 60000.0f;
+    float totalMin = (float)m_mainWindow->mediaObject()->totalTime() / 60000.0f;
     float N[] = { 60, 30, 15, 12, 6, 5, 4, 3, 2 };
     int Ncount = sizeof(N)/sizeof(N[0]);
 
@@ -66,7 +66,7 @@ void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
 
 void StoryBoard::updateSnapshots()
 {
-    float tt = mainWindow->mediaObject()->totalTime();
+    float tt = m_mainWindow->mediaObject()->totalTime();
 
     foreach(QGraphicsItem * item, m_msToItem) {
         scene()->removeItem(item);
@@ -78,7 +78,7 @@ void StoryBoard::updateSnapshots()
 
     int n = 0;
 
-    foreach(MainWindow::Marker * m, mainWindow->getMarkers(MainWindow::ANY, false)) {
+    foreach(MainWindow::Marker * m, m_mainWindow->getMarkers(MainWindow::ANY, false)) {
         float x = (float)m->at() / tt - 0.5 * m_thumbWidth;
 
         int gapCount = s_levelCount - 1;
@@ -135,7 +135,7 @@ void StoryBoard::mousePressEvent ( QMouseEvent * event )
         while (m_dragItem) {
             if (m_itemToMarker.contains(m_dragItem)) {
                 MainWindow::Marker * m = m_itemToMarker[m_dragItem];
-                mainWindow->seek( m->at() );
+                m_mainWindow->seek( m->at() );
                 showItemPopup( m_dragItem );
                 return;
             }

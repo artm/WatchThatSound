@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>574</height>
+    <height>586</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -174,7 +174,7 @@
      </widget>
     </item>
     <item>
-     <widget class="TimeLineWidget" name="tension">
+     <widget class="CurveEditor" name="tension">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -432,6 +432,11 @@
    <class>StoryBoard</class>
    <extends>QGraphicsView</extends>
    <header>storyboard.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurveEditor</class>
+   <extends>QGraphicsView</extends>
+   <header>curveeditor.h</header>
   </customwidget>
  </customwidgets>
  <resources>

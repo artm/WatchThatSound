@@ -17,12 +17,19 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // connect to the sampler
-    connect(this, SIGNAL(samplerClear()), &m_audio, SLOT(samplerClear()));
-    connect(this, SIGNAL(samplerClock(qint64)), &m_audio, SLOT(samplerClock(qint64)));
-    connect(this, SIGNAL(samplerSchedule(WtsAudio::BufferAt*)), &m_audio, SLOT(samplerSchedule(WtsAudio::BufferAt*)));
+    connect(this, SIGNAL(samplerClear()),
+            &m_audio, SLOT(samplerClear()));
+    connect(this, SIGNAL(samplerClock(qint64)),
+            &m_audio, SLOT(samplerClock(qint64)));
+    connect(this, SIGNAL(samplerSchedule(WtsAudio::BufferAt*)),
+            &m_audio, SLOT(samplerSchedule(WtsAudio::BufferAt*)));
+
+    connect(ui->tension, SIGNAL(dataChanged()), SLOT(saveData()));
+    connect(ui->tension, SIGNAL(dataChanged()), ui->storyboard, SLOT(update()));
+    connect(ui->tension, SIGNAL(dataChanged()), ui->timeLine, SLOT(update()));
+    connect(ui->tension, SIGNAL(dataChanged()), ui->score, SLOT(update()));
 
     buildMovieSelector();
-    //loadMovie(QCoreApplication::applicationDirPath () + "/../../../movie/edje.mov");
 
     constructStateMachine();
 }
@@ -126,6 +133,10 @@ void MainWindow::saveData()
     }
     xml.writeEndElement();
 
+    xml.writeStartElement("tension");
+    ui->tension->saveData(xml);
+    xml.writeEndElement();
+
     xml.writeStartElement("sequence");
     xml.writeAttribute("counter",QString("%1").arg(m_lastSampleNameNum));
     foreach(WtsAudio::BufferAt * buffer, m_sequence) {
@@ -164,8 +175,11 @@ void MainWindow::loadData()
                     // this is one way to read a flat list of <foo/> not recursing
                     xml.readElementText();
                 }
+            } else if (xml.name() == "tension") {
+                ui->tension->loadData(xml);
             } else if (xml.name() == "sequence") {
-                m_lastSampleNameNum = xml.attributes().value("counter").toString().toInt();
+                m_lastSampleNameNum =
+                        xml.attributes().value("counter").toString().toInt();
                 while(xml.readNextStartElement()) {
                     QString id = xml.attributes().value("id").toString();
                     QFile wav( m_dataDir.filePath( id ));
@@ -372,7 +386,12 @@ void MainWindow::constructStateMachine()
     m_tabActions = new QActionGroup(this);
 
     addPage("1", QList<QWidget*>() << ui->storyboard);
-    addPage("2", QList<QWidget*>()
+    QState * tensionPage =
+            addPage("2",  QList<QWidget*>()
+                    << ui->storyboard
+                    << ui->tension);
+    connect(tensionPage, SIGNAL(entered()), SLOT(maybeInitTension()));
+    addPage("3", QList<QWidget*>()
             << ui->storyboard
             << ui->timeLine
             << ui->recorder);
@@ -380,7 +399,7 @@ void MainWindow::constructStateMachine()
     m_machine.start();
 }
 
-void MainWindow::addPage(const QString& name, QList<QWidget*> widgets)
+QState * MainWindow::addPage(const QString& name, QList<QWidget*> widgets)
 {
     QState * state = new QState(m_workshop);
     foreach(QWidget * w, widgets) {
@@ -395,6 +414,7 @@ void MainWindow::addPage(const QString& name, QList<QWidget*> widgets)
         m_workshop->setInitialState(state);
         action->setChecked(true);
     }
+    return state;
 }
 
 void MainWindow::buildMovieSelector()
@@ -420,4 +440,43 @@ void MainWindow::buildMovieSelector()
     }
 
     connect(mapper, SIGNAL(mapped(QString)), SLOT(loadMovie(QString)));
+}
+
+void MainWindow::maybeInitTension()
+{
+    if (ui->tension->isEdited())
+        return;
+
+    float level = 0.5;
+    QMapIterator<qint64, Marker *> iter(m_markers);
+
+    QPainterPath curve;
+    bool init = true;
+    while(iter.hasNext()){
+        iter.next();
+        Marker * m = iter.value();
+        if (m->type() == SCENE) {
+            level = 0.5;
+        } else {
+            level = 0.5 * level;
+        }
+
+        float x = (float)ui->tension->sceneRect().width()
+                * m->at() / m_videoFile->duration();
+
+        if (init) {
+            curve.moveTo(QPointF(x, level));
+            init = false;
+        } else
+            curve.lineTo( QPointF(x, level) );
+    }
+
+    curve.lineTo( QPointF(ui->tension->sceneRect().width(), 0.5));
+
+    ui->tension->setCurve(curve);
+}
+
+QPainterPath MainWindow::tensionCurve() const
+{
+    return ui->tension->curve();
 }

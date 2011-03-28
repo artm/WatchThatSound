@@ -22,7 +22,7 @@ public slots:
     void setSeekOnDrag(bool on) { _seekOnDrag = on; }
 
 protected:
-    MainWindow * mainWindow;
+    MainWindow * m_mainWindow;
     bool _seekOnDrag;
     qint64 m_currentTime;
 

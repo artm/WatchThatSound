@@ -5,11 +5,11 @@
 SequencerTimeLine::SequencerTimeLine(QWidget *parent) :
         TimeLineWidget(parent), m_pen(Qt::black), m_brush(Qt::white), m_dragItem(0)
 {
-    connect(mainWindow,SIGNAL(newBufferAt(WtsAudio::BufferAt*)),
+    connect(m_mainWindow,SIGNAL(newBufferAt(WtsAudio::BufferAt*)),
             SLOT(insertBufferAt(WtsAudio::BufferAt*)));
-    connect(mainWindow,SIGNAL(scratchUpdated(bool,qint64,const SoundBuffer&)),
+    connect(m_mainWindow,SIGNAL(scratchUpdated(bool,qint64,const SoundBuffer&)),
             SLOT(showScratch(bool,qint64,const SoundBuffer&)));
-    mainWindow->connect(this, SIGNAL(bufferSelected(WtsAudio::BufferAt*)),
+    m_mainWindow->connect(this, SIGNAL(bufferSelected(WtsAudio::BufferAt*)),
                         SLOT(loadToScratch(WtsAudio::BufferAt *)));
 
     QBrush scratchBrush(QColor(255,200,200,127));
@@ -24,7 +24,7 @@ SequencerTimeLine::SequencerTimeLine(QWidget *parent) :
 void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * buffer)
 {
     QBrush brush(buffer->buffer()->color());
-    float tt = (float)mainWindow->mediaObject()->totalTime();
+    float tt = (float)m_mainWindow->mediaObject()->totalTime();
     float relX = (float)buffer->at() / tt;
     float relW = (float)buffer->buffer()->duration() / tt;
     QGraphicsItem * item =
@@ -69,7 +69,7 @@ void SequencerTimeLine::showScratch(bool on, qint64 at, const SoundBuffer& scrat
     if (on) {
         qint64 duration = WtsAudio::sampleCountToMs(scratch.m_writePos);
 
-        float tt = (float)mainWindow->mediaObject()->totalTime();
+        float tt = (float)m_mainWindow->mediaObject()->totalTime();
         float relX = (float)at / tt;
         float relW = (float)duration / tt;
         m_scratchRect->setRect(relX, .1, relW, .8 );
@@ -90,7 +90,7 @@ void SequencerTimeLine::mousePressEvent ( QMouseEvent * event )
             } else {
                 WtsAudio::BufferAt * buffer = m_itemToBuffer[m_dragItem];
                 emit bufferSelected( buffer );
-                mainWindow->seek( buffer->at() );
+                m_mainWindow->seek( buffer->at() );
                 return;
             }
         }
@@ -106,7 +106,7 @@ void SequencerTimeLine::mouseReleaseEvent ( QMouseEvent * event )
            restackItems();
        }
     }
-    mainWindow->saveData();
+    m_mainWindow->saveData();
 }
 
 void SequencerTimeLine::mouseMoveEvent ( QMouseEvent * event )
@@ -118,9 +118,9 @@ void SequencerTimeLine::mouseMoveEvent ( QMouseEvent * event )
             m_dragLastP = newPos;
             m_dragItem->moveBy(dx, 0);
 
-            qint64 newTime = (float)mainWindow->mediaObject()->totalTime() *
+            qint64 newTime = (float)m_mainWindow->mediaObject()->totalTime() *
                              m_dragItem->x();
-            mainWindow->seek( newTime );
+            m_mainWindow->seek( newTime );
             m_itemToBuffer[m_dragItem]->setAt( newTime );
             return;
         }

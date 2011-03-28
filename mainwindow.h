@@ -49,9 +49,11 @@ public:
     QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
     void addMarker(MarkerType type, qint64 when = -1);
     Phonon::MediaObject * mediaObject();
-    void addPage(const QString& name, QList<QWidget*> widgets);
+    QState * addPage(const QString& name, QList<QWidget*> widgets);
 
     void buildMovieSelector();
+
+    QPainterPath tensionCurve() const;
 
 public slots:
     void setFullscreen(bool fs);
@@ -71,6 +73,8 @@ public slots:
     void loadData();
 
     void exportMovie();
+
+    void maybeInitTension();
 
 signals:
     void storyBoardChanged();
