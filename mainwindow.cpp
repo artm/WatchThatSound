@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_lastSampleNameNum(0)
     , m_videoFile(0)
     , m_loading(false)
-    , m_exportThread(new Exporter(this))
+    , m_exporter(new Exporter(this))
 {
     ui->setupUi(this);
 
@@ -328,10 +328,11 @@ void MainWindow::exportMovie()
     QProgressDialog progress("Opslaan...", "Stop", 0, 100, this);
     progress.setWindowModality(Qt::WindowModal);
 
-    m_exportThread->configure(m_dataDir.filePath("export.mov"),
+    m_exporter->configure(m_dataDir.filePath("export.mov"),
                               m_videoFile,
                               m_sequence,
                               &m_audio,
                               &progress);
-    m_exportThread->run();
+    m_exporter->run();
+}
 }

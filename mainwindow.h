@@ -92,7 +92,7 @@ protected:
     int m_lastSampleNameNum;
     VideoFile * m_videoFile;
     bool m_loading;
-    Exporter * m_exportThread;
+    Exporter * m_exporter;
 };
 
 #endif // MAINWINDOW_H
