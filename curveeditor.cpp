@@ -7,6 +7,7 @@ CurveEditor::CurveEditor(QWidget *parent)
     , m_dragItem(0)
     , m_edited(false)
 {
+    m_curve = scene()->addPath(QPainterPath(), QPen(Qt::red));
 }
 
 void CurveEditor::setCurve(const QPainterPath& curve)
@@ -93,7 +94,9 @@ void CurveEditor::scaleNodes()
 
 void CurveEditor::saveData(QXmlStreamWriter &xml)
 {
-    xml.writeAttribute("edited", QString("%1").arg(isEdited()));
+    if (!m_curve)
+        return;
+    xml.writeAttribute("edited", QString("%1").arg(isEdited()));    
     foreach(QGraphicsItem * child, m_curve->childItems()) {
         QGraphicsRectItem * node = dynamic_cast<QGraphicsRectItem *>(child);
         if (!node)
