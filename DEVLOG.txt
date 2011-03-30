@@ -121,17 +121,24 @@ movie selector:
 
 * * *
 
-curve
+score (partituur)
+[x] score page
+[x] grid (override the background)
+[ ] score editor
+  [ ] gestures
+  [ ] color wheel
+[ ] save score
+[ ] load score
 
-[x] curve editing page
-[x] init curve from storyboard if not edited yet
-    [x] reset the curve when regenerating
-[x] curve editor
-    [x] when setting the curve - refresh nodes
-    [x] remember element index in the node
-[x] save curve to xml
-[ ] draw curve in the background
-[ ] when changing story board should change the curve as well
+gestures are probably doable as state machines.
+press - either drag/drop or start a state machine.
+drag - either go to drag/drop or to to a state machine.
+release - either... or...
+plus there should be some timers...
+
+start with click to empty circle: release handler.
+
+but shouldn't mouse events get passed to the machine when appropriate?
 
 * * *
 
@@ -142,6 +149,7 @@ curve
 
 future improvements:
 
+[ ] when changing story board should change the curve as well
 [ ] support for different numbers of films in movie selector (nice grid fills)
 [ ] support for different resolutions in movie selector
 [ ] caching the thumbnail

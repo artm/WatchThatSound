@@ -158,7 +158,7 @@
      </widget>
     </item>
     <item>
-     <widget class="TimeLineWidget" name="score">
+     <widget class="ScoreEditor" name="score">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -413,11 +413,6 @@
    <header location="global">phonon/videoplayer.h</header>
   </customwidget>
   <customwidget>
-   <class>TimeLineWidget</class>
-   <extends>QGraphicsView</extends>
-   <header>timelinewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>SequencerTimeLine</class>
    <extends>QGraphicsView</extends>
    <header>sequencertimeline.h</header>
@@ -437,6 +432,11 @@
    <class>CurveEditor</class>
    <extends>QGraphicsView</extends>
    <header>curveeditor.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ScoreEditor</class>
+   <extends>QGraphicsView</extends>
+   <header>scoreeditor.h</header>
   </customwidget>
  </customwidgets>
  <resources>

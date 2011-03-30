@@ -13,7 +13,9 @@ SOURCES += main.cpp \
     videofile.cpp \
     synced.cpp \
     exporter.cpp \
-    curveeditor.cpp
+    curveeditor.cpp \
+    scoreeditor.cpp \
+    scoresymbol.cpp
 HEADERS += mainwindow.h \
     timelinewidget.h \
     soundbuffer.h \
@@ -26,7 +28,9 @@ HEADERS += mainwindow.h \
     synced.h \
     exporter.h \
     stable.h \
-    curveeditor.h
+    curveeditor.h \
+    scoreeditor.h \
+    scoresymbol.h
 FORMS += mainwindow.ui
 RESOURCES += WTS3Resources.qrc
 CONFIG += precompile_header

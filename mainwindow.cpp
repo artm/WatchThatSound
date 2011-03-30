@@ -378,9 +378,9 @@ void MainWindow::constructStateMachine()
     ui->storyboard->hide();
     ui->timeLine->hide();
     ui->recorder->hide();
-    // ...and unfinished widgets...
     ui->tension->hide();
     ui->score->hide();
+    // ...
     ui->soundBank->hide();
 
     m_tabActions = new QActionGroup(this);
@@ -393,6 +393,10 @@ void MainWindow::constructStateMachine()
     connect(tensionPage, SIGNAL(entered()), SLOT(maybeInitTension()));
     addPage("3", QList<QWidget*>()
             << ui->storyboard
+            << ui->score);
+    addPage("4", QList<QWidget*>()
+            << ui->storyboard
+            << ui->score
             << ui->timeLine
             << ui->recorder);
 
