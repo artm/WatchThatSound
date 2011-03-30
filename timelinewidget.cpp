@@ -79,7 +79,6 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
 
     painter->setPen(QColor(255,100,100,127));
     painter->drawPath( m_mainWindow->tensionCurve() );
-
 }
 
 void TimeLineWidget::drawForeground ( QPainter * painter, const QRectF & rect )
