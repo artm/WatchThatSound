@@ -16,7 +16,7 @@ public:
     void saveData(QXmlStreamWriter& xml);
     void loadData(QXmlStreamReader& xml);
 
-    QPainterPath curve() const { return m_curve->path(); }
+    QPainterPath curve() const { return m_curve ? m_curve->path() : QPainterPath(); }
 signals:
     void dataChanged();
 
