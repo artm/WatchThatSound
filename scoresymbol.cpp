@@ -4,14 +4,11 @@
 
 const float ScoreSymbol::s_maxThickness = 30;
 
-ScoreSymbol::ScoreSymbol(QObject *parent)
-    : QObject(parent)
-    , m_running(false)
-    , m_graphics(0)
+ScoreSymbol::ScoreSymbol()
+    : m_running(false)
 {
     m_pen = QPen(QColor(0,0,127));
     m_brush = QBrush(QColor(64,64,255,200));
-    connect(&m_inkTimer, SIGNAL(timeout()), SLOT(ink()));
 }
 
 void ScoreSymbol::start(const QPointF &pos)
@@ -37,7 +34,7 @@ void ScoreSymbol::ink()
     int target = 0;
     m_inkTimer.setInterval(50);
 
-    switch(shape()) {
+    switch(symbolShape()) {
     case CIRCLE:
         setShape(FILLED_CIRCLE);
         break;
@@ -62,9 +59,9 @@ void ScoreSymbol::pull(const QPointF &pos)
     if (!m_running) return;
     m_length = pos.x() - m_pos.x();
 
-    float len = m_graphics->mapFromScene(m_pos + QPointF(m_length, 0)).x();
+    float len = mapFromScene(m_pos + QPointF(m_length, 0)).x();
 
-    switch(shape()) {
+    switch(symbolShape()) {
     case CIRCLE:
         if (fabs(len) > m_thickness[0]) {
             setShape(TAILED_CIRCLE);
@@ -102,33 +99,30 @@ void ScoreSymbol::finish()
 
     m_running = false;
     m_inkTimer.stop();
+    m_inkTimer.disconnect(SIGNAL(timeout()));
 }
 
-const QGraphicsItem * ScoreSymbol::configure(QGraphicsScene *scene, int width, int height)
+void ScoreSymbol::configure(QGraphicsScene *theScene, int width, int height)
 {
-    if (!m_graphics)
-        m_graphics = new QGraphicsItemGroup(0,scene);
-
-    m_graphics->setTransform( QTransform::fromScale( 1.0/width, 1.0/height ) );
-
-    return m_graphics;
+    if (!scene())
+        theScene->addItem(this);
+    setTransform( QTransform::fromScale( 1.0/width, 1.0/height ) );
 }
 
 void ScoreSymbol::updateGraphics()
 {
-    QGraphicsScene * scene = m_graphics->scene();
-    if (!scene)
+    if (!scene())
         return;
 
-    foreach(QGraphicsItem * child, m_graphics->childItems()) {
-        scene->removeItem(child);
+    foreach(QGraphicsItem * child, childItems()) {
+        scene()->removeItem(child);
         delete child;
     }
 
     // length is in ms but item is in pixels...
-    float len = m_graphics->mapFromScene(m_pos + QPointF(m_length, 0)).x();
+    float len = mapFromScene(m_pos + QPointF(m_length, 0)).x();
     float d0 = m_thickness[0], d1 = m_thickness[1], r0 = d0/2.0, r1 = d1/2.0;
-    switch(shape()) {
+    switch(symbolShape()) {
     case DROPLET: {
         QPainterPath path;
 
@@ -141,7 +135,7 @@ void ScoreSymbol::updateGraphics()
         path.closeSubpath();
 
         QGraphicsPathItem * pathItem =
-                new QGraphicsPathItem(path, m_graphics);
+                new QGraphicsPathItem(path, this);
         pathItem->setPen(m_pen);
         pathItem->setBrush(m_brush);
     }
@@ -149,23 +143,28 @@ void ScoreSymbol::updateGraphics()
     case TAILED_CIRCLE:
         if (fabs(len) > r0) {
             QGraphicsLineItem * line =
-                    new QGraphicsLineItem(QLineF(len > 0 ? r0 : - r0, 0, len,0), m_graphics);
+                    new QGraphicsLineItem(QLineF(len > 0 ? r0 : - r0, 0, len,0),
+                                          this);
             line->setPen(m_pen);
     }
     case CIRCLE: {
-        QGraphicsEllipseItem * ellipse = new QGraphicsEllipseItem(QRectF(-r0,-r0,d0,d0), m_graphics);
+        QGraphicsEllipseItem * ellipse =
+                new QGraphicsEllipseItem(QRectF(-r0,-r0,d0,d0),
+                                         this);
         ellipse->setPen(m_pen);
         break;
     }
     case FILLED_CIRCLE: {
-        QGraphicsEllipseItem * ellipse = new QGraphicsEllipseItem(QRectF(-r0,-r0,d0,d0), m_graphics);
+        QGraphicsEllipseItem * ellipse =
+                new QGraphicsEllipseItem(QRectF(-r0,-r0,d0,d0),
+                                         this);
         ellipse->setPen(m_pen);
         ellipse->setBrush(m_brush);
         break;
     }
     }
 
-    m_graphics->setPos(m_pos);
+    setPos(m_pos);
 }
 
 void ScoreSymbol::setColors(const QPen &pen, const QBrush &brush)

@@ -19,16 +19,18 @@ public:
 signals:
 
 public slots:
+    void passInk() { m_newSymbol->ink(); }
 
 protected:
     void selectPetal(QGraphicsItem * petal);
+    void initNewSymbol();
 
     enum {
         PetalIndex = 100
     };
 
     unsigned m_gridStep;
-    ScoreSymbol m_newSymbol;
+    ScoreSymbol * m_newSymbol;
     QGraphicsItemGroup * m_colorWheel;
     QGraphicsEllipseItem * m_colorSelCircle;
 

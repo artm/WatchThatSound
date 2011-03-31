@@ -9,8 +9,10 @@ const float ScoreEditor::s_wheelOuterRadius = 18;
 ScoreEditor::ScoreEditor(QWidget *parent)
     : TimeLineWidget(parent)
     , m_gridStep(5)
+    , m_newSymbol(0)
+    , m_colorSelCircle(0)
 {
-    m_newSymbol.configure(scene(), width(), height());
+    initNewSymbol();
     setRenderHints(QPainter::Antialiasing);
 
     // make color wheel
@@ -64,7 +66,8 @@ void ScoreEditor::drawBackground(QPainter *painter, const QRectF &rect)
 
 void ScoreEditor::mouseReleaseEvent(QMouseEvent * /*event*/)
 {
-    m_newSymbol.finish();
+    m_newSymbol->finish();
+    initNewSymbol();
 }
 
 void ScoreEditor::mousePressEvent(QMouseEvent * event)
@@ -83,19 +86,19 @@ void ScoreEditor::mousePressEvent(QMouseEvent * event)
             }
 
         } else
-            m_newSymbol.start(mapToScene(event->pos()));
+            m_newSymbol->start(mapToScene(event->pos()));
     }
 }
 
 void ScoreEditor::mouseMoveEvent(QMouseEvent * event)
 {
-    m_newSymbol.pull(mapToScene(event->pos()));
+    m_newSymbol->pull(mapToScene(event->pos()));
 }
 
 void ScoreEditor::resizeEvent(QResizeEvent *event)
 {
     TimeLineWidget::resizeEvent(event);
-    m_newSymbol.configure(scene(), width(), height());
+    m_newSymbol->configure(scene(), width(), height());
     m_colorWheel->setTransform( QTransform::fromScale( 1.0/width(), 1.0/height() ) );
     m_colorWheel->setTransform( QTransform::fromTranslate( s_wheelOuterRadius, s_wheelOuterRadius ), true);
 }
@@ -109,6 +112,16 @@ void ScoreEditor::selectPetal(QGraphicsItem * item)
 
     m_colorSelCircle->setPen(petal->pen());
     m_colorSelCircle->setBrush(petal->brush());
-    m_newSymbol.setColors(petal->pen(), petal->brush());
+    m_newSymbol->setColors(petal->pen(), petal->brush());
+}
+
+void ScoreEditor::initNewSymbol()
+{
+    m_newSymbol = new ScoreSymbol();
+    m_newSymbol->configure(scene(), width(), height());
+    if (m_colorSelCircle)
+        m_newSymbol->setColors( m_colorSelCircle->pen(),
+                               m_colorSelCircle->brush() );
+    connect(m_newSymbol->inkTimer(), SIGNAL(timeout()), SLOT(passInk()));
 }
 

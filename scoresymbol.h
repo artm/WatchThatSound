@@ -1,13 +1,11 @@
 #ifndef SCORESYMBOL_H
 #define SCORESYMBOL_H
 
-#include <QObject>
+#include <QGraphicsItemGroup>
 #include <QTimer>
 
-class ScoreSymbol : public QObject
+class ScoreSymbol : public QGraphicsItemGroup
 {
-    Q_OBJECT
-    Q_ENUMS(Shape)
 public:
     enum Shape {
         CIRCLE,
@@ -16,15 +14,13 @@ public:
         DROPLET
     };
 
-    explicit ScoreSymbol(QObject *parent = 0);
-    Shape shape() const { return m_shape; }
+    explicit ScoreSymbol();
+    Shape symbolShape() const { return m_shape; }
 
-    const QGraphicsItem * configure(QGraphicsScene * scene, int width, int height);
+    void configure(QGraphicsScene * scene, int width, int height);
     void setColors(const QPen& pen, const QBrush& brush);
 
-signals:
-
-public slots:
+    QTimer * inkTimer() { return &m_inkTimer; }
     void ink();
     void setShape(Shape shape) { m_shape = shape; }
 
@@ -44,8 +40,6 @@ protected:
 
     QPen m_pen;
     QBrush m_brush;
-
-    QGraphicsItem * m_graphics;
 
     static const float s_maxThickness;
 };
