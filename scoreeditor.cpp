@@ -4,6 +4,8 @@ ScoreEditor::ScoreEditor(QWidget *parent)
     : TimeLineWidget(parent)
     , m_gridStep(5)
 {
+    m_newSymbol.configure(scene(), width(), height());
+    setRenderHints(QPainter::Antialiasing);
 }
 
 void ScoreEditor::drawBackground(QPainter *painter, const QRectF &rect)
@@ -35,5 +37,11 @@ void ScoreEditor::mousePressEvent(QMouseEvent * event)
 void ScoreEditor::mouseMoveEvent(QMouseEvent * event)
 {
     m_newSymbol.pull(mapToScene(event->pos()));
+}
+
+void ScoreEditor::resizeEvent(QResizeEvent *event)
+{
+    TimeLineWidget::resizeEvent(event);
+    m_newSymbol.configure(scene(), width(), height());
 }
 

@@ -13,12 +13,13 @@ public:
         CIRCLE,
         FILLED_CIRCLE,
         TAILED_CIRCLE,
-        DROPLET,
-        POLY
+        DROPLET
     };
 
     explicit ScoreSymbol(QObject *parent = 0);
     Shape shape() const { return m_shape; }
+
+    const QGraphicsItem * configure(QGraphicsScene * scene, int width, int height);
 
 signals:
 
@@ -31,12 +32,21 @@ public slots:
     void finish();
 
 protected:
+    void updateGraphics();
+
     Shape m_shape;
-    int m_thickness[2];
+    float m_thickness[2];
     QPointF m_pos;
     float m_length;
     bool m_running;
     QTimer m_inkTimer;
+
+    QPen m_pen;
+    QBrush m_brush;
+
+    QGraphicsItem * m_graphics;
+
+    static const float s_maxThickness;
 };
 
 #endif // SCORESYMBOL_H

@@ -125,20 +125,12 @@ score (partituur)
 [x] score page
 [x] grid (override the background)
 [ ] score editor
-  [ ] gestures
+  [x] gestures
   [ ] color wheel
 [ ] save score
 [ ] load score
 
-gestures are probably doable as state machines.
-press - either drag/drop or start a state machine.
-drag - either go to drag/drop or to to a state machine.
-release - either... or...
-plus there should be some timers...
 
-start with click to empty circle: release handler.
-
-but shouldn't mouse events get passed to the machine when appropriate?
 
 * * *
 
