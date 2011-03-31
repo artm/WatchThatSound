@@ -59,7 +59,7 @@ void ScoreSymbol::ink()
 
 void ScoreSymbol::pull(const QPointF &pos)
 {
-    Q_ASSERT(m_running);
+    if (!m_running) return;
     m_length = pos.x() - m_pos.x();
 
     float len = m_graphics->mapFromScene(m_pos + QPointF(m_length, 0)).x();
@@ -98,7 +98,9 @@ void ScoreSymbol::pull(const QPointF &pos)
 
 void ScoreSymbol::finish()
 {
-    Q_ASSERT(m_running);
+    if (!m_running) return;
+
+    m_running = false;
     m_inkTimer.stop();
 }
 
@@ -164,4 +166,10 @@ void ScoreSymbol::updateGraphics()
     }
 
     m_graphics->setPos(m_pos);
+}
+
+void ScoreSymbol::setColors(const QPen &pen, const QBrush &brush)
+{
+    m_pen = pen;
+    m_brush = brush;
 }

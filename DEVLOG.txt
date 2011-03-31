@@ -126,11 +126,18 @@ score (partituur)
 [x] grid (override the background)
 [ ] score editor
   [x] gestures
-  [ ] color wheel
+  [x] color wheel
+      [x] color picking
+      [x] color affects next new thing...
+  [ ] clone/reset on release
+  [ ] keep relative lengths
 [ ] save score
 [ ] load score
 
+a better approach would have been to derive symbol from item group and call its ink method from the editor. it could even have a pointer to the timer if it wanted, but
+better not. the problem is with ink / pull really needing the timer.
 
+but lets try.
 
 * * *
 

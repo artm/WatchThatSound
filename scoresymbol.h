@@ -20,6 +20,7 @@ public:
     Shape shape() const { return m_shape; }
 
     const QGraphicsItem * configure(QGraphicsScene * scene, int width, int height);
+    void setColors(const QPen& pen, const QBrush& brush);
 
 signals:
 

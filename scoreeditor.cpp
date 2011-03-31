@@ -1,4 +1,10 @@
 #include "scoreeditor.h"
+#include "rainbow.h"
+
+const int ScoreEditor::s_wheelColorCount = 8;
+const float ScoreEditor::s_wheelInnerRadius = 7;
+const float ScoreEditor::s_wheelOuterRadius = 18;
+
 
 ScoreEditor::ScoreEditor(QWidget *parent)
     : TimeLineWidget(parent)
@@ -6,6 +12,38 @@ ScoreEditor::ScoreEditor(QWidget *parent)
 {
     m_newSymbol.configure(scene(), width(), height());
     setRenderHints(QPainter::Antialiasing);
+
+    // make color wheel
+    m_colorWheel = new QGraphicsItemGroup(0,scene());
+
+    float arcRun = 360.0 / s_wheelColorCount;
+
+    QRectF outerRect( - s_wheelOuterRadius, - s_wheelOuterRadius, 2.0*s_wheelOuterRadius, 2.0*s_wheelOuterRadius);
+    QRectF innerRect( - s_wheelInnerRadius, - s_wheelInnerRadius, 2.0*s_wheelInnerRadius, 2.0*s_wheelInnerRadius);
+
+    for(int i = 0; i<s_wheelColorCount; ++i) {
+        float startAngle = arcRun * i;
+        float a0 = startAngle / 180.0 * M_PI;
+        float a1 = (startAngle + arcRun) / 180.0 * M_PI;
+
+        QPainterPath petalShape;
+
+        // is Qt inconsistent in the orientation of Y and angles?
+        petalShape.moveTo( s_wheelInnerRadius * cos(a1), -s_wheelInnerRadius * sin(a1) );
+        petalShape.arcTo(  innerRect, startAngle+arcRun, -arcRun );
+        petalShape.lineTo( s_wheelOuterRadius * cos(a0), -s_wheelOuterRadius * sin(a0));
+        petalShape.arcTo(  outerRect, startAngle, arcRun );
+        petalShape.closeSubpath();
+
+        QGraphicsPathItem * petal = new QGraphicsPathItem(petalShape, m_colorWheel);
+        petal->setPen(QPen(Rainbow::getColor(i,255,80)));
+        petal->setBrush(QBrush(Rainbow::getColor(i,200)));
+
+        petal->setData(PetalIndex, i);
+
+    }
+    m_colorSelCircle = new QGraphicsEllipseItem(innerRect,m_colorWheel);
+    selectPetal( m_colorWheel->childItems()[0] );
 }
 
 void ScoreEditor::drawBackground(QPainter *painter, const QRectF &rect)
@@ -31,7 +69,22 @@ void ScoreEditor::mouseReleaseEvent(QMouseEvent * /*event*/)
 
 void ScoreEditor::mousePressEvent(QMouseEvent * event)
 {
-    m_newSymbol.start(mapToScene(event->pos()));
+    /* first see if we hit something */
+    if (event->buttons() & Qt::LeftButton) {
+        QGraphicsItem * hitItem = itemAt( event->pos() );
+
+        if (hitItem) {
+
+            // is this a petal?
+            QVariant vpindex = hitItem->data(PetalIndex);
+            if (vpindex.isValid() && !vpindex.isNull()) {
+                // yes, a petal, use its color
+                selectPetal(hitItem);
+            }
+
+        } else
+            m_newSymbol.start(mapToScene(event->pos()));
+    }
 }
 
 void ScoreEditor::mouseMoveEvent(QMouseEvent * event)
@@ -43,5 +96,19 @@ void ScoreEditor::resizeEvent(QResizeEvent *event)
 {
     TimeLineWidget::resizeEvent(event);
     m_newSymbol.configure(scene(), width(), height());
+    m_colorWheel->setTransform( QTransform::fromScale( 1.0/width(), 1.0/height() ) );
+    m_colorWheel->setTransform( QTransform::fromTranslate( s_wheelOuterRadius, s_wheelOuterRadius ), true);
+}
+
+void ScoreEditor::selectPetal(QGraphicsItem * item)
+{
+    QGraphicsPathItem * petal =
+            dynamic_cast<QGraphicsPathItem *>(item);
+
+    if (!petal) return;
+
+    m_colorSelCircle->setPen(petal->pen());
+    m_colorSelCircle->setBrush(petal->brush());
+    m_newSymbol.setColors(petal->pen(), petal->brush());
 }
 

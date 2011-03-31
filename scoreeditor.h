@@ -21,8 +21,20 @@ signals:
 public slots:
 
 protected:
+    void selectPetal(QGraphicsItem * petal);
+
+    enum {
+        PetalIndex = 100
+    };
+
     unsigned m_gridStep;
     ScoreSymbol m_newSymbol;
+    QGraphicsItemGroup * m_colorWheel;
+    QGraphicsEllipseItem * m_colorSelCircle;
+
+    static const int s_wheelColorCount;
+    static const float s_wheelInnerRadius;
+    static const float s_wheelOuterRadius;
 };
 
 #endif // SCOREEDITOR_H
