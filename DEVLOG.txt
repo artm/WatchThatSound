@@ -135,6 +135,15 @@ bugs
 
 * * *
 
+[ ] infrastructure: a script to:
+(a) make a clean build
+(b) rename and compress
+(c) commit and tag
+
+probably there is a function or a hook in the GUI for this
+
+* * *
+
 [ ] re-design: time lines should be: x in ms and y view specific (default 0,1 line now)
 [ ] re-factor: all time lines partially share drag and drop. generalize.
 

@@ -75,7 +75,7 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     paintRange(painter, relX1, 1.0f - relX1, colors[currentColor]);
 
     // draw tension curve antialised...
-    painter->setRenderHint(QPainter::Antialiasing, true);
+    //painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setPen(QColor(0,0,0,200));
     foreach(MainWindow::Marker * marker, m_mainWindow->getMarkers(MainWindow::EVENT)) {
         qreal relX2 = (qreal)marker->at() / total;
