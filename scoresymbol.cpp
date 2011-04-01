@@ -189,7 +189,7 @@ void ScoreSymbol::loadData(QXmlStreamReader &xml)
 {
     m_shape = (Shape)xml.attributes().value("shape").toString().toInt();
     m_thickness[0] = xml.attributes().value("thickness_0").toString().toFloat();
-    m_thickness[1] = xml.attributes().value("thickness_0").toString().toFloat();
+    m_thickness[1] = xml.attributes().value("thickness_1").toString().toFloat();
     setPos(xml.attributes().value("x").toString().toFloat(),
            xml.attributes().value("y").toString().toFloat());
     m_length = xml.attributes().value("length").toString().toFloat();
