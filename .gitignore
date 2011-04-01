@@ -9,4 +9,4 @@ moc_*
 qrc_*.cpp
 ui_mainwindow.h
 /WTS3.gch
-
+WTS3.pro.user

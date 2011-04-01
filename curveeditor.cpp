@@ -14,10 +14,15 @@ void CurveEditor::setCurve(const QPainterPath& curve)
 {
     if (!m_curve)
         m_curve = scene()->addPath(curve, QPen(Qt::red));
-    else
+    else {
         m_curve->setPath(curve);
+    }
 
     int cnt = m_curve->path().elementCount();
+
+    foreach(QGraphicsItem * child, m_curve->childItems()) {
+        delete child;
+    }
 
     for(int i = 0; i<cnt; ++i) {
         const QPainterPath::Element& elt = m_curve->path().elementAt(i);
@@ -97,6 +102,7 @@ void CurveEditor::saveData(QXmlStreamWriter &xml)
     if (!m_curve)
         return;
     xml.writeAttribute("edited", QString("%1").arg(isEdited()));    
+
     foreach(QGraphicsItem * child, m_curve->childItems()) {
         QGraphicsRectItem * node = dynamic_cast<QGraphicsRectItem *>(child);
         if (!node)

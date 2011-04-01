@@ -55,6 +55,9 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     qreal total = m_mainWindow->mediaObject()->totalTime();
     qreal relX1 = 0.0f;
 
+    QPainter::RenderHints oldHints = painter->renderHints();
+    painter->setRenderHint(QPainter::Antialiasing, false);
+
     QColor colors[] = {
         QColor(170,255,170),
         QColor(200,255,200),
@@ -71,7 +74,9 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     // the last one: form relX1 to 1.0
     paintRange(painter, relX1, 1.0f - relX1, colors[currentColor]);
 
-    painter->setPen(QColor(0,0,0,100));
+    // draw tension curve antialised...
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setPen(QColor(0,0,0,200));
     foreach(MainWindow::Marker * marker, m_mainWindow->getMarkers(MainWindow::EVENT)) {
         qreal relX2 = (qreal)marker->at() / total;
         painter->drawLine(QPointF(relX2,0.), QPointF(relX2,1.));
@@ -79,10 +84,15 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
 
     painter->setPen(QColor(255,100,100,127));
     painter->drawPath( m_mainWindow->tensionCurve() );
+
+    painter->setRenderHints(oldHints, true);
 }
 
 void TimeLineWidget::drawForeground ( QPainter * painter, const QRectF & rect )
 {
+    QPainter::RenderHints oldHints = painter->renderHints();
+    painter->setRenderHint(QPainter::Antialiasing, false);
+
     float x = (float)m_currentTime / (float)m_mainWindow->mediaObject()->totalTime();
 
     if (x > rect.x() && x < rect.right()) {
@@ -90,6 +100,7 @@ void TimeLineWidget::drawForeground ( QPainter * painter, const QRectF & rect )
         painter->drawLine(QPointF(x,0),QPointF(x,1));
     }
 
+    painter->setRenderHints(oldHints, true);
 }
 
 void TimeLineWidget::seekTo(qint64 x) {

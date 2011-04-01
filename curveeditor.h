@@ -18,7 +18,6 @@ public:
 
     QPainterPath curve() const { return m_curve ? m_curve->path() : QPainterPath(); }
 signals:
-    void dataChanged();
 
 public slots:
 

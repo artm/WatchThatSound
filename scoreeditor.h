@@ -16,6 +16,9 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
     void resizeEvent(QResizeEvent *event);
 
+    void saveData(QXmlStreamWriter& xml);
+    void loadData(QXmlStreamReader& xml);
+
 signals:
 
 public slots:
@@ -33,6 +36,7 @@ protected:
     ScoreSymbol * m_newSymbol;
     QGraphicsItemGroup * m_colorWheel;
     QGraphicsEllipseItem * m_colorSelCircle;
+    QList<ScoreSymbol *> m_symbols;
 
     static const int s_wheelColorCount;
     static const float s_wheelInnerRadius;

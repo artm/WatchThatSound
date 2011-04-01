@@ -16,7 +16,7 @@ void ScoreSymbol::start(const QPointF &pos)
     m_shape = CIRCLE;
     m_thickness[0] = 5;
     m_thickness[1] = 0;
-    m_pos = pos;
+    setPos(pos);
     m_length = 0;
     m_inkTimer.start(500);
     m_running = true;
@@ -54,12 +54,12 @@ void ScoreSymbol::ink()
     updateGraphics();
 }
 
-void ScoreSymbol::pull(const QPointF &pos)
+void ScoreSymbol::pull(const QPointF &pullPos)
 {
     if (!m_running) return;
-    m_length = pos.x() - m_pos.x();
+    m_length = pullPos.x() - pos().x();
 
-    float len = mapFromScene(m_pos + QPointF(m_length, 0)).x();
+    float len = mapFromScene(pos() + QPointF(m_length, 0)).x();
 
     switch(symbolShape()) {
     case CIRCLE:
@@ -120,7 +120,7 @@ void ScoreSymbol::updateGraphics()
     }
 
     // length is in ms but item is in pixels...
-    float len = mapFromScene(m_pos + QPointF(m_length, 0)).x();
+    float len = mapFromScene(pos() + QPointF(m_length, 0)).x();
     float d0 = m_thickness[0], d1 = m_thickness[1], r0 = d0/2.0, r1 = d1/2.0;
     switch(symbolShape()) {
     case DROPLET: {
@@ -163,12 +163,37 @@ void ScoreSymbol::updateGraphics()
         break;
     }
     }
-
-    setPos(m_pos);
 }
 
 void ScoreSymbol::setColors(const QPen &pen, const QBrush &brush)
 {
     m_pen = pen;
     m_brush = brush;
+}
+
+void ScoreSymbol::saveData(QXmlStreamWriter &xml)
+{
+    xml.writeStartElement("symbol");
+    xml.writeAttribute("shape", QString("%1").arg(m_shape));
+    xml.writeAttribute("thickness_0", QString("%1").arg(m_thickness[0]));
+    xml.writeAttribute("thickness_1", QString("%1").arg(m_thickness[1]));
+    xml.writeAttribute("x", QString("%1").arg(pos().x()));
+    xml.writeAttribute("y", QString("%1").arg(pos().y()));
+    xml.writeAttribute("length", QString("%1").arg(m_length));
+    xml.writeAttribute("pen", QString("%1").arg(m_pen.color().name()));
+    xml.writeAttribute("brush", QString("%1").arg(m_brush.color().name()));
+    xml.writeEndElement();
+}
+
+void ScoreSymbol::loadData(QXmlStreamReader &xml)
+{
+    m_shape = (Shape)xml.attributes().value("shape").toString().toInt();
+    m_thickness[0] = xml.attributes().value("thickness_0").toString().toFloat();
+    m_thickness[1] = xml.attributes().value("thickness_0").toString().toFloat();
+    setPos(xml.attributes().value("x").toString().toFloat(),
+           xml.attributes().value("y").toString().toFloat());
+    m_length = xml.attributes().value("length").toString().toFloat();
+    m_pen = QPen( QColor(xml.attributes().value("pen").toString()) );
+    m_brush = QBrush( QColor(xml.attributes().value("brush").toString()) );
+    updateGraphics();
 }

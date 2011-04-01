@@ -5,7 +5,6 @@ const int ScoreEditor::s_wheelColorCount = 8;
 const float ScoreEditor::s_wheelInnerRadius = 7;
 const float ScoreEditor::s_wheelOuterRadius = 18;
 
-
 ScoreEditor::ScoreEditor(QWidget *parent)
     : TimeLineWidget(parent)
     , m_gridStep(5)
@@ -67,7 +66,9 @@ void ScoreEditor::drawBackground(QPainter *painter, const QRectF &rect)
 void ScoreEditor::mouseReleaseEvent(QMouseEvent * /*event*/)
 {
     m_newSymbol->finish();
+    m_symbols.append( m_newSymbol );
     initNewSymbol();
+    emit dataChanged();
 }
 
 void ScoreEditor::mousePressEvent(QMouseEvent * event)
@@ -99,8 +100,16 @@ void ScoreEditor::resizeEvent(QResizeEvent *event)
 {
     TimeLineWidget::resizeEvent(event);
     m_newSymbol->configure(scene(), width(), height());
+    foreach(ScoreSymbol * sym, m_symbols) {
+        sym->configure(scene(), width(), height());
+        sym->updateGraphics();
+    }
+
     m_colorWheel->setTransform( QTransform::fromScale( 1.0/width(), 1.0/height() ) );
-    m_colorWheel->setTransform( QTransform::fromTranslate( s_wheelOuterRadius, s_wheelOuterRadius ), true);
+    m_colorWheel->setTransform( QTransform::fromTranslate(
+                                   s_wheelOuterRadius,
+                                   s_wheelOuterRadius ),
+                               true);
 }
 
 void ScoreEditor::selectPetal(QGraphicsItem * item)
@@ -123,5 +132,23 @@ void ScoreEditor::initNewSymbol()
         m_newSymbol->setColors( m_colorSelCircle->pen(),
                                m_colorSelCircle->brush() );
     connect(m_newSymbol->inkTimer(), SIGNAL(timeout()), SLOT(passInk()));
+}
+
+void ScoreEditor::saveData(QXmlStreamWriter &xml)
+{
+    foreach(ScoreSymbol * symbol, m_symbols) {
+        symbol->saveData(xml);
+    }
+}
+
+void ScoreEditor::loadData(QXmlStreamReader &xml)
+{
+    while(xml.readNextStartElement()) {
+        ScoreSymbol * symbol = new ScoreSymbol();
+        symbol->configure(scene(), width(), height());
+        symbol->loadData(xml);
+        m_symbols << symbol;
+        xml.readElementText();
+    }
 }
 

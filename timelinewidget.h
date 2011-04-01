@@ -16,6 +16,7 @@ public:
     bool seekOnDrag() { return _seekOnDrag; }
 
 signals:
+    void dataChanged();
 
 public slots:
     virtual void setCurrentTime(qint64 time);

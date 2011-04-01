@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->tension, SIGNAL(dataChanged()), ui->storyboard, SLOT(update()));
     connect(ui->tension, SIGNAL(dataChanged()), ui->timeLine, SLOT(update()));
     connect(ui->tension, SIGNAL(dataChanged()), ui->score, SLOT(update()));
+    connect(ui->score, SIGNAL(dataChanged()), SLOT(saveData()));
 
     buildMovieSelector();
 
@@ -137,6 +138,10 @@ void MainWindow::saveData()
     ui->tension->saveData(xml);
     xml.writeEndElement();
 
+    xml.writeStartElement("score");
+    ui->score->saveData(xml);
+    xml.writeEndElement();
+
     xml.writeStartElement("sequence");
     xml.writeAttribute("counter",QString("%1").arg(m_lastSampleNameNum));
     foreach(WtsAudio::BufferAt * buffer, m_sequence) {
@@ -177,6 +182,8 @@ void MainWindow::loadData()
                 }
             } else if (xml.name() == "tension") {
                 ui->tension->loadData(xml);
+            } else if (xml.name() == "score") {
+                ui->score->loadData(xml);
             } else if (xml.name() == "sequence") {
                 m_lastSampleNameNum =
                         xml.attributes().value("counter").toString().toInt();

@@ -122,22 +122,16 @@ movie selector:
 * * *
 
 score (partituur)
-[x] score page
-[x] grid (override the background)
-[ ] score editor
-  [x] gestures
-  [x] color wheel
-      [x] color picking
-      [x] color affects next new thing...
-  [ ] clone/reset on release
-  [ ] keep relative lengths
-[ ] save score
-[ ] load score
+[x] save score
+[x] load score
 
-a better approach would have been to derive symbol from item group and call its ink method from the editor. it could even have a pointer to the timer if it wanted, but
-better not. the problem is with ink / pull really needing the timer.
+[x] correct length:
+1. store in scene coords
+2. when updating the graphics (e.g. upon resize) convert to local (pixel) coords.
 
-but lets try.
+
+bugs
+[x] initial tension curve looks broken
 
 * * *
 
@@ -148,6 +142,7 @@ but lets try.
 
 future improvements:
 
+[ ] keep relative lengths of the score symbols
 [ ] when changing story board should change the curve as well
 [ ] support for different numbers of films in movie selector (nice grid fills)
 [ ] support for different resolutions in movie selector

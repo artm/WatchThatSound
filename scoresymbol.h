@@ -28,12 +28,14 @@ public:
     void pull(const QPointF& pos);
     void finish();
 
-protected:
+    void saveData(QXmlStreamWriter& xml);
+    void loadData(QXmlStreamReader& xml);
+
     void updateGraphics();
+protected:
 
     Shape m_shape;
     float m_thickness[2];
-    QPointF m_pos;
     float m_length;
     bool m_running;
     QTimer m_inkTimer;
