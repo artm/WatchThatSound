@@ -45,6 +45,10 @@ VideoFile::VideoFile(QString path, QObject *parent)
                                                    path.toLocal8Bit().data(),
                                                    NULL, 0, NULL) );
 
+
+    // HACK this solves "max_analyze_duration reached" warning
+    m_formatContext->max_analyze_duration *= 10;
+
     Q_ASSERT ( av_find_stream_info(m_formatContext) >= 0 );
 
     // Find the first video stream

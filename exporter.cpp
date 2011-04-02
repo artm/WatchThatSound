@@ -275,4 +275,7 @@ void Exporter::initVideoStream()
     m_videoStream->codec->strict_std_compliance = FF_COMPLIANCE_UNOFFICIAL;
     m_videoStream->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
 
+    // otherwise we crash on non-square pixels (first world trouble)
+    m_videoStream->codec->sample_aspect_ratio = m_videoStream->sample_aspect_ratio;
+
 }
