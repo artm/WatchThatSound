@@ -274,7 +274,14 @@
     </property>
     <addaction name="actionPlay"/>
    </widget>
+   <widget class="QMenu" name="menuVenster">
+    <property name="title">
+     <string>Venster</string>
+    </property>
+    <addaction name="actionFullscreen"/>
+   </widget>
    <addaction name="menuFilm"/>
+   <addaction name="menuVenster"/>
   </widget>
   <action name="actionPlay">
    <property name="checkable">

@@ -430,24 +430,42 @@ QState * MainWindow::addPage(const QString& name, QList<QWidget*> widgets)
 
 void MainWindow::buildMovieSelector()
 {
-    QLayout * layout = new QGridLayout;
+    QGridLayout * layout = new QGridLayout;
+    //layout->setMargin(0);
+    //layout->setSpacing(0);
     ui->movieSelector->setLayout(layout);
     QDir movDir(QCoreApplication::applicationDirPath () + "/../../../movie");
 
     QSignalMapper * mapper = new QSignalMapper(this);
 
-    foreach(QFileInfo fi, movDir.entryInfoList(QStringList() << "*.mov")) {
+    QFileInfoList movList = movDir.entryInfoList(QStringList() << "*.mov");
+
+    int minColWidth = 100, maxCols = width() / minColWidth;
+    int cols = (movList.size()>3) ? (int)ceilf( sqrtf( (float) movList.size() ) ) : 1;
+    if (cols > maxCols)
+        cols = maxCols;
+
+    QSize iconSize = size() / cols;
+
+    int i = 0;
+    foreach(QFileInfo fi, movList) {
         QPushButton * button = new QPushButton( );
-        layout->addWidget( button );
-        button->setFlat(true);
+        layout->addWidget( button, i/cols, i%cols );
+        i++;
+        //button->setFlat(true);
+        button->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
         mapper->setMapping( button, fi.absoluteFilePath() );
         connect(button, SIGNAL(clicked()), mapper, SLOT(map()));
 
         VideoFile vf(fi.absoluteFilePath());
-        vf.seek( vf.duration()/2 );
-        QPixmap thumb = QPixmap::fromImage( vf.frame() );
+        vf.seek( vf.duration()/3 );
+        QPixmap thumb = QPixmap::fromImage( vf.frame().scaled(iconSize,Qt::KeepAspectRatio) );
+
+        qint64 tt = vf.duration(), min = tt / 60000, sec = tt / 1000 % 60;
+        button->setToolTip(QString("%1\n%2x%3\n%4:%5").arg(fi.fileName()).arg(vf.width()).arg(vf.height())
+                           .arg(min).arg(sec,2,10,QLatin1Char('0')) );
         button->setIcon(QIcon(thumb));
-        button->setIconSize(QSize(vf.width(),vf.height()));
+        button->setIconSize(iconSize);
     }
 
     connect(mapper, SIGNAL(mapped(QString)), SLOT(loadMovie(QString)));
