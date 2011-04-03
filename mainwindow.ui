@@ -143,7 +143,21 @@
      </widget>
     </item>
     <item>
-     <widget class="QWidget" name="movieSelector" native="true"/>
+     <widget class="QScrollArea" name="movieSelectorScrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="movieSelector">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>638</width>
+         <height>76</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
     </item>
     <item>
      <widget class="SequencerTimeLine" name="timeLine">

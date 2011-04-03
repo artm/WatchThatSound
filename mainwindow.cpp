@@ -365,7 +365,7 @@ void MainWindow::constructStateMachine()
     m_workshop = new QState();
 
     selector->addTransition(this,SIGNAL(loaded()), firstPlay);
-    connect(selector, SIGNAL(exited()), ui->movieSelector, SLOT(hide()));
+    connect(selector, SIGNAL(exited()), ui->movieSelectorScrollArea, SLOT(hide()));
 
     firstPlay->addTransition(this, SIGNAL(stopped()), m_workshop);
     connect(firstPlay, SIGNAL(entered()), ui->videoPlayer, SLOT(show()));
