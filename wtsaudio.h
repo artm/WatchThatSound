@@ -22,6 +22,8 @@ public:
         SoundBuffer * buffer() { return m_buffer; }
         qint64 playOffset() const { return m_playOffset; }
         void setPlayOffset(qint64 offset) { m_playOffset = offset; }
+        void setBuffer(SoundBuffer * buffer)
+        { m_buffer = buffer; }
 
     protected:
         SoundBuffer * m_buffer;

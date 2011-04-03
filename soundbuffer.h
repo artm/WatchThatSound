@@ -38,12 +38,21 @@ public:
     QColor color() const { return m_color; }
     void setColor(QColor color) { m_color = color; }
 
+    void setRange(qint64 from, qint64 to) { setRangeStart(from); setRangeEnd(to); }
+    void setRangeStart(qint64 from) { m_range[0] = std::max(from, 0ll); }
+    void setRangeEnd(qint64 to) { m_range[1] = std::min(to, sampleCount()); }
+
+    qint64 rangeStart() const { return m_range[0]; }
+    qint64 rangeEnd() const { return m_range[1]; }
+
 protected:
     QString m_name;
     bool m_saved;
 
     QVector<float> m_data;
     QColor m_color;
+
+    qint64 m_range[2];
 
 public:
     // fixme

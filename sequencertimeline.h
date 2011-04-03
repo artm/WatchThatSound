@@ -15,7 +15,7 @@ signals:
 
 public slots:
     void insertBufferAt(WtsAudio::BufferAt * buffer);
-    void showScratch(bool on, qint64 at, const SoundBuffer& scratch);
+    void showScratch(WtsAudio::BufferAt * scratchAt, bool on);
 
 protected:
     QPen m_pen;

@@ -7,6 +7,7 @@ SoundBuffer::SoundBuffer()
     , m_writePos(0)
     , m_readPos(0)
 {
+    setRange(0,0);
 }
 
 SoundBuffer::SoundBuffer(qint64 sampleCount)
@@ -16,6 +17,7 @@ SoundBuffer::SoundBuffer(qint64 sampleCount)
     , m_writePos(0)
     , m_readPos(0)
 {
+    setRange(0,sampleCount);
 }
 
 SoundBuffer::SoundBuffer(const QString& name, const SoundBuffer& other, qint64 sampleCount)
@@ -27,6 +29,7 @@ SoundBuffer::SoundBuffer(const QString& name, const SoundBuffer& other, qint64 s
 {
     if (sampleCount && sampleCount != other.sampleCount())
         m_data.resize(sampleCount);
+    setRange(0,sampleCount);
 }
 
 SoundBuffer& SoundBuffer::operator= (const SoundBuffer& other)
@@ -36,6 +39,8 @@ SoundBuffer& SoundBuffer::operator= (const SoundBuffer& other)
     m_saved = other.m_saved;
     m_writePos = 0;
     m_readPos = 0;
+    m_range[0] = other.m_range[0];
+    m_range[1] = other.m_range[1];
     return *this;
 }
 

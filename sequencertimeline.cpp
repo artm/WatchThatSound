@@ -7,10 +7,8 @@ SequencerTimeLine::SequencerTimeLine(QWidget *parent) :
 {
     connect(m_mainWindow,SIGNAL(newBufferAt(WtsAudio::BufferAt*)),
             SLOT(insertBufferAt(WtsAudio::BufferAt*)));
-    connect(m_mainWindow,SIGNAL(scratchUpdated(bool,qint64,const SoundBuffer&)),
-            SLOT(showScratch(bool,qint64,const SoundBuffer&)));
-    m_mainWindow->connect(this, SIGNAL(bufferSelected(WtsAudio::BufferAt*)),
-                        SLOT(loadToScratch(WtsAudio::BufferAt *)));
+    connect(m_mainWindow,SIGNAL(scratchUpdated(WtsAudio::BufferAt*,bool)),
+            SLOT(showScratch(WtsAudio::BufferAt*,bool)));
 
     QBrush scratchBrush(QColor(255,200,200,127));
     m_scratchRect = scene()->addRect(0,0,0,0);
@@ -64,10 +62,11 @@ void SequencerTimeLine::restackItems()
     }
 }
 
-void SequencerTimeLine::showScratch(bool on, qint64 at, const SoundBuffer& scratch)
+void SequencerTimeLine::showScratch(WtsAudio::BufferAt * scratchAt, bool on)
 {
     if (on) {
-        qint64 duration = WtsAudio::sampleCountToMs(scratch.m_writePos);
+        qint64 at = scratchAt->at();
+        qint64 duration = WtsAudio::sampleCountToMs(scratchAt->buffer()->m_writePos);
 
         float tt = (float)m_mainWindow->mediaObject()->totalTime();
         float relX = (float)at / tt;

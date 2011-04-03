@@ -13,16 +13,24 @@ public:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
 
+    void mousePressEvent(QMouseEvent *);
+    void mouseMoveEvent(QMouseEvent *);
+    void mouseReleaseEvent(QMouseEvent *);
+
 signals:
+    void rangeChanged();
 
 public slots:
-    void updateWaveform(bool recording, qint64 at, const SoundBuffer& buffer);
+    void updateWaveform(WtsAudio::BufferAt * bufferAt, bool recording = false);
 
 protected:
-    QPixmap img;
-    float scaleMax;
-    static const float minScaleMax = 0.1;
-    bool wasRecording;
+    QPixmap m_img;
+    float m_scaleMax;
+    static const float m_minScaleMax = 0.1;
+    bool m_wasRecording;
+
+    SoundBuffer * m_buffer;
+    qint64 m_selStart;
 };
 
 #endif // WAVEFORMWIDGET_H

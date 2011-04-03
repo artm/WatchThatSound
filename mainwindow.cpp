@@ -17,18 +17,21 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // connect to the sampler
-    connect(this, SIGNAL(samplerClear()),
-            &m_audio, SLOT(samplerClear()));
-    connect(this, SIGNAL(samplerClock(qint64)),
-            &m_audio, SLOT(samplerClock(qint64)));
+    connect(this, SIGNAL(samplerClear()), &m_audio, SLOT(samplerClear()));
+    connect(this, SIGNAL(samplerClock(qint64)), &m_audio, SLOT(samplerClock(qint64)));
     connect(this, SIGNAL(samplerSchedule(WtsAudio::BufferAt*)),
             &m_audio, SLOT(samplerSchedule(WtsAudio::BufferAt*)));
 
+    // change signals to save data...
     connect(ui->tension, SIGNAL(dataChanged()), SLOT(saveData()));
     connect(ui->tension, SIGNAL(dataChanged()), ui->storyboard, SLOT(update()));
     connect(ui->tension, SIGNAL(dataChanged()), ui->timeLine, SLOT(update()));
     connect(ui->tension, SIGNAL(dataChanged()), ui->score, SLOT(update()));
     connect(ui->score, SIGNAL(dataChanged()), SLOT(saveData()));
+    connect(ui->waveform, SIGNAL(rangeChanged()), SLOT(saveData()));
+
+    connect(ui->timeLine, SIGNAL(bufferSelected(WtsAudio::BufferAt*)),
+            ui->waveform, SLOT(updateWaveform(WtsAudio::BufferAt*)));
 
     buildMovieSelector();
 
@@ -64,15 +67,17 @@ void MainWindow::loadMovie(const QString& path)
     mediaObject()->setTickInterval(50);
 
     ui->waveform->connect(this,
-                          SIGNAL(scratchUpdated(bool, qint64, const SoundBuffer&)),
-                          SLOT(updateWaveform(bool, qint64, const SoundBuffer&)));
+                          SIGNAL(scratchUpdated(WtsAudio::BufferAt *, bool)),
+                          SLOT(updateWaveform(WtsAudio::BufferAt *, bool)));
 
     // further configuration
     ui->storyboard->setSeekOnDrag(true);
 
     // scratch should be big enough to fit a movie-long sound
-    m_scratch = SoundBuffer( WtsAudio::msToSampleCount(mediaObject()->totalTime()) );
-    m_scratch.setColor( Qt::red );
+    m_scratch.setBuffer(
+                new SoundBuffer(
+                    WtsAudio::msToSampleCount(mediaObject()->totalTime())));
+    m_scratch.buffer()->setColor( Qt::red );
 
     // now setup dataPath and try to load files from there
     QDir movieDir = QFileInfo(path).dir();
@@ -94,8 +99,8 @@ void MainWindow::loadMovie(const QString& path)
 void MainWindow::resetData()
 {
     m_dataDir.setPath("");;
-    m_scratchInsertTime = 0;
-    m_scratch = SoundBuffer();
+    m_scratch.setAt(0);
+    //m_scratch = SoundBuffer();
     m_sequence.clear();;
     m_sequenceCursor = m_sequence.begin();
     m_markers.clear();
@@ -148,6 +153,9 @@ void MainWindow::saveData()
         xml.writeStartElement("sample");
         xml.writeAttribute("ms",QString("%1").arg(buffer->at()));
         xml.writeAttribute("id",buffer->buffer()->name());
+        // FIXME: this shouldn't be here, but in a separate samples chunk
+        xml.writeAttribute("range_start", QString("%1").arg(buffer->buffer()->rangeStart()));
+        xml.writeAttribute("range_end", QString("%1").arg(buffer->buffer()->rangeEnd()));
         xml.writeEndElement();
 
         QFile wav( m_dataDir.filePath( buffer->buffer()->name() ));
@@ -193,6 +201,8 @@ void MainWindow::loadData()
 
                     SoundBuffer * sb = new SoundBuffer();
                     sb->load(wav);
+                    sb->setRange(xml.attributes().value("range_start").toString().toLongLong(),
+                                 xml.attributes().value("range_end").toString().toLongLong());
 
                     WtsAudio::BufferAt * buffer =
                             new WtsAudio::BufferAt(sb,
@@ -264,18 +274,21 @@ void MainWindow::onPlay(bool play)
 void MainWindow::onRecord(bool record)
 {
     if (record) {
-        m_scratch.setWritePos(0);
-        m_scratch.setColor(Qt::red);
+        m_scratch.buffer()->setWritePos(0);
+        m_scratch.buffer()->setColor(Qt::red);
     } else {
-        WtsAudio::BufferAt * newBuff = new WtsAudio::BufferAt(
-                    new SoundBuffer(makeSampleName(), m_scratch, m_scratch.m_writePos),
-                    m_scratchInsertTime,
+        WtsAudio::BufferAt * newBuff =
+                new WtsAudio::BufferAt(
+                    new SoundBuffer(makeSampleName(),
+                                    *m_scratch.buffer(),
+                                    m_scratch.buffer()->m_writePos),
+                    m_scratch.at(),
                     this);
         newBuff->buffer()->setColor( Rainbow::getColor(m_lastSampleNameNum) );
         m_sequence.append(newBuff);
-        emit scratchUpdated(false, 0, m_scratch);
+        emit scratchUpdated(newBuff, false);
         emit newBufferAt(newBuff);
-        ui->videoPlayer->seek(m_scratchInsertTime);
+        ui->videoPlayer->seek(m_scratch.at());
         saveData();
     }
 }
@@ -288,12 +301,12 @@ void MainWindow::tick(qint64 ms)
 
     if (ui->actionRecord->isChecked()) {
         // recording
-        if (m_scratch.m_writePos == 0)
-            m_scratchInsertTime = ms;
-        if ( m_audio.capture(&m_scratch) > 0) {
-            emit scratchUpdated(true, m_scratchInsertTime, m_scratch);
+        if (m_scratch.buffer()->m_writePos == 0)
+            m_scratch.setAt(ms);
+        if ( m_audio.capture(m_scratch.buffer()) > 0) {
+            emit scratchUpdated(&m_scratch, true);
 
-            if (m_scratch.freeToWrite() == 0) {
+            if (m_scratch.buffer()->freeToWrite() == 0) {
                 ui->actionRecord->setChecked(false);
             }
         }
@@ -334,14 +347,6 @@ QList<MainWindow::Marker *> MainWindow::getMarkers(MarkerType type, bool forward
     }
 
     return scenes;
-}
-
-void MainWindow::loadToScratch(WtsAudio::BufferAt * bufferAt)
-{
-    m_scratch.m_writePos = 0;
-    m_scratch.paste(bufferAt->buffer());
-    m_scratch.setColor(bufferAt->buffer()->color());
-    emit scratchUpdated(false, bufferAt->at(), m_scratch);
 }
 
 void MainWindow::exportMovie()

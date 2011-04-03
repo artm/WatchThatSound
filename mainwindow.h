@@ -66,7 +66,6 @@ public slots:
     void addEventMark(){ addMarker(EVENT); }
 
     void loadMovie(const QString& path);
-    void loadToScratch(WtsAudio::BufferAt * bufferAt);
 
     void resetData();
     void saveData();
@@ -79,7 +78,7 @@ public slots:
 signals:
     void storyBoardChanged();
     void newBufferAt(WtsAudio::BufferAt * bufferAt);
-    void scratchUpdated(bool on, qint64 at, const SoundBuffer& scratch);
+    void scratchUpdated(WtsAudio::BufferAt * bufferAt, bool recording);
 
     void samplerClock(qint64 ms);
     void samplerSchedule(WtsAudio::BufferAt * buffer);
@@ -95,8 +94,11 @@ protected:
     WtsAudio m_audio;
     Ui::MainWindow *ui;
     QDir m_dataDir;
-    qint64 m_scratchInsertTime;
-    SoundBuffer m_scratch;
+
+    //qint64 m_scratchInsertTime;
+    //SoundBuffer m_scratch;
+    WtsAudio::BufferAt m_scratch;
+
     QList<WtsAudio::BufferAt *> m_sequence;
     QList<WtsAudio::BufferAt *>::iterator m_sequenceCursor;
     QMap<qint64, Marker *> m_markers;
