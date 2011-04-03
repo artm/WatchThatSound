@@ -1,6 +1,7 @@
 #include "exporter.h"
 #include "videofile.h"
 
+#include <QtGui>
 #include <QtDebug>
 
 class AssertFailed {
@@ -201,6 +202,17 @@ void Exporter::run()
         m_progress->setValue(100);
     } catch (const AssertFailed& e) {
         qCritical() << e.cMessage();
+
+        m_progress->cancel();
+
+        QMessageBox dialog(m_progress->parentWidget());
+        dialog.setText("Fout in exporter");
+        dialog.setInformativeText("Iets ging verkeerd tijdens het opslaan van " + m_filename);
+        dialog.setDetailedText(e.message());
+        dialog.setIcon(QMessageBox::Critical);
+        dialog.setWindowModality(Qt::WindowModal);
+        dialog.setModal(true);
+        dialog.exec();
     }
 }
 
