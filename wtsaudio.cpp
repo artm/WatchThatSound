@@ -91,15 +91,15 @@ void WtsAudio::samplerMix(qint64 ms, QVector<float>& mix)
             startRead = 0;
         }
 
-        qint64 count = std::min(mix.size() - startWrite,
-                                buffer->buffer()->sampleCount() - startRead);
+        qint64 rangeEnd = msToSampleCount(buffer->buffer()->rangeEnd());
+        qint64 count = std::min(mix.size() - startWrite, rangeEnd - startRead);
         float * in = buffer->buffer()->floatAt( startRead );
         for(int i = 0; i<count; ++i) {
             mix[ startWrite+i ] += in[i];
         }
         buffer->setPlayOffset(startRead + count);
 
-        if (buffer->playOffset() == buffer->buffer()->sampleCount())
+        if (buffer->playOffset() >= rangeEnd)
             // deactivate buffer...
             nextBufferIt = m_activeBuffers.erase(nextBufferIt);
         else
@@ -119,14 +119,13 @@ void WtsAudio::samplerMix(qint64 ms, QVector<int16_t>& mix)
 void WtsAudio::samplerSchedule(WtsAudio::BufferAt * buffer)
 {
     qint64 t = currentSampleOffset();
-    qint64 bt = msToSampleCount(buffer->at());
 
     // ignore if end time before current time
-    if (bt + buffer->buffer()->sampleCount() < t)
+    if (msToSampleCount(buffer->at() + buffer->buffer()->rangeEnd()) < t)
         return;
 
     // position buffer's playback offset
-    buffer->setPlayOffset(t - bt);
+    buffer->setPlayOffset(t - msToSampleCount(buffer->at()));
 
     // add buffer to the list...
     m_activeBuffers << buffer;

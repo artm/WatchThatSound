@@ -297,10 +297,6 @@ void MainWindow::onRecord(bool record)
 
 void MainWindow::tick(qint64 ms)
 {
-    // FIXME shouldn't this happen AFTER scheduling new samples?
-    // sync with the sampler
-    emit samplerClock(ms);
-
     if (ui->actionRecord->isChecked()) {
         // recording
         if (m_scratch.buffer()->m_writePos == 0)
@@ -314,13 +310,18 @@ void MainWindow::tick(qint64 ms)
         }
     }
 
+    emit samplerClock(ms);
+
     // find out which samples to trigger
     if (ui->actionPlay->isChecked()) {
-        while( m_sequenceCursor != m_sequence.end() && (*m_sequenceCursor)->at() <= ms ) {
+        while( m_sequenceCursor != m_sequence.end()
+              && ((*m_sequenceCursor)->at()
+              + (*m_sequenceCursor)->buffer()->rangeStart()) <= ms ) {
             emit samplerSchedule( *m_sequenceCursor );
             m_sequenceCursor++;
         }
     }
+
 }
 
 void MainWindow::addMarker(MarkerType type, qint64 when)

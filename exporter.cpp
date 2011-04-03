@@ -1,5 +1,6 @@
 #include "exporter.h"
 #include "videofile.h"
+#include "soundbuffer.h"
 
 #include <QtGui>
 #include <QtDebug>
@@ -159,7 +160,8 @@ void Exporter::performExport()
             qint64 ms = (qint64)(audio_pts * 1000.0);
 
             while( sequenceCursor != m_sequence.end()
-                  && (*sequenceCursor)->at() <= ms ) {
+                  && ((*sequenceCursor)->at()
+                      + (*sequenceCursor)->buffer()->rangeStart()) <= ms ) {
                 m_audio->samplerSchedule(*sequenceCursor);
                 sequenceCursor++;
             }
