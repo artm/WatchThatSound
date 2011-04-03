@@ -19,7 +19,7 @@ public slots:
 
 protected:
     QPen m_pen;
-    QBrush m_brush;
+    QBrush m_brush, m_muteBrush;
     QGraphicsRectItem * m_scratchRect;
 
     QGraphicsItem * m_dragItem;

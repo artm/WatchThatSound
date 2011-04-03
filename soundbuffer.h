@@ -44,6 +44,7 @@ public:
 
     qint64 rangeStart() const { return m_range[0]; }
     qint64 rangeEnd() const { return m_range[1]; }
+    qint64 rangeLength() const { return m_range[1]-m_range[0]; }
 
 protected:
     QString m_name;
