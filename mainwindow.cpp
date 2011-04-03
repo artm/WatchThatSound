@@ -32,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->timeLine, SIGNAL(bufferSelected(WtsAudio::BufferAt*)),
             ui->waveform, SLOT(updateWaveform(WtsAudio::BufferAt*)));
+    connect(ui->waveform, SIGNAL(rangeChanged(SoundBuffer*)),
+            ui->timeLine, SLOT(updateBuffer(SoundBuffer*)));
 
     buildMovieSelector();
 

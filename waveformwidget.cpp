@@ -95,5 +95,5 @@ void WaveformWidget::mouseMoveEvent(QMouseEvent * e)
 
 void WaveformWidget::mouseReleaseEvent(QMouseEvent *)
 {
-    emit rangeChanged();
+    emit rangeChanged(m_buffer);
 }

@@ -35,27 +35,8 @@ void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * bufferAt)
             static_cast<QGraphicsItem*>(scene()->addRect(0, 0, relW, 0.3,
                                                          Qt::NoPen, brush));
 
-    float
-            selX1 = (float)buffer->rangeStart() / tt,
-            selX2 = (float)buffer->rangeEnd() / tt;
-
-    scene()->addRect(
-                0, 0, selX1, 0.3,
-                Qt::NoPen, m_muteBrush )
-            ->setParentItem(item);
-
-    scene()->addRect(
-                selX2, 0, relW-selX2, 0.3,
-                Qt::NoPen, m_muteBrush )
-            ->setParentItem(item);
-
-    scene()->addRect(
-                0, 0,
-                relW, 0.3,
-                m_pen, Qt::NoBrush )
-            ->setParentItem(item);
-
     item->moveBy(relX, 0);
+    showRange(item, buffer);
 
     m_itemToBuffer[item] = bufferAt;
     m_bufferItems.append(item);
@@ -157,4 +138,44 @@ void SequencerTimeLine::mouseMoveEvent ( QMouseEvent * event )
     }
 
     TimeLineWidget::mouseMoveEvent( event );
+}
+
+void SequencerTimeLine::showRange(QGraphicsItem * root, SoundBuffer *buffer)
+{
+    float tt = (float)m_mainWindow->mediaObject()->totalTime();
+    float relW = (float)buffer->duration() / tt;
+    float selX1 = (float)buffer->rangeStart() / tt;
+    float selX2 = (float)buffer->rangeEnd() / tt;
+
+    scene()->addRect(
+                0, 0, selX1, 0.3,
+                Qt::NoPen, m_muteBrush )
+            ->setParentItem(root);
+
+    scene()->addRect(
+                selX2, 0, relW-selX2, 0.3,
+                Qt::NoPen, m_muteBrush )
+            ->setParentItem(root);
+
+    scene()->addRect(
+                0, 0,
+                relW, 0.3,
+                m_pen, Qt::NoBrush )
+            ->setParentItem(root);
+
+}
+
+void SequencerTimeLine::updateBuffer(SoundBuffer *buffer)
+{
+    QHashIterator< QGraphicsItem *, WtsAudio::BufferAt * > i(m_itemToBuffer);
+    while(i.hasNext()) {
+        i.next();
+        if (i.value()->buffer() == buffer) {
+            foreach(QGraphicsItem * child, i.key()->childItems()) {
+                scene()->removeItem(child);
+                delete child;
+            }
+            showRange(i.key(), buffer);
+        }
+    }
 }

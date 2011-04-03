@@ -16,6 +16,7 @@ signals:
 public slots:
     void insertBufferAt(WtsAudio::BufferAt * buffer);
     void showScratch(WtsAudio::BufferAt * scratchAt, bool on);
+    void updateBuffer(SoundBuffer * buffer);
 
 protected:
     QPen m_pen;
@@ -29,6 +30,7 @@ protected:
     QList< QGraphicsItem * > m_bufferItems;
 
     void restackItems();
+    void showRange(QGraphicsItem * root, SoundBuffer * buffer);
 
     virtual void mousePressEvent ( QMouseEvent * event );
     virtual void mouseReleaseEvent ( QMouseEvent * event );

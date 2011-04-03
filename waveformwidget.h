@@ -18,7 +18,7 @@ public:
     void mouseReleaseEvent(QMouseEvent *);
 
 signals:
-    void rangeChanged();
+    void rangeChanged(SoundBuffer * buffer = 0);
 
 public slots:
     void updateWaveform(WtsAudio::BufferAt * bufferAt, bool recording = false);
