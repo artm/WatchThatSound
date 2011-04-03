@@ -377,6 +377,9 @@
    </property>
   </action>
   <action name="actionAddScene">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="WTS3Resources.qrc">
      <normaloff>:/Resources/add-scene.png</normaloff>:/Resources/add-scene.png</iconset>
@@ -389,6 +392,9 @@
    </property>
   </action>
   <action name="actionAddMarker">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="WTS3Resources.qrc">
      <normaloff>:/Resources/add-marker.png</normaloff>:/Resources/add-marker.png</iconset>

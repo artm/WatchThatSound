@@ -49,7 +49,7 @@ public:
     QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
     void addMarker(MarkerType type, qint64 when = -1);
     Phonon::MediaObject * mediaObject();
-    QState * addPage(const QString& name, QList<QWidget*> widgets);
+    QState * addPage(const QString& name, QList<QWidget*> widgets, QList<QAction*> actions = QList<QAction*>());
 
     void buildMovieSelector();
 

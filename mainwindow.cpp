@@ -392,7 +392,11 @@ void MainWindow::constructStateMachine()
 
     m_tabActions = new QActionGroup(this);
 
-    addPage("1", QList<QWidget*>() << ui->storyboard);
+    addPage("1", QList<QWidget*>()
+            << ui->storyboard,
+            QList<QAction*>()
+            << ui->actionAddMarker
+            << ui->actionAddScene);
     QState * tensionPage =
             addPage("2",  QList<QWidget*>()
                     << ui->storyboard
@@ -410,15 +414,19 @@ void MainWindow::constructStateMachine()
     m_machine.start();
 }
 
-QState * MainWindow::addPage(const QString& name, QList<QWidget*> widgets)
+QState * MainWindow::addPage(const QString& name, QList<QWidget*> widgets, QList<QAction*> actions)
 {
     QState * state = new QState(m_workshop);
     foreach(QWidget * w, widgets) {
         state->assignProperty(w, "visible", true);
     }
+    foreach(QAction * a, actions) {
+        state->assignProperty(a, "enabled", true);
+    }
     QAction * action = ui->toolBar->addAction(name);
     m_tabActions->addAction( action );
     action->setCheckable(true);
+    action->setShortcut(QKeySequence(name));
     m_workshop->addTransition(action, SIGNAL(triggered()), state);
 
     if (!m_workshop->initialState()) {
@@ -431,8 +439,6 @@ QState * MainWindow::addPage(const QString& name, QList<QWidget*> widgets)
 void MainWindow::buildMovieSelector()
 {
     QGridLayout * layout = new QGridLayout;
-    //layout->setMargin(0);
-    //layout->setSpacing(0);
     ui->movieSelector->setLayout(layout);
     QDir movDir(QCoreApplication::applicationDirPath () + "/../../../movie");
 
@@ -452,7 +458,6 @@ void MainWindow::buildMovieSelector()
         QPushButton * button = new QPushButton( );
         layout->addWidget( button, i/cols, i%cols );
         i++;
-        //button->setFlat(true);
         button->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
         mapper->setMapping( button, fi.absoluteFilePath() );
         connect(button, SIGNAL(clicked()), mapper, SLOT(map()));
