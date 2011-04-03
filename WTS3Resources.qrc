@@ -17,5 +17,7 @@
         <file>Resources/rec-bright.png</file>
         <file>Resources/rec-dim.png</file>
         <file>Resources/rec-normal.png</file>
+        <file>Resources/favicon.png</file>
+        <file>Resources/Icon-nobg.png</file>
     </qresource>
 </RCC>

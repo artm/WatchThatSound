@@ -17,7 +17,11 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string notr="true">WatchThat</string>
+   <string notr="true">Watch That Sound</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="WTS3Resources.qrc">
+    <normaloff>:/Resources/favicon.png</normaloff>:/Resources/favicon.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">

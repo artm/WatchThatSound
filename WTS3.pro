@@ -36,6 +36,8 @@ RESOURCES += WTS3Resources.qrc
 CONFIG += precompile_header
 PRECOMPILED_HEADER = stable.h
 
+ICON = WTS.icns
+
 INCLUDEPATH += Shoulders/portaudio/include Shoulders/ffmpeg
 LIBS += -L$$PWD/Shoulders/portaudio/lib -lportaudio
 LIBS += -L$$PWD/Shoulders/ffmpeg/libavcodec -lavcodec
