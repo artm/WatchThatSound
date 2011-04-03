@@ -1,7 +1,6 @@
 the latest news is below...
 
-
-- button bar:
+[ ] button bar:
     - make it a common timeline functionality (but with changeable button selection)
     - buttons emit some actions that affect data item corresponding to selection
 
@@ -129,33 +128,25 @@ score (partituur)
 1. store in scene coords
 2. when updating the graphics (e.g. upon resize) convert to local (pixel) coords.
 
+* * *
 
-bugs
-[x] initial tension curve looks broken
+[x] support for different numbers of films in movie selector (nice grid fills)
+[x] support for different resolutions in movie selector
 
 * * *
 
-[ ] infrastructure: a script to:
-(a) make a clean build
-(b) rename and compress
-(c) commit and tag
-
-probably there is a function or a hook in the GUI for this
+[ ] when changing story board should change the curve as well
 
 * * *
 
 [ ] re-design: time lines should be: x in ms and y view specific (default 0,1 line now)
 [ ] re-factor: all time lines partially share drag and drop. generalize.
+[ ] re-factor: BufferAt should have methods for getting at SoundBuffer's range (including setter) and dragging should use them to limit dragging to movie
 
 * * *
 
 future improvements:
 
 [ ] keep relative lengths of the score symbols
-[ ] when changing story board should change the curve as well
-[ ] support for different numbers of films in movie selector (nice grid fills)
-[ ] support for different resolutions in movie selector
-[ ] caching the thumbnail
-[ ] menu item to override the thumbnail
 [ ] movie import (transcode and cache the result)
 
