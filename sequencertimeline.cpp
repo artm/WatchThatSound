@@ -131,7 +131,9 @@ void SequencerTimeLine::mouseMoveEvent ( QMouseEvent * event )
                     (float)m_mainWindow->mediaObject()->totalTime()
                     * dx;
             m_mainWindow->seek( newTime );
-            m_itemToBuffer[m_dragItem]->setAt( newTime );
+            WtsAudio::BufferAt * bufferAt = m_itemToBuffer[m_dragItem];
+
+            bufferAt->setAt( newTime - bufferAt->buffer()->rangeStart() );
 
             return;
         }
