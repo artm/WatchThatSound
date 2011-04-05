@@ -446,8 +446,24 @@ QState * MainWindow::addPage(const QString& name, QList<QWidget*> widgets, QList
 
 void MainWindow::buildMovieSelector()
 {
+    QVBoxLayout * layout0 = new QVBoxLayout;
+    ui->movieSelector->setLayout(layout0);
+
+    QLabel * title = new QLabel("Watch that Sound");
+    QFont titleFont("Sans-Serif", 32, 500);
+    title->setFont(titleFont);
+    layout0->addWidget(title, 0, Qt::AlignHCenter);
+
+    QLabel * version = new QLabel( WTS_VERSION );
+    layout0->addWidget(version, 0, Qt::AlignCenter);
+
+    QWidget * grid = new QWidget;
+    layout0->addWidget(grid, 1);
+
+
     QGridLayout * layout = new QGridLayout;
-    ui->movieSelector->setLayout(layout);
+    grid->setLayout(layout);
+
     QDir movDir(QCoreApplication::applicationDirPath () + "/../../../movie");
 
     QSignalMapper * mapper = new QSignalMapper(this);
@@ -461,10 +477,10 @@ void MainWindow::buildMovieSelector()
 
     QSize iconSize = size() / cols;
 
-    int i = 0;
+    int i = 0, offs = 1;
     foreach(QFileInfo fi, movList) {
         QPushButton * button = new QPushButton( );
-        layout->addWidget( button, i/cols, i%cols );
+        layout->addWidget( button, offs + i/cols, i%cols );
         i++;
         button->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
         mapper->setMapping( button, fi.absoluteFilePath() );

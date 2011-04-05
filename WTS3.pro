@@ -2,6 +2,7 @@ QT += phonon multimedia
 TARGET = WatchThatSound
 
 VERSION = 3-alpha-10.1
+DEFINES += WTS_VERSION=\\\"$$VERSION\\\"
 
 TEMPLATE = app
 SOURCES += main.cpp \
