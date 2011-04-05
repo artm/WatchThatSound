@@ -161,7 +161,7 @@ void Exporter::performExport()
 
             while( sequenceCursor != m_sequence.end()
                   && ((*sequenceCursor)->at()
-                      + (*sequenceCursor)->buffer()->rangeStart()) <= ms ) {
+                      + WtsAudio::sampleCountToMs((*sequenceCursor)->buffer()->rangeStart())) <= ms ) {
                 m_audio->samplerSchedule(*sequenceCursor);
                 sequenceCursor++;
             }

@@ -59,8 +59,8 @@ void WaveformWidget::paintEvent(QPaintEvent */*event*/)
     painter.drawPixmap(0,0,m_img);
 
     if (m_buffer) {
-        int x1 = m_buffer->rangeStart() * width() / m_buffer->duration();
-        int x2 = m_buffer->rangeEnd() * width() / m_buffer->duration();
+        int x1 = m_buffer->rangeStart() * width() / m_buffer->sampleCount();
+        int x2 = m_buffer->rangeEnd() * width() / m_buffer->sampleCount();
         painter.fillRect(QRect(0,0,x1,height()), QBrush(QColor(0,0,0,70)));
         painter.fillRect(QRect(x2,0,width(),height()), QBrush(QColor(0,0,0,70)));
     }
@@ -77,18 +77,18 @@ void WaveformWidget::resizeEvent(QResizeEvent *event)
 
 void WaveformWidget::mousePressEvent(QMouseEvent * e)
 {
-    m_selStart = e->x() * m_buffer->duration() / width();
+    m_selStart = e->x() * m_buffer->sampleCount() / width();
     m_buffer->setRange(m_selStart, m_selStart);
     update();
 }
 
 void WaveformWidget::mouseMoveEvent(QMouseEvent * e)
 {
-    float sampleNum = e->x() * m_buffer->duration() / width();
-    if (sampleNum > m_selStart) {
-        m_buffer->setRange(m_selStart, sampleNum);
+    float selEnd = e->x() * m_buffer->sampleCount() / width();
+    if (selEnd > m_selStart) {
+        m_buffer->setRange(m_selStart, selEnd);
     } else {
-        m_buffer->setRange(sampleNum, m_selStart);
+        m_buffer->setRange(selEnd, m_selStart);
     }
     update();
 }

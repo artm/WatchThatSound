@@ -316,7 +316,7 @@ void MainWindow::tick(qint64 ms)
     if (ui->actionPlay->isChecked()) {
         while( m_sequenceCursor != m_sequence.end()
               && ((*m_sequenceCursor)->at()
-              + (*m_sequenceCursor)->buffer()->rangeStart()) <= ms ) {
+              + WtsAudio::sampleCountToMs((*m_sequenceCursor)->buffer()->rangeStart())) <= ms ) {
             emit samplerSchedule( *m_sequenceCursor );
             m_sequenceCursor++;
         }

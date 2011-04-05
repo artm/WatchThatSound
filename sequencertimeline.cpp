@@ -99,7 +99,7 @@ void SequencerTimeLine::mousePressEvent ( QMouseEvent * event )
         if (m_dragItem) {
             WtsAudio::BufferAt * buffer = m_itemToBuffer[m_dragItem];
             emit bufferSelected( buffer );
-            m_mainWindow->seek( buffer->at() + buffer->buffer()->rangeStart() );
+            m_mainWindow->seek( buffer->at() + WtsAudio::sampleCountToMs(buffer->buffer()->rangeStart()) );
             return;
         }
     }
@@ -133,7 +133,7 @@ void SequencerTimeLine::mouseMoveEvent ( QMouseEvent * event )
             m_mainWindow->seek( newTime );
             WtsAudio::BufferAt * bufferAt = m_itemToBuffer[m_dragItem];
 
-            bufferAt->setAt( newTime - bufferAt->buffer()->rangeStart() );
+            bufferAt->setAt( newTime - WtsAudio::sampleCountToMs(bufferAt->buffer()->rangeStart()) );
 
             return;
         }
@@ -146,8 +146,8 @@ void SequencerTimeLine::showRange(QGraphicsItem * root, SoundBuffer *buffer)
 {
     float tt = (float)m_mainWindow->mediaObject()->totalTime();
     float relW = (float)buffer->duration() / tt;
-    float selX1 = (float)buffer->rangeStart() / tt;
-    float selX2 = (float)buffer->rangeEnd() / tt;
+    float selX1 = (float)WtsAudio::sampleCountToMs(buffer->rangeStart()) / tt;
+    float selX2 = (float)WtsAudio::sampleCountToMs(buffer->rangeEnd()) / tt;
 
     scene()->addRect(
                 0, 0, selX1, 0.3,
