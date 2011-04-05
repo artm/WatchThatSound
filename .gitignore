@@ -2,11 +2,11 @@
 /release
 /Shoulders
 Makefile
-WTS3*.app
-WTS3*.app.zip
+WatchThatSound.app
+WatchThatSound*.zip
 moc_*
 *.o
 qrc_*.cpp
 ui_mainwindow.h
-/WTS3.gch
+/*.gch
 WTS3.pro.user
