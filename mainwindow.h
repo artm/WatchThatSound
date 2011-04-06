@@ -62,6 +62,8 @@ public slots:
     void tick(qint64 ms);
     void seek(qint64 ms);
 
+    void onMovieFinished();
+
     void addSceneMark(){ addMarker(SCENE); }
     void addEventMark(){ addMarker(EVENT); }
 

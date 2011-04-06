@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->waveform, SIGNAL(rangeChanged(SoundBuffer*)),
             ui->timeLine, SLOT(updateBuffer(SoundBuffer*)));
 
+    connect(mediaObject(), SIGNAL(finished()), SLOT(onMovieFinished()));
+
     buildMovieSelector();
 
     constructStateMachine();
@@ -255,6 +257,7 @@ void MainWindow::setFullscreen(bool fs) {
     else
         showNormal();
 }
+
 
 void MainWindow::onPlay(bool play)
 {
@@ -537,4 +540,9 @@ void MainWindow::maybeInitTension()
 QPainterPath MainWindow::tensionCurve() const
 {
     return ui->tension->curve();
+}
+
+void MainWindow::onMovieFinished()
+{
+    ui->actionPlay->setChecked(false);
 }
