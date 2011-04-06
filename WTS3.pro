@@ -1,7 +1,8 @@
-QT += phonon multimedia
+VERSION = 3-alpha-10.2
 TARGET = WatchThatSound
 
-VERSION = 3-alpha-10.1
+QT += phonon multimedia
+
 DEFINES += WTS_VERSION=\\\"$$VERSION\\\"
 
 TEMPLATE = app
@@ -70,10 +71,14 @@ mac {
   LIBS += -framework Sparkle -framework AppKit
   LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices
 
-  QMAKE_INFO_PLIST=WTS.plist
+  InfoPlist.target = "$$TARGET".app/Contents/Info.plist
+  InfoPlist.source = WTS.plist
+  InfoPlist.depends = $$InfoPlist.source WTS3.pro
+  InfoPlist.commands = sed \"s/@VERSION@/$$VERSION/g;s/@EXECUTABLE@/$$TARGET/g;s/@TYPEINFO@/WTS3/g;s/@ICON@/$$ICON/g\" \
+                       $$InfoPlist.source > $$InfoPlist.target
+
+  QMAKE_EXTRA_TARGETS += InfoPlist
 
   QMAKE_POST_LINK = mkdir -p "$$TARGET".app/Contents/Frameworks \
-    && cp -r /Library/Frameworks/Sparkle.framework "$$TARGET".app/Contents/Frameworks \
-    && cat "$$TARGET".app/Contents/Info.plist | sed s/@VERSION@/$$VERSION/g > "$$TARGET".app/Contents/Info.plist.new \
-    && mv "$$TARGET".app/Contents/Info.plist.new "$$TARGET".app/Contents/Info.plist
+    && cp -r /Library/Frameworks/Sparkle.framework "$$TARGET".app/Contents/Frameworks
 }
