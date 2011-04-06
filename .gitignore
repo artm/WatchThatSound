@@ -2,7 +2,7 @@
 /release
 /Shoulders
 Makefile
-WatchThatSound.app
+WatchThatSound*.app
 WatchThatSound*.zip
 moc_*
 *.o

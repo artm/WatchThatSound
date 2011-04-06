@@ -124,16 +124,15 @@ void SequencerTimeLine::mouseMoveEvent ( QMouseEvent * event )
             QPointF newPos = mapToScene(event->pos());
             float dx = newPos.x() - m_dragLastP.x();
             m_dragLastP = newPos;
-            m_dragItem->moveBy(dx, 0);
 
-            qint64 newTime =
-                    m_mainWindow->mediaObject()->currentTime() +
-                    (float)m_mainWindow->mediaObject()->totalTime()
-                    * dx;
-            m_mainWindow->seek( newTime );
+
             WtsAudio::BufferAt * bufferAt = m_itemToBuffer[m_dragItem];
+            qint64 dt = dx * m_mainWindow->mediaObject()->totalTime();
+            qint64 at = std::max( bufferAt->at() + dt, - WtsAudio::sampleCountToMs(bufferAt->buffer()->rangeStart()));
+            bufferAt->setAt( at );
+            m_dragItem->setX( (float)at / m_mainWindow->mediaObject()->totalTime() );
 
-            bufferAt->setAt( newTime - WtsAudio::sampleCountToMs(bufferAt->buffer()->rangeStart()) );
+            m_mainWindow->mediaObject()->seek( at + WtsAudio::sampleCountToMs(bufferAt->buffer()->rangeStart()) );
 
             return;
         }
