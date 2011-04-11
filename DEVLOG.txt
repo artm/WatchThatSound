@@ -135,19 +135,10 @@ score (partituur)
 
 * * *
 
-[ ] when changing story board should change the curve as well
-
-* * *
-
-[ ] re-design: time lines should be: x in ms and y view specific (default 0,1 line now)
-[ ] re-factor: all time lines partially share drag and drop. generalize.
-[ ] re-factor: BufferAt should have methods for getting at SoundBuffer's range (including setter) and dragging should use them to limit dragging to movie
-
 * * *
 
 future improvements:
 
-[ ] keep relative lengths of the score symbols
 [ ] movie import (transcode and cache the result)
 
 * * *
@@ -156,11 +147,32 @@ future improvements:
 [x] gain field in the sample object
 [x] connect the two and use gain field when mixing
 [x] non-destructive normalisation: second (invisible) gain field
-[ ] save gains
-[ ] load gains if present
+[x] save gains
+[x] load gains if present
 
 How to deal with sounds that are soft or loud?
 1. find the normGain
 2. make the gain = 1.0 / normGain
 
 this way we can make the sound the loudest, but it starts out the same as recorded... something like that.
+
+* * *
+
+[ ] when changing story board should change the curve as well
+[ ] re-factor: all time lines partially share drag and drop. generalize.
+[ ] re-factor: BufferAt should have methods for getting at SoundBuffer's range (including setter)
+[ ] uv meter
+
+* * *
+
+so, fix the curve editor...
+
+[x] save the node height in the event marker
+[x] save it with the event marker
+[x] initialize node heights
+[x] when editing the curve, should update the corresponding marker
+[x] when adding a marker should update the curve properly
+    now node blocks disappear
+[ ] make curve editor scrolling...
+
+[ ] optionally: mute when recording

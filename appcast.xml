@@ -1,40 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
-   <channel>
-      <title>Watch That Sound Changelog</title>
-      <link>https://ftp.v2.nl/~artm/WTS3/appcast.xml</link>
-      <description>Most recent changes with links to updates.</description>
-      <language>en</language>
-         <item>
-            <title>3-alpha-10.1</title>
-            <description><![CDATA[
-            <h2>Nieuw in deze versie</h2>
-            <ul>
-            <li>auto-update</li>
-            <li>deel van de mixdown crashes opgelost. De oplossing heeft echter oude selecties in samples ongeldig gemaakt
-            (tijd schaal van selectie is veranderd)</li>
-            </ul>
-            ]]>
-            </description>
-            <pubDate>Tue, Apr 5 2011 13:53:52 CEST</pubDate>
-            <enclosure url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3-alpha-10.1.zip" sparkle:version="3-alpha-10.1"
-            length="4533390" type="application/octet-stream"/>
-         </item>
+<channel>
+<title>Watch That Sound Changelog</title>
+<link>https://ftp.v2.nl/~artm/WTS3/appcast.xml</link>
+<description>Most recent changes with links to updates.</description>
+<language>en</language>
+<item>
+<title>3-alpha-10.1</title>
+<description><![CDATA[
+<h2>Nieuw in deze versie</h2>
+<ul>
+<li>auto-update</li>
+<li>deel van de mixdown crashes opgelost. De oplossing heeft echter oude selecties in samples ongeldig gemaakt
+(tijd schaal van selectie is veranderd)</li>
+</ul>
+]]>
+</description>
+<pubDate>Tue, Apr 5 2011 13:53:52 CEST</pubDate>
+<enclosure url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3-alpha-10.1.zip" sparkle:version="3-alpha-10.1"
+length="4533390" type="application/octet-stream"/>
+</item>
 
-         <item>
-            <title>3-alpha-10.2</title>
-            <description><![CDATA[
-            <h2>Nieuw in deze versie</h2>
-            <ul>
-            <li>aantal verbeteringen in samples slepen</li>
-            <li>stop opname aan het eind van het filmpje</li>
-            </ul>
-            ]]>
-            </description>
-            <pubDate>Tue, Apr 6 2011 11:35:00 CEST</pubDate>
-            <enclosure url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3-alpha-10.2.zip" sparkle:version="3-alpha-10.2"
-            length="4533277" type="application/octet-stream"/>
-         </item>
+<item>
+<title>3-alpha-10.2</title>
+<description><![CDATA[
+<h2>Nieuw in deze versie</h2>
+<ul>
+<li>aantal verbeteringen in samples slepen</li>
+<li>stop opname aan het eind van het filmpje</li>
+</ul>
+]]>
+</description>
+<pubDate>Tue, Apr 6 2011 11:35:00 CEST</pubDate>
+<enclosure url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3-alpha-10.2.zip" sparkle:version="3-alpha-10.2"
+length="4533277" type="application/octet-stream"/>
+</item>
 
-   </channel>
+<item>
+<title>3-alpha-11.0</title>
+<description><![CDATA[
+<h2>Nieuw in deze versie</h2>
+<ul>
+<li>opname normalisatie</li>
+<li>volume slider voor een opname</li>
+<li>opslaan filmpje bestandsnaam in data (voor debugging)</li>
+<li>spannings curve corrspondeert aan de bookmarks</li>
+</ul>
+]]>
+</description>
+<pubDate>Tue, Apr 11 2011 16:30:00 CEST</pubDate>
+<enclosure url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3-alpha-11.0.zip" sparkle:version="3-alpha-11.0"
+length="?????" type="application/octet-stream"/>
+
+</item>
+
+</channel>
 </rss>

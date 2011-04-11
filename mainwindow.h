@@ -35,19 +35,28 @@ public:
         MarkerType m_type;
         QPixmap m_snapshot;
 
+        float m_tension;
+
     public:
-        Marker(MarkerType type, qint64 ms, QObject * parent) : WTS::Synced(ms, parent), m_type(type) {}
+        Marker(MarkerType type, qint64 ms, QObject * parent)
+            : WTS::Synced(ms, parent)
+            , m_type(type)
+            , m_tension(0.5)
+        {}
 
         MarkerType type() const { return m_type; }
         const QPixmap& snapshot() const { return m_snapshot; }
         void setSnapshot(const QPixmap& snapshot) { m_snapshot = snapshot; }
+
+        float tension() const { return m_tension; }
+        void setTension(float value) { m_tension = value; }
     };
 
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
     QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
-    void addMarker(MarkerType type, qint64 when = -1);
+    void addMarker(MarkerType type, qint64 when = -1, float tension = 0.5);
     Phonon::MediaObject * mediaObject();
     QState * addPage(const QString& name, QList<QWidget*> widgets, QList<QAction*> actions = QList<QAction*>());
 
@@ -75,7 +84,8 @@ public slots:
 
     void exportMovie();
 
-    void maybeInitTension();
+    void refreshTension();
+    void updateMarkerTension(int markerIndex, float tension);
 
 signals:
     void storyBoardChanged();

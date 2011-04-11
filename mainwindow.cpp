@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
             &m_audio, SLOT(samplerSchedule(WtsAudio::BufferAt*)));
 
     // change signals to save data...
+    connect(ui->tension, SIGNAL(updateLevel(int,float)), SLOT(updateMarkerTension(int,float)));
     connect(ui->tension, SIGNAL(dataChanged()), SLOT(saveData()));
     connect(ui->tension, SIGNAL(dataChanged()), ui->storyboard, SLOT(update()));
     connect(ui->tension, SIGNAL(dataChanged()), ui->timeLine, SLOT(update()));
@@ -79,6 +80,7 @@ void MainWindow::loadMovie(const QString& path)
 
     // further configuration
     ui->storyboard->setSeekOnDrag(true);
+    ui->tension->setSeekOnDrag(true);
 
     // scratch should be big enough to fit a movie-long sound
     m_scratch.setBuffer(
@@ -144,12 +146,9 @@ void MainWindow::saveData()
         ms.setNum(m->at());
         xml.writeAttribute("ms",ms);
         xml.writeAttribute("type", m->type() == SCENE ? "scene" : "event");
+        xml.writeAttribute("tension", QString("%1").arg(m->tension()));
         xml.writeEndElement();
     }
-    xml.writeEndElement();
-
-    xml.writeStartElement("tension");
-    ui->tension->saveData(xml);
     xml.writeEndElement();
 
     xml.writeStartElement("score");
@@ -192,14 +191,20 @@ void MainWindow::loadData()
         while (xml.readNextStartElement()) {
             if (xml.name() == "storyboard") {
                 while(xml.readNextStartElement()) {
+
+                    float tension = xml.attributes().hasAttribute("tension")
+                            ? xml.attributes().value("tension").toString().toFloat()
+                            : 0.5;
+
                     addMarker(xml.attributes().value("type") == "scene" ? SCENE : EVENT,
-                              xml.attributes().value("ms").toString().toLongLong());
+                              xml.attributes().value("ms").toString().toLongLong(),
+                              tension);
+
 
                     // this is one way to read a flat list of <foo/> not recursing
                     xml.readElementText();
                 }
-            } else if (xml.name() == "tension") {
-                ui->tension->loadData(xml);
+                refreshTension();
             } else if (xml.name() == "score") {
                 ui->score->loadData(xml);
             } else if (xml.name() == "sequence") {
@@ -340,15 +345,17 @@ void MainWindow::tick(qint64 ms)
 
 }
 
-void MainWindow::addMarker(MarkerType type, qint64 when)
+void MainWindow::addMarker(MarkerType type, qint64 when, float tension)
 {
     if (when < 0)
         when = mediaObject()->currentTime();
     m_markers[when] = new Marker(type, when, this);
+    m_markers[when]->setTension( tension );
     // load frameshot...
     m_videoFile->seek(when);
     m_markers[when]->setSnapshot( QPixmap::fromImage(m_videoFile->frame()) );
 
+    refreshTension();
     emit storyBoardChanged();
     saveData();
 }
@@ -425,7 +432,7 @@ void MainWindow::constructStateMachine()
             addPage("2",  QList<QWidget*>()
                     << ui->storyboard
                     << ui->tension);
-    connect(tensionPage, SIGNAL(entered()), SLOT(maybeInitTension()));
+    //connect(tensionPage, SIGNAL(entered()), SLOT(refreshTension()));
     addPage("3", QList<QWidget*>()
             << ui->storyboard
             << ui->score);
@@ -516,37 +523,26 @@ void MainWindow::buildMovieSelector()
     connect(mapper, SIGNAL(mapped(QString)), SLOT(loadMovie(QString)));
 }
 
-void MainWindow::maybeInitTension()
+void MainWindow::refreshTension()
 {
-    if (ui->tension->isEdited())
-        return;
-
-    float level = 0.5;
     QMapIterator<qint64, Marker *> iter(m_markers);
-
     QPainterPath curve;
     bool init = true;
     while(iter.hasNext()){
         iter.next();
         Marker * m = iter.value();
-        if (m->type() == SCENE) {
-            level = 0.5;
-        } else {
-            level = 0.5 * level;
-        }
 
         float x = (float)ui->tension->sceneRect().width()
                 * m->at() / m_videoFile->duration();
 
         if (init) {
-            curve.moveTo(QPointF(x, level));
+            curve.moveTo(QPointF(x, m->tension()));
             init = false;
         } else
-            curve.lineTo( QPointF(x, level) );
+            curve.lineTo( QPointF(x, m->tension()) );
     }
 
     curve.lineTo( QPointF(ui->tension->sceneRect().width(), 0.5));
-
     ui->tension->setCurve(curve);
 }
 
@@ -558,4 +554,9 @@ QPainterPath MainWindow::tensionCurve() const
 void MainWindow::onMovieFinished()
 {
     ui->actionPlay->setChecked(false);
+}
+
+void MainWindow::updateMarkerTension(int markerIndex, float tension)
+{
+    m_markers[ m_markers.keys()[markerIndex] ]->setTension(tension);
 }

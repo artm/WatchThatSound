@@ -11,13 +11,11 @@ public:
 
     void setCurve(const QPainterPath& curve);
     void scaleNodes();
-    bool isEdited() const { return m_edited; }
-
-    void saveData(QXmlStreamWriter& xml);
-    void loadData(QXmlStreamReader& xml);
 
     QPainterPath curve() const { return m_curve ? m_curve->path() : QPainterPath(); }
+
 signals:
+    void updateLevel(int index, float level);
 
 public slots:
 
@@ -32,7 +30,6 @@ protected:
 
     QGraphicsRectItem * m_dragItem;
     QPointF m_dragLastP;
-    bool m_edited;
 };
 
 #endif // CURVEEDITOR_H
