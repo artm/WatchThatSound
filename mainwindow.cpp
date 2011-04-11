@@ -81,6 +81,7 @@ void MainWindow::loadMovie(const QString& path)
     // further configuration
     ui->storyboard->setSeekOnDrag(true);
     ui->tension->setSeekOnDrag(true);
+    ui->score->setSeekOnDrag(true);
 
     // scratch should be big enough to fit a movie-long sound
     m_scratch.setBuffer(
@@ -432,10 +433,13 @@ void MainWindow::constructStateMachine()
             addPage("2",  QList<QWidget*>()
                     << ui->storyboard
                     << ui->tension);
-    //connect(tensionPage, SIGNAL(entered()), SLOT(refreshTension()));
-    addPage("3", QList<QWidget*>()
+    QState * scorePage = addPage("3", QList<QWidget*>()
             << ui->storyboard
             << ui->score);
+
+    ui->score->setEditMode(false);
+    scorePage->assignProperty( ui->score, "editMode", true);
+
     addPage("4", QList<QWidget*>()
             << ui->storyboard
             << ui->score

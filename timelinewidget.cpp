@@ -2,8 +2,11 @@
 #include "ui_mainwindow.h"
 #include <QMouseEvent>
 
-TimeLineWidget::TimeLineWidget(QWidget *parent) :
-    QGraphicsView(parent), _seekOnDrag(false), m_currentTime(0)
+TimeLineWidget::TimeLineWidget(QWidget *parent)
+    : QGraphicsView(parent)
+    , m_seekOnDrag(false)
+    , m_currentTime(0)
+    , m_editMode(true)
 {
     // find the mainWindow
     QObject * iter = parent;

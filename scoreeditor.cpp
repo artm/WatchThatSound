@@ -65,35 +65,44 @@ void ScoreEditor::drawBackground(QPainter *painter, const QRectF &rect)
 
 void ScoreEditor::mouseReleaseEvent(QMouseEvent * /*event*/)
 {
-    m_newSymbol->finish();
-    m_symbols.append( m_newSymbol );
-    initNewSymbol();
-    emit dataChanged();
+    if (editMode()) {
+        m_newSymbol->finish();
+        m_symbols.append( m_newSymbol );
+        initNewSymbol();
+        emit dataChanged();
+    }
+    //TimeLineWidget::mouseReleaseEvent(event);
 }
 
 void ScoreEditor::mousePressEvent(QMouseEvent * event)
 {
-    /* first see if we hit something */
-    if (event->buttons() & Qt::LeftButton) {
-        QGraphicsItem * hitItem = itemAt( event->pos() );
+    if (editMode()) {
+        /* first see if we hit something */
+        if (event->buttons() & Qt::LeftButton) {
+            QGraphicsItem * hitItem = itemAt( event->pos() );
 
-        if (hitItem) {
+            if (hitItem) {
 
-            // is this a petal?
-            QVariant vpindex = hitItem->data(PetalIndex);
-            if (vpindex.isValid() && !vpindex.isNull()) {
-                // yes, a petal, use its color
-                selectPetal(hitItem);
-            }
+                // is this a petal?
+                QVariant vpindex = hitItem->data(PetalIndex);
+                if (vpindex.isValid() && !vpindex.isNull()) {
+                    // yes, a petal, use its color
+                    selectPetal(hitItem);
+                }
 
-        } else
-            m_newSymbol->start(mapToScene(event->pos()));
+            } else
+                m_newSymbol->start(mapToScene(event->pos()));
+        }
     }
+    TimeLineWidget::mousePressEvent(event);
 }
 
 void ScoreEditor::mouseMoveEvent(QMouseEvent * event)
 {
-    m_newSymbol->pull(mapToScene(event->pos()));
+    if (editMode()) {
+        m_newSymbol->pull(mapToScene(event->pos()));
+    }
+    TimeLineWidget::mouseMoveEvent(event);
 }
 
 void ScoreEditor::resizeEvent(QResizeEvent *event)

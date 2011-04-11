@@ -45,6 +45,7 @@ length="4533277" type="application/octet-stream"/>
 <li>volume slider voor een opname</li>
 <li>opslaan filmpje bestandsnaam in data (voor debugging)</li>
 <li>spannings curve corrspondeert aan de bookmarks</li>
+<li>partituur alleen te editen in pagina 3</li>
 </ul>
 ]]>
 </description>
