@@ -46,6 +46,11 @@ public:
     qint64 rangeEnd() const { return m_range[1]; }
     qint64 rangeLength() const { return m_range[1]-m_range[0]; }
 
+    void setGain(float gain) { m_gain = gain; }
+    float gain() const { return m_gain; }
+    float normGain() const { return m_normGain; }
+    void initGains();
+
 protected:
     QString m_name;
     bool m_saved;
@@ -58,6 +63,9 @@ protected:
 public:
     // fixme
     qint64 m_writePos, m_readPos;
+
+protected:
+    float m_normGain, m_gain;
 };
 
 #endif // SOUNDBUFFER_H

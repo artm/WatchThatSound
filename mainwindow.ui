@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>586</height>
+    <height>654</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,7 +55,7 @@
       <property name="frameShadow">
        <enum>QFrame::Plain</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -99,6 +99,22 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="gainSlider">
+         <property name="toolTip">
+          <string>volume (hoe hard het geluid klinkt)</string>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>

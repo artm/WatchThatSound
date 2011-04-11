@@ -35,6 +35,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->waveform, SIGNAL(rangeChanged(SoundBuffer*)),
             ui->timeLine, SLOT(updateBuffer(SoundBuffer*)));
 
+    connect(ui->gainSlider, SIGNAL(valueChanged(int)), ui->waveform, SLOT(setGain(int)));
+    connect(ui->waveform, SIGNAL(adjustGainSlider(int)), ui->gainSlider, SLOT(setValue(int)));
+
     connect(mediaObject(), SIGNAL(finished()), SLOT(onMovieFinished()));
 
     buildMovieSelector();
@@ -160,6 +163,7 @@ void MainWindow::saveData()
         // FIXME: this shouldn't be here, but in a separate samples chunk
         xml.writeAttribute("range_start", QString("%1").arg(buffer->buffer()->rangeStart()));
         xml.writeAttribute("range_end", QString("%1").arg(buffer->buffer()->rangeEnd()));
+        xml.writeAttribute("gain", QString("%1").arg( buffer->buffer()->gain() ));
         xml.writeEndElement();
 
         QFile wav( m_dataDir.filePath( buffer->buffer()->name() ));
@@ -222,6 +226,10 @@ void MainWindow::loadData()
                         qDebug() << "Color index didn't parse...";
                     }
 
+                    buffer->buffer()->initGains();
+                    if (xml.attributes().hasAttribute("gain"))
+                        buffer->buffer()->setGain( xml.attributes().value("gain").toString().toFloat() );
+
                     emit newBufferAt(buffer);
                     // finish off the element...
                     xml.readElementText();
@@ -279,9 +287,11 @@ void MainWindow::onPlay(bool play)
 void MainWindow::onRecord(bool record)
 {
     if (record) {
+        // started recording
         m_scratch.buffer()->setWritePos(0);
         m_scratch.buffer()->setColor(Qt::red);
     } else {
+        // done with recording - make a new sample buffer
         WtsAudio::BufferAt * newBuff =
                 new WtsAudio::BufferAt(
                     new SoundBuffer(makeSampleName(),
@@ -290,6 +300,7 @@ void MainWindow::onRecord(bool record)
                     m_scratch.at(),
                     this);
         newBuff->buffer()->setColor( Rainbow::getColor(m_lastSampleNameNum) );
+        newBuff->buffer()->initGains();
         m_sequence.append(newBuff);
         emit scratchUpdated(newBuff, false);
         emit newBufferAt(newBuff);

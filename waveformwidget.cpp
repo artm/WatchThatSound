@@ -8,7 +8,14 @@ WaveformWidget::WaveformWidget(QWidget *parent) :
 
 void WaveformWidget::updateWaveform(WtsAudio::BufferAt * bufferAt, bool recording)
 {
-    m_buffer = bufferAt->buffer();
+    if (m_buffer != bufferAt->buffer()) {
+        m_buffer = bufferAt->buffer();
+
+        float gain = m_buffer->gain();
+        gain = sqrtf(sqrtf(gain)) * 100;
+
+        emit adjustGainSlider((int)gain);
+    }
 
     QPainter painter(&m_img);
     painter.setPen(QColor(0,0,0,100));
@@ -96,4 +103,18 @@ void WaveformWidget::mouseMoveEvent(QMouseEvent * e)
 void WaveformWidget::mouseReleaseEvent(QMouseEvent *)
 {
     emit rangeChanged(m_buffer);
+}
+
+void WaveformWidget::setGain(int volX)
+{
+    if (m_buffer) {
+
+        // exponential approximation from
+        // http://www.dr-lex.be/info-stuff/volumecontrols.html
+
+        float gain = 0.01 * volX;
+        gain *= gain;
+        gain *= gain;
+        m_buffer->setGain( gain );
+    }
 }

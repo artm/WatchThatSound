@@ -93,9 +93,12 @@ void WtsAudio::samplerMix(qint64 ms, QVector<float>& mix)
 
         qint64 rangeEnd = buffer->buffer()->rangeEnd();
         qint64 count = std::min(mix.size() - startWrite, rangeEnd - startRead);
+
+        float gain = buffer->buffer()->gain() * buffer->buffer()->normGain();
+
         float * in = buffer->buffer()->floatAt( startRead );
         for(int i = 0; i<count; ++i) {
-            mix[ startWrite+i ] += in[i];
+            mix[ startWrite+i ] += gain * in[i];
         }
         buffer->setPlayOffset(startRead + count);
 

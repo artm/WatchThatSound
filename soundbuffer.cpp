@@ -6,6 +6,8 @@ SoundBuffer::SoundBuffer()
     , m_saved(true)
     , m_writePos(0)
     , m_readPos(0)
+    , m_normGain(1)
+    , m_gain(1)
 {
     setRange(0,0);
 }
@@ -16,6 +18,8 @@ SoundBuffer::SoundBuffer(qint64 sampleCount)
     , m_data(sampleCount, 0)
     , m_writePos(0)
     , m_readPos(0)
+    , m_normGain(1)
+    , m_gain(1)
 {
     setRange(0,sampleCount);
 }
@@ -26,6 +30,8 @@ SoundBuffer::SoundBuffer(const QString& name, const SoundBuffer& other, qint64 s
     , m_data(other.m_data)
     , m_writePos(0)
     , m_readPos(0)
+    , m_normGain(1)
+    , m_gain(1)
 {
     if (sampleCount && sampleCount != other.sampleCount())
         m_data.resize(sampleCount);
@@ -41,6 +47,8 @@ SoundBuffer& SoundBuffer::operator= (const SoundBuffer& other)
     m_readPos = 0;
     m_range[0] = other.m_range[0];
     m_range[1] = other.m_range[1];
+    m_normGain = other.m_normGain;
+    m_gain = other.m_gain;
     return *this;
 }
 
@@ -97,4 +105,17 @@ float* SoundBuffer::chunkToWrite(qint64& size) {
 qint64 SoundBuffer::duration() const
 {
     return WtsAudio::sampleCountToMs(m_data.size());
+}
+
+void SoundBuffer::initGains()
+{
+    float peak = 0.0;
+    foreach(float v, m_data) {
+        if (fabs(v) > peak) {
+            peak = v;
+        }
+    }
+    m_normGain = 1.0 / peak;
+    m_gain = peak;
+    // What?
 }

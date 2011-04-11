@@ -150,3 +150,17 @@ future improvements:
 [ ] keep relative lengths of the score symbols
 [ ] movie import (transcode and cache the result)
 
+* * *
+
+[x] gain slider in GUI
+[x] gain field in the sample object
+[x] connect the two and use gain field when mixing
+[x] non-destructive normalisation: second (invisible) gain field
+[ ] save gains
+[ ] load gains if present
+
+How to deal with sounds that are soft or loud?
+1. find the normGain
+2. make the gain = 1.0 / normGain
+
+this way we can make the sound the loudest, but it starts out the same as recorded... something like that.

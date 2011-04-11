@@ -19,9 +19,11 @@ public:
 
 signals:
     void rangeChanged(SoundBuffer * buffer = 0);
+    void adjustGainSlider(int volX);
 
 public slots:
     void updateWaveform(WtsAudio::BufferAt * bufferAt, bool recording = false);
+    void setGain(int volX);
 
 protected:
     QPixmap m_img;
