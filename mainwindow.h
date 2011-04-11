@@ -95,6 +95,7 @@ protected:
 
     WtsAudio m_audio;
     Ui::MainWindow *ui;
+    QFileInfo m_movInfo;
     QDir m_dataDir;
 
     //qint64 m_scratchInsertTime;

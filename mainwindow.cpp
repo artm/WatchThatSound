@@ -88,6 +88,7 @@ void MainWindow::loadMovie(const QString& path)
 
     // now setup dataPath and try to load files from there
     QDir movieDir = QFileInfo(path).dir();
+    m_movInfo = QFileInfo(path);
     m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName() + ".data") );
 
     if (! m_dataDir.exists() ) { movieDir.mkdir( m_dataDir.dirName() ); }
@@ -133,7 +134,8 @@ void MainWindow::saveData()
     xml.writeStartDocument();
     xml.writeDTD("<!DOCTYPE soundtrack>");
     xml.writeStartElement("soundtrack");
-    xml.writeAttribute("version", "1.0");
+    xml.writeAttribute("version", WTS_VERSION);
+    xml.writeAttribute("movie", m_movInfo.fileName());
 
     xml.writeStartElement("storyboard");
     foreach(Marker * m, m_markers) {
