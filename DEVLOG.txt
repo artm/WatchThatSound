@@ -158,7 +158,7 @@ this way we can make the sound the loudest, but it starts out the same as record
 
 * * *
 
-[ ] when changing story board should change the curve as well
+[x] when changing story board should change the curve as well
 [ ] re-factor: all time lines partially share drag and drop. generalize.
 [ ] re-factor: BufferAt should have methods for getting at SoundBuffer's range (including setter)
 [ ] uv meter
@@ -173,6 +173,6 @@ so, fix the curve editor...
 [x] when editing the curve, should update the corresponding marker
 [x] when adding a marker should update the curve properly
     now node blocks disappear
-[ ] make curve editor scrolling...
+[x] make curve editor scrolling...
 
 [ ] optionally: mute when recording

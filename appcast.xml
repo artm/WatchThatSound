@@ -46,12 +46,13 @@ length="4533277" type="application/octet-stream"/>
 <li>opslaan filmpje bestandsnaam in data (voor debugging)</li>
 <li>spannings curve corrspondeert aan de bookmarks</li>
 <li>partituur alleen te editen in pagina 3</li>
+<li>een impressie van een print pagina</li>
 </ul>
 ]]>
 </description>
 <pubDate>Tue, Apr 11 2011 16:30:00 CEST</pubDate>
 <enclosure url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3-alpha-11.0.zip" sparkle:version="3-alpha-11.0"
-length="?????" type="application/octet-stream"/>
+length="4535517" type="application/octet-stream"/>
 
 </item>
 

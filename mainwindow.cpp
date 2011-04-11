@@ -446,6 +446,12 @@ void MainWindow::constructStateMachine()
             << ui->timeLine
             << ui->recorder);
 
+    QState * printPage = addPage("P", QList<QWidget*>()
+            << ui->storyboard
+            << ui->tension
+            << ui->score);
+    printPage->assignProperty(ui->videoPlayer, "visible", false);
+
     m_machine.start();
 }
 
