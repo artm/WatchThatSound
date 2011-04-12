@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     curveeditor.cpp \
     scoreeditor.cpp \
     scoresymbol.cpp \
-    AutoUpdater.cpp
+    AutoUpdater.cpp \
+    vumeter.cpp
 HEADERS += mainwindow.h \
     timelinewidget.h \
     soundbuffer.h \
@@ -37,7 +38,8 @@ HEADERS += mainwindow.h \
     curveeditor.h \
     scoreeditor.h \
     scoresymbol.h \
-    AutoUpdater.h
+    AutoUpdater.h \
+    vumeter.h
 FORMS += mainwindow.ui
 RESOURCES += WTS3Resources.qrc
 CONFIG += precompile_header

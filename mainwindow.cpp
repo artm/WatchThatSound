@@ -68,9 +68,6 @@ void MainWindow::loadMovie(const QString& path)
     ui->videoPlayer->load(Phonon::MediaSource(path));
     ui->videoPlayer->setVolume(0);
 
-    // we need to be in pause so the seek bar is always "connected"
-    //ui->videoPlayer->pause();
-
     connect(mediaObject(), SIGNAL(tick(qint64)), this, SLOT(tick(qint64)));
     mediaObject()->setTickInterval(50);
 
@@ -334,6 +331,10 @@ void MainWindow::tick(qint64 ms)
 
     emit samplerClock(ms);
 
+    float volume = m_audio.getVolume();
+    ui->vuLeft->setValue( volume );
+    ui->vuRight->setValue( volume );
+
     // find out which samples to trigger
     if (ui->actionPlay->isChecked()) {
         while( m_sequenceCursor != m_sequence.end()
@@ -400,7 +401,7 @@ void MainWindow::constructStateMachine()
     connect(selector, SIGNAL(exited()), ui->movieSelectorScrollArea, SLOT(hide()));
 
     firstPlay->addTransition(this, SIGNAL(stopped()), m_workshop);
-    connect(firstPlay, SIGNAL(entered()), ui->videoPlayer, SLOT(show()));
+    connect(firstPlay, SIGNAL(entered()), ui->videoStripe, SLOT(show()));
     connect(firstPlay, SIGNAL(entered()), ui->actionPlay, SLOT(toggle()));
 
     connect(m_workshop, SIGNAL(entered()), ui->toolBar, SLOT(show()));
@@ -412,15 +413,13 @@ void MainWindow::constructStateMachine()
     m_machine.setInitialState(selector);
 
     // first hide all
-    ui->videoPlayer->hide();
+    ui->videoStripe->hide();
     ui->toolBar->hide();
     ui->storyboard->hide();
     ui->timeLine->hide();
     ui->recorder->hide();
     ui->tension->hide();
     ui->score->hide();
-    // ...
-    ui->soundBank->hide();
 
     m_tabActions = new QActionGroup(this);
 
@@ -429,7 +428,7 @@ void MainWindow::constructStateMachine()
             QList<QAction*>()
             << ui->actionAddMarker
             << ui->actionAddScene);
-    QState * tensionPage =
+    //QState * tensionPage =
             addPage("2",  QList<QWidget*>()
                     << ui->storyboard
                     << ui->tension);
@@ -450,7 +449,7 @@ void MainWindow::constructStateMachine()
             << ui->storyboard
             << ui->tension
             << ui->score);
-    printPage->assignProperty(ui->videoPlayer, "visible", false);
+    printPage->assignProperty(ui->videoStripe, "visible", false);
 
     m_machine.start();
 }

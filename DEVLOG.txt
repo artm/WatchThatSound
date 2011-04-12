@@ -84,7 +84,7 @@ this also means that the stream parameters should be copied.
 
 * * *
 
-[ ] Factor out SoundBuffer, use QVector<float> instead. Questions:
+[.] Factor out SoundBuffer, use QVector<float> instead. Questions:
     - name: the project maintains a mapping from sound vectors to names and back
     - sharing: BufferAt or Synced may refer to the same data
     - save/load: originals get saved once and are refered to by names
@@ -139,8 +139,6 @@ score (partituur)
 
 future improvements:
 
-[ ] movie import (transcode and cache the result)
-
 * * *
 
 [x] gain slider in GUI
@@ -159,10 +157,6 @@ this way we can make the sound the loudest, but it starts out the same as record
 * * *
 
 [x] when changing story board should change the curve as well
-[ ] re-factor: all time lines partially share drag and drop. generalize.
-[ ] re-factor: BufferAt should have methods for getting at SoundBuffer's range (including setter)
-[ ] uv meter
-
 * * *
 
 so, fix the curve editor...
@@ -175,4 +169,18 @@ so, fix the curve editor...
     now node blocks disappear
 [x] make curve editor scrolling...
 
+
+* * *
+
+[ ] re-factor: all time lines partially share drag and drop. generalize.
+[ ] re-factor: BufferAt should have methods for getting at SoundBuffer's range (including setter)
+[ ] uv meter
 [ ] optionally: mute when recording
+[ ] movie import (transcode and cache the result)
+
+* * *
+
+today working on volume meter.
+
+the best place seems next to the film (right and left of) - there is almost always some black there.
+

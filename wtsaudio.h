@@ -51,6 +51,8 @@ public:
     void samplerMix(qint64 ms, QVector<float>& mix);
     void samplerMix(qint64 ms, QVector<int16_t>& mix);
 
+    float getVolume() const { return m_volume; }
+
 signals:
 
 public slots:
@@ -65,6 +67,7 @@ protected:
     PaStream * m_stream;
     qint64 m_clock;
     QLinkedList< WtsAudio::BufferAt * > m_activeBuffers;
+    float m_volume;
 };
 
 #endif // WTSAUDIO_H

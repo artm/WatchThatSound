@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
+    <width>680</width>
     <height>654</height>
    </rect>
   </property>
@@ -38,13 +38,63 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="Phonon::VideoPlayer" name="videoPlayer">
+     <widget class="QWidget" name="videoStripe" native="true">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>10</verstretch>
        </sizepolicy>
       </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="VuMeter" name="vuLeft" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>32</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Phonon::VideoPlayer" name="videoPlayer">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="VuMeter" name="vuRight" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>32</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item>
@@ -55,7 +105,7 @@
       <property name="frameShadow">
        <enum>QFrame::Plain</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -118,43 +168,6 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QGraphicsView" name="soundBank">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
-         </property>
-         <property name="backgroundBrush">
-          <brush brushstyle="SolidPattern">
-           <color alpha="255">
-            <red>198</red>
-            <green>255</green>
-            <blue>213</blue>
-           </color>
-          </brush>
-         </property>
-         <property name="foregroundBrush">
-          <brush brushstyle="SolidPattern">
-           <color alpha="255">
-            <red>79</red>
-            <green>187</green>
-            <blue>79</blue>
-           </color>
-          </brush>
-         </property>
-         <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::TextAntialiasing</set>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>
@@ -168,7 +181,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>638</width>
+         <width>678</width>
          <height>76</height>
         </rect>
        </property>
@@ -286,7 +299,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>640</width>
+     <width>680</width>
      <height>22</height>
     </rect>
    </property>
@@ -490,6 +503,12 @@
    <class>ScoreEditor</class>
    <extends>QGraphicsView</extends>
    <header>scoreeditor.h</header>
+  </customwidget>
+  <customwidget>
+   <class>VuMeter</class>
+   <extends>QWidget</extends>
+   <header>vumeter.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

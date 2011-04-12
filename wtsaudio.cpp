@@ -16,8 +16,10 @@ struct PortAudioLogger {
 template<typename T> T audioCast(float v) { return (T)v; }
 template<> int16_t audioCast<int16_t>(float v) { return  (int16_t) (v * 32768.0); }
 
-WtsAudio::WtsAudio(QObject *parent) :
-    QObject(parent), m_stream(0)
+WtsAudio::WtsAudio(QObject *parent)
+    : QObject(parent)
+    , m_stream(0)
+    , m_volume(0)
 {
     Pa_Initialize();
 
@@ -98,6 +100,7 @@ void WtsAudio::samplerMix(qint64 ms, QVector<float>& mix)
 
         float * in = buffer->buffer()->floatAt( startRead );
         for(int i = 0; i<count; ++i) {
+
             mix[ startWrite+i ] += gain * in[i];
         }
         buffer->setPlayOffset(startRead + count);
@@ -108,6 +111,14 @@ void WtsAudio::samplerMix(qint64 ms, QVector<float>& mix)
         else
             ++nextBufferIt;
     }
+
+    m_volume = 0.0;
+    foreach(float v, mix) {
+        v = fabs(v);
+        if (v > m_volume)
+            m_volume = v;
+    }
+
 }
 
 void WtsAudio::samplerMix(qint64 ms, QVector<int16_t>& mix)
