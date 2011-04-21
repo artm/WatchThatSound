@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include <QMouseEvent>
 
+#include "synced.h"
+
 TimeLineWidget::TimeLineWidget(QWidget *parent)
     : QGraphicsView(parent)
     , m_seekOnDrag(false)
@@ -127,5 +129,24 @@ void TimeLineWidget::mouseMoveEvent ( QMouseEvent * event )
         if (event->buttons() & Qt::LeftButton) {
             seekTo(event->x());
         }
+    }
+}
+
+void TimeLineWidget::assignSynced(QGraphicsItem *item, WTS::Synced *synced)
+{
+    item->setData(SYNCED, QVariant::fromValue(synced));
+}
+
+QGraphicsItem * TimeLineWidget::findSynced(QGraphicsItem *item, WTS::Synced **synced)
+{
+    while( item && !item->data(SYNCED) .isValid() ) {
+        item = item->parentItem();
+    }
+    if (item) {
+        *synced = item->data(SYNCED).value<WTS::Synced*>();
+        return item;
+    } else {
+        *synced = 0;
+        return 0;
     }
 }

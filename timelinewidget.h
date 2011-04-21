@@ -6,16 +6,27 @@
 #include <QGraphicsLineItem>
 #include "mainwindow.h"
 
+namespace WTS { class Synced; }
+
 class TimeLineWidget : public QGraphicsView
 {
     Q_OBJECT
-public:
     Q_PROPERTY(bool seekOnDrag READ seekOnDrag WRITE setSeekOnDrag)
     Q_PROPERTY(bool editMode READ editMode WRITE setEditMode)
+public:
 
     explicit TimeLineWidget(QWidget *parent = 0);
     bool seekOnDrag() const { return m_seekOnDrag; }
     bool editMode() const { return m_editMode; }
+
+    enum {
+        SYNCED = 1000,
+    };
+
+    void assignSynced(QGraphicsItem * item, WTS::Synced * synced);
+    // find synced associated with given item or its ancestor
+    // returns the item which has the synced associated
+    QGraphicsItem * findSynced(QGraphicsItem * item, WTS::Synced ** synced);
 
 signals:
     void dataChanged();
