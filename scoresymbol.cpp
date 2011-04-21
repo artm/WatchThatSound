@@ -1,6 +1,6 @@
 #include "scoresymbol.h"
-
 #include <QtGui>
+#include "timelinewidget.h"
 
 const float ScoreSymbol::s_maxThickness = 30;
 
@@ -9,6 +9,7 @@ ScoreSymbol::ScoreSymbol()
 {
     m_pen = QPen(QColor(0,0,127));
     m_brush = QBrush(QColor(64,64,255,200));
+    TimeLineWidget::setItemDragFlags( this, TimeLineWidget::DRAG_XY );
 }
 
 void ScoreSymbol::start(const QPointF &pos)

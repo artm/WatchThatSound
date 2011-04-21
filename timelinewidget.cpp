@@ -9,6 +9,7 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
     , m_seekOnDrag(false)
     , m_currentTime(0)
     , m_editMode(true)
+    , m_draggedItem(0)
 {
     // find the mainWindow
     QObject * iter = parent;
@@ -115,6 +116,16 @@ void TimeLineWidget::seekTo(qint64 x) {
 void TimeLineWidget::mousePressEvent ( QMouseEvent * event )
 {
     QGraphicsView::mousePressEvent(event);
+
+    // check if a draggable item was hit
+    m_lastDragPos = mapToScene(event->pos());
+    m_draggedItem  = itemAt( event->pos() );
+    while(m_draggedItem) {
+        m_draggedItemFlags = itemDragFlags(m_draggedItem);
+        if ((m_draggedItemFlags & DRAG_XY))
+            break;
+        m_draggedItem = m_draggedItem->parentItem();
+    }
     if (seekOnDrag()) {
         if (event->buttons() & Qt::LeftButton) {
             seekTo(event->x());
@@ -125,11 +136,32 @@ void TimeLineWidget::mousePressEvent ( QMouseEvent * event )
 void TimeLineWidget::mouseMoveEvent ( QMouseEvent * event )
 {
     QGraphicsView::mouseMoveEvent(event);
+
+    // do we have a dragged item?
+    if (m_draggedItem) {
+        QPointF newPos = mapToScene(event->pos());
+        QPointF delta = newPos - m_lastDragPos;
+        m_lastDragPos = newPos;
+
+        if (m_draggedItemFlags & DRAG_X)
+            m_draggedItem->setX( m_draggedItem->x() + delta.x() );
+        if (m_draggedItemFlags & DRAG_Y)
+            m_draggedItem->setY( m_draggedItem->y() + delta.y() );
+    }
+
     if (seekOnDrag()) {
         if (event->buttons() & Qt::LeftButton) {
             seekTo(event->x());
         }
     }
+}
+
+void TimeLineWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    QGraphicsView::mouseReleaseEvent(event);
+
+    if (m_draggedItem)
+        m_draggedItem = 0;
 }
 
 void TimeLineWidget::assignSynced(QGraphicsItem *item, WTS::Synced *synced)
@@ -150,3 +182,14 @@ QGraphicsItem * TimeLineWidget::findSynced(QGraphicsItem *item, WTS::Synced **sy
         return 0;
     }
 }
+
+void TimeLineWidget::setItemDragFlags(QGraphicsItem *item, int options)
+{
+    item->setData(DRAG_OPTIONS, options);
+}
+
+int TimeLineWidget::itemDragFlags(QGraphicsItem * item)
+{
+    return item->data(DRAG_OPTIONS).toInt();
+}
+

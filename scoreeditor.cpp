@@ -76,6 +76,7 @@ void ScoreEditor::mouseReleaseEvent(QMouseEvent * /*event*/)
 
 void ScoreEditor::mousePressEvent(QMouseEvent * event)
 {
+    TimeLineWidget::mousePressEvent(event);
     if (editMode()) {
         /* first see if we hit something */
         if (event->buttons() & Qt::LeftButton) {
@@ -94,15 +95,14 @@ void ScoreEditor::mousePressEvent(QMouseEvent * event)
                 m_newSymbol->start(mapToScene(event->pos()));
         }
     }
-    TimeLineWidget::mousePressEvent(event);
 }
 
 void ScoreEditor::mouseMoveEvent(QMouseEvent * event)
 {
+    TimeLineWidget::mouseMoveEvent(event);
     if (editMode()) {
         m_newSymbol->pull(mapToScene(event->pos()));
     }
-    TimeLineWidget::mouseMoveEvent(event);
 }
 
 void ScoreEditor::resizeEvent(QResizeEvent *event)
