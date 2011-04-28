@@ -9,7 +9,7 @@ ScoreSymbol::ScoreSymbol()
 {
     m_pen = QPen(QColor(0,0,127));
     m_brush = QBrush(QColor(64,64,255,200));
-    TimeLineWidget::setItemDragFlags( this, TimeLineWidget::DRAG_XY );
+    setFlag(QGraphicsItem::ItemIsMovable);
 }
 
 void ScoreSymbol::start(const QPointF &pos)
@@ -198,3 +198,20 @@ void ScoreSymbol::loadData(QXmlStreamReader &xml)
     m_brush = QBrush( QColor(xml.attributes().value("brush").toString()) );
     updateGraphics();
 }
+
+QRectF ScoreSymbol::boundingRect() const
+{
+    return childrenBoundingRect();
+}
+
+void ScoreSymbol::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    return;
+}
+
+void ScoreSymbol::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (! boundingRect().contains(event->pos()) )
+        event->ignore();
+}
+

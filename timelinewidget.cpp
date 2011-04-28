@@ -122,7 +122,7 @@ void TimeLineWidget::mousePressEvent ( QMouseEvent * event )
     m_draggedItem  = itemAt( event->pos() );
     while(m_draggedItem) {
         m_draggedItemFlags = itemDragFlags(m_draggedItem);
-        if ((m_draggedItemFlags & DRAG_XY))
+        if (m_draggedItemFlags & DRAG_XY)
             break;
         m_draggedItem = m_draggedItem->parentItem();
     }

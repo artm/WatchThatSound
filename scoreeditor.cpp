@@ -63,15 +63,15 @@ void ScoreEditor::drawBackground(QPainter *painter, const QRectF &rect)
     }
 }
 
-void ScoreEditor::mouseReleaseEvent(QMouseEvent * /*event*/)
+void ScoreEditor::mouseReleaseEvent(QMouseEvent * event)
 {
+    TimeLineWidget::mouseReleaseEvent(event);
     if (editMode()) {
         m_newSymbol->finish();
         m_symbols.append( m_newSymbol );
         initNewSymbol();
         emit dataChanged();
     }
-    //TimeLineWidget::mouseReleaseEvent(event);
 }
 
 void ScoreEditor::mousePressEvent(QMouseEvent * event)

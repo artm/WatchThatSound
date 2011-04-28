@@ -1,10 +1,10 @@
 #ifndef SCORESYMBOL_H
 #define SCORESYMBOL_H
 
-#include <QGraphicsItemGroup>
+#include <QGraphicsItem>
 #include <QTimer>
 
-class ScoreSymbol : public QGraphicsItemGroup
+class ScoreSymbol : public QGraphicsItem
 {
 public:
     enum Shape {
@@ -32,6 +32,12 @@ public:
     void loadData(QXmlStreamReader& xml);
 
     void updateGraphics();
+
+    virtual QRectF boundingRect() const;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
 protected:
 
     Shape m_shape;
