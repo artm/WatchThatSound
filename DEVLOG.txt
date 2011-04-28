@@ -193,3 +193,8 @@ Today - fix the timelines' drag and drop.
     [ ] show current selection (so it can be deleted)
     [ ] mark current editable surface (so its obvious what deletion will do)
     [ ] re:implement other drag / click handlings via new system
+
+* * *
+
+[ ] grand refactor: all timelines should be based on a custm scene, not custom view
+[ ] for now temporary deletion support: mark itself as deleted.

@@ -5,11 +5,11 @@
 const float ScoreSymbol::s_maxThickness = 30;
 
 ScoreSymbol::ScoreSymbol()
-    : m_running(false)
+    : m_running(false), m_TMP_deleted(false)
 {
     m_pen = QPen(QColor(0,0,127));
     m_brush = QBrush(QColor(64,64,255,200));
-    setFlag(QGraphicsItem::ItemIsMovable);
+    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable );
 }
 
 void ScoreSymbol::start(const QPointF &pos)
@@ -174,6 +174,8 @@ void ScoreSymbol::setColors(const QPen &pen, const QBrush &brush)
 
 void ScoreSymbol::saveData(QXmlStreamWriter &xml)
 {
+    if (m_TMP_deleted)
+        return;
     xml.writeStartElement("symbol");
     xml.writeAttribute("shape", QString("%1").arg(m_shape));
     xml.writeAttribute("thickness_0", QString("%1").arg(m_thickness[0]));
@@ -213,5 +215,19 @@ void ScoreSymbol::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (! boundingRect().contains(event->pos()) )
         event->ignore();
+
+    setFocus(Qt::MouseFocusReason);
+}
+
+void ScoreSymbol::keyReleaseEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Backspace:
+    case Qt::Key_Delete:
+        // selfdestruct...
+        scene()->removeItem(this);
+        m_TMP_deleted = true;
+        break;
+    }
 }
 

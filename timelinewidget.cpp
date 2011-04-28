@@ -106,6 +106,10 @@ void TimeLineWidget::drawForeground ( QPainter * painter, const QRectF & rect )
         painter->drawLine(QPointF(x,0),QPointF(x,1));
     }
 
+    if (scene()->focusItem()) {
+        painter->drawRect(scene()->focusItem()->sceneBoundingRect());
+    }
+
     painter->setRenderHints(oldHints, true);
 }
 

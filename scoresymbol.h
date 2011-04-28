@@ -37,6 +37,7 @@ public:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
 
 protected:
 
@@ -48,6 +49,8 @@ protected:
 
     QPen m_pen;
     QBrush m_brush;
+
+    bool m_TMP_deleted;
 
     static const float s_maxThickness;
 };
