@@ -1,0 +1,21 @@
+<h2>Niew in deze versie</h2>
+
+<ul>
+    <li>Partituur editen: slepen en verwijderen (met backspace) van symbolen</li>
+</ul>
+
+<p>Tijdens operaties met de partituur wordt nog steeds door het filmpje
+genavigeert. Dat maakt het vervrissen van de partituur GUI soms fout gaan (er
+blijven stukjes symbool achter). Ik werk aan een oplossing - betere
+implementatie van het scrollen.
+
+<p>(Technische detail - het plaatsen van cursor is nu indirect - eerst wordt de
+"playback hoofd" van de video speler verplaatst, dan stuurt video speler een
+signal dat cursor verplaatst moet worden. De twee teken procedures - van
+slepen en van feedback van het speler werken elkaar tegen. Dat hoeft echter
+niet: als we aan het slepen zijn hoeven we helemaal niet reageren op de speler
+zijn feedback, want we weten waar de cursor is. Het is alleen tijdens het
+afspelen dat dat signal relevant is. De reden dat het op deze manier is
+geimplementeerd is vertalen van Max - daar was het al zo geimplementeerd)
+
+

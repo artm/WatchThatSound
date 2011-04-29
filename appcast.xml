@@ -68,5 +68,19 @@ length="4537597"
 type="application/octet-stream"/>
 </item>
 
+<item>
+<title>3-alpha-12</title>
+<sparkle:releaseNotesLink>
+https://ftp.v2.nl/~artm/WTS3/ReleaseNotes-3-alpha-12.html
+</sparkle:releaseNotesLink>
+<pubDate>Tue, Apr 28 2011 14:00:00 CEST</pubDate>
+<enclosure
+url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3-alpha-12.zip"
+sparkle:version="3-alpha-12"
+length="4541362"
+type="application/octet-stream"/>
+</item>
+
+
 </channel>
 </rss>
