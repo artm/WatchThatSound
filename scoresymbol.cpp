@@ -9,7 +9,7 @@ ScoreSymbol::ScoreSymbol()
 {
     m_pen = QPen(QColor(0,0,127));
     m_brush = QBrush(QColor(64,64,255,200));
-    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable );
+    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemIsSelectable );
 }
 
 void ScoreSymbol::start(const QPointF &pos)
@@ -217,6 +217,8 @@ void ScoreSymbol::mousePressEvent(QGraphicsSceneMouseEvent *event)
         event->ignore();
 
     setFocus(Qt::MouseFocusReason);
+    scene()->clearSelection();
+    setSelected( true );
 }
 
 void ScoreSymbol::keyReleaseEvent(QKeyEvent *event)

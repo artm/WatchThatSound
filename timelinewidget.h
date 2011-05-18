@@ -44,12 +44,16 @@ public slots:
     virtual void setCurrentTime(qint64 time);
     void setSeekOnDrag(bool on) { m_seekOnDrag = on; }
     void setEditMode(bool on) { m_editMode = on; }
+    void updateSelection();
 
 protected:
     MainWindow * m_mainWindow;
     bool m_seekOnDrag;
     qint64 m_currentTime;
     bool m_editMode;
+
+    QGraphicsLineItem * m_cursorLine;
+    QGraphicsRectItem * m_selectionRect;
 
     QGraphicsItem * m_draggedItem;
     QPointF m_lastDragPos;

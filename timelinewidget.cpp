@@ -23,6 +23,18 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
     connect(m_mainWindow,SIGNAL(samplerClock(qint64)),SLOT(setCurrentTime(qint64)));
 
     setScene(new QGraphicsScene(0.0,0.0,1.0,1.0,this));
+    m_cursorLine = new QGraphicsLineItem(0,0,0,1.0,0,scene());
+    m_cursorLine->setPen( QPen(Qt::blue) );
+    m_cursorLine->setZValue(10);
+    m_selectionRect = new QGraphicsRectItem(0,scene());
+    m_selectionRect->setVisible(false);
+    m_selectionRect->setZValue(5);
+    m_selectionRect->setPen( Qt::NoPen );
+    QColor selbg(Qt::blue);
+    selbg = selbg.lighter();
+    selbg.setAlpha(100);
+    m_selectionRect->setBrush( QBrush( selbg ) );
+    connect(scene(), SIGNAL(selectionChanged()), SLOT(updateSelection()));
 }
 
 void TimeLineWidget::resizeEvent ( QResizeEvent * /*event*/ )
@@ -36,15 +48,8 @@ void TimeLineWidget::setCurrentTime(qint64 time)
     if (!mo) return;
 
     if (time != m_currentTime) {
-        // erase old cursor
-        qint64 x = m_currentTime * width() / mo->totalTime();
-        update( (int) x - 3, 0, (int) x + 3, height() );
-
         m_currentTime = time;
-
-        // draw new cursor
-        x = m_currentTime * width() / mo->totalTime();
-        update( (int)x - 1, 0, (int) x + 1, height() );
+        m_cursorLine->setX( (double)m_currentTime / mo->totalTime() );
     }
 }
 
@@ -94,23 +99,20 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     painter->setRenderHints(oldHints, true);
 }
 
-void TimeLineWidget::drawForeground ( QPainter * painter, const QRectF & rect )
+void TimeLineWidget::drawForeground ( QPainter * painter, const QRectF & /*rect*/ )
 {
+    /*
     QPainter::RenderHints oldHints = painter->renderHints();
     painter->setRenderHint(QPainter::Antialiasing, false);
-
-    float x = (float)m_currentTime / (float)m_mainWindow->mediaObject()->totalTime();
-
-    if (x > rect.x() && x < rect.right()) {
-        painter->setPen(QColor(0,0,255,100));
-        painter->drawLine(QPointF(x,0),QPointF(x,1));
-    }
-
     if (scene()->focusItem()) {
-        painter->drawRect(scene()->focusItem()->sceneBoundingRect());
+        float dx = 3, dy = 3;
+        dx /= painter->device()->width();
+        dy /= painter->device()->height();
+        painter->drawRect(scene()->focusItem()->sceneBoundingRect().adjusted(-dx,-dy,dx,dy));
     }
 
     painter->setRenderHints(oldHints, true);
+    */
 }
 
 void TimeLineWidget::seekTo(qint64 x) {
@@ -195,5 +197,21 @@ void TimeLineWidget::setItemDragFlags(QGraphicsItem *item, int options)
 int TimeLineWidget::itemDragFlags(QGraphicsItem * item)
 {
     return item->data(DRAG_OPTIONS).toInt();
+}
+
+void TimeLineWidget::updateSelection()
+{
+    QList<QGraphicsItem *> sel = scene()->selectedItems();
+    if (sel.length() > 0) {
+        m_selectionRect->setVisible(true);
+        if (sel[0] == m_selectionRect->parentItem())
+            return;
+        float dx = 3, dy = 3;
+        QRectF r = sel[0]->boundingRect().adjusted(-dx,-dy,dx,dy);
+        m_selectionRect->setRect( r );
+        m_selectionRect->setParentItem( sel[0] );
+    } else {
+        m_selectionRect->setVisible(false);
+    }
 }
 
