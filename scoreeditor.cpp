@@ -107,6 +107,9 @@ void ScoreEditor::mouseMoveEvent(QMouseEvent * event)
 
 void ScoreEditor::resizeEvent(QResizeEvent *event)
 {
+    scene()->clearSelection();
+    scene()->clearFocus();
+
     TimeLineWidget::resizeEvent(event);
     m_newSymbol->configure(scene(), width(), height());
     foreach(ScoreSymbol * sym, m_symbols) {
