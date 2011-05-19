@@ -40,7 +40,7 @@ protected:
     MainWindow * m_mainWindow;
     bool m_seekOnDrag;
     qint64 m_currentTime;
-    bool m_editMode;
+    bool m_editMode, m_deafToSeek;
 
     QGraphicsLineItem * m_cursorLine;
     QGraphicsRectItem * m_selectionRect;

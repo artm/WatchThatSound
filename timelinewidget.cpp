@@ -9,6 +9,7 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
     , m_seekOnDrag(false)
     , m_currentTime(0)
     , m_editMode(true)
+    , m_deafToSeek(false)
 {
     // find the mainWindow
     QObject * iter = parent;
@@ -43,6 +44,8 @@ void TimeLineWidget::resizeEvent ( QResizeEvent * /*event*/ )
 
 void TimeLineWidget::setCurrentTime(qint64 time)
 {
+    if (m_deafToSeek) return;
+
     Phonon::MediaObject * mo = m_mainWindow->mediaObject();
     if (!mo) return;
 
@@ -99,7 +102,10 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
 }
 
 void TimeLineWidget::seekTo(qint64 x) {
+    m_deafToSeek = true;
     m_mainWindow->seek(m_mainWindow->mediaObject()->totalTime() * x / (qint64)width());
+    m_cursorLine->setX( (double)x / width() );
+    m_deafToSeek = false;
 }
 
 void TimeLineWidget::mousePressEvent ( QMouseEvent * event )
