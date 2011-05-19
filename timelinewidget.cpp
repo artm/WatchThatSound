@@ -110,7 +110,8 @@ void TimeLineWidget::seekTo(qint64 x) {
 
 void TimeLineWidget::mousePressEvent ( QMouseEvent * event )
 {
-    QGraphicsView::mousePressEvent(event);
+    if (m_editMode)
+        QGraphicsView::mousePressEvent(event);
 
     // check if a draggable item was hit
     if (seekOnDrag()) {

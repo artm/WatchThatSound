@@ -199,5 +199,5 @@ Today - fix the timelines' drag and drop.
 [x] CRASH: clicking on a symbol when score not in edit mode
     Was due to score re-creating items on resize.
 
-[ ] disable score editing when view isn't in edit mode
+[x] disable score editing when view isn't in edit mode
 
