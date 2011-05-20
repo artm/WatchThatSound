@@ -108,8 +108,6 @@ protected:
     QFileInfo m_movInfo;
     QDir m_dataDir;
 
-    //qint64 m_scratchInsertTime;
-    //SoundBuffer m_scratch;
     WtsAudio::BufferAt m_scratch;
 
     QList<WtsAudio::BufferAt *> m_sequence;
@@ -122,6 +120,8 @@ protected:
     QStateMachine m_machine;
     QState * m_workshop;
     QActionGroup * m_tabActions;
+
+    double m_finalTension;
 };
 
 #endif // MAINWINDOW_H

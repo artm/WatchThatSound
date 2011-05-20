@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_videoFile(0)
     , m_loading(false)
     , m_exporter(new Exporter(this))
+    , m_finalTension(0.5)
 {
     ui->setupUi(this);
 
@@ -138,6 +139,7 @@ void MainWindow::saveData()
     xml.writeAttribute("movie", m_movInfo.fileName());
 
     xml.writeStartElement("storyboard");
+    xml.writeAttribute("final_tension", QString("%1").arg(m_finalTension));
     foreach(Marker * m, m_markers) {
         xml.writeStartElement("marker");
         QString ms;
@@ -188,6 +190,9 @@ void MainWindow::loadData()
     if (xml.name() == "soundtrack") {
         while (xml.readNextStartElement()) {
             if (xml.name() == "storyboard") {
+                m_finalTension = xml.attributes().hasAttribute("final_tension")
+                        ? xml.attributes().value("final_tension").toString().toFloat()
+                        : 0.5;
                 while(xml.readNextStartElement()) {
 
                     float tension = xml.attributes().hasAttribute("tension")
@@ -554,7 +559,7 @@ void MainWindow::refreshTension()
             curve.lineTo( QPointF(x, m->tension()) );
     }
 
-    curve.lineTo( QPointF(ui->tension->sceneRect().width(), 0.5));
+    curve.lineTo( QPointF(ui->tension->sceneRect().width(), m_finalTension));
     ui->tension->setCurve(curve);
 }
 
@@ -570,5 +575,9 @@ void MainWindow::onMovieFinished()
 
 void MainWindow::updateMarkerTension(int markerIndex, float tension)
 {
-    m_markers[ m_markers.keys()[markerIndex] ]->setTension(tension);
+    if (markerIndex < m_markers.size() )
+        m_markers[ m_markers.keys()[markerIndex] ]->setTension(tension);
+    else if (markerIndex  == m_markers.size()) {
+        m_finalTension = tension;
+    }
 }
