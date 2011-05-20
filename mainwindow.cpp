@@ -423,11 +423,14 @@ void MainWindow::constructStateMachine()
 
     m_tabActions = new QActionGroup(this);
 
-    addPage("1", QList<QWidget*>()
+    QState * storyboardPage = addPage("1", QList<QWidget*>()
             << ui->storyboard,
             QList<QAction*>()
             << ui->actionAddMarker
             << ui->actionAddScene);
+    ui->storyboard->setEditMode(false);
+    storyboardPage->assignProperty( ui->storyboard, "editMode", true);
+
     //QState * tensionPage =
             addPage("2",  QList<QWidget*>()
                     << ui->storyboard

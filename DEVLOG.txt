@@ -208,3 +208,14 @@ Today - fix the timelines' drag and drop.
     [x] restack on release
     [x] stick the cursor to some place...
     [ ] handle deletes
+
+[ ] do we have border controls?
+    - can't control their color, make them disappear
+
+[x] set edit mode's border different
+    - draw in background
+
+[ ] catch keys in the views and if in edit mode - try to act (if there is shown focused bit)
+
+[ ] CRASH: on resize of score editor
+    - can't reproduce

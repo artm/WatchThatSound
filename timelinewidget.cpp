@@ -39,6 +39,9 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
     selbg.setAlpha(100);
     m_selectionRect->setBrush( QBrush( selbg ) );
     connect(scene(), SIGNAL(selectionChanged()), SLOT(updateSelection()));
+
+    setLineWidth(0);
+    setMidLineWidth(0);
 }
 
 void TimeLineWidget::resizeEvent ( QResizeEvent * /*event*/ )
@@ -67,6 +70,10 @@ void TimeLineWidget::paintRange(QPainter * painter, qreal x, qreal w, const QCol
     painter->fillRect( r, QBrush(c) );
 }
 
+void TimeLineWidget::drawForeground(QPainter *painter, const QRectF &rect)
+{
+}
+
 void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*/ )
 {
     qreal total = m_mainWindow->mediaObject()->totalTime();
@@ -91,8 +98,6 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     // the last one: form relX1 to 1.0
     paintRange(painter, relX1, 1.0f - relX1, colors[currentColor]);
 
-    // draw tension curve antialised...
-    //painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setPen(QColor(0,0,0,200));
     foreach(MainWindow::Marker * marker, m_mainWindow->getMarkers(MainWindow::EVENT)) {
         qreal relX2 = (qreal)marker->at() / total;
@@ -101,6 +106,11 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
 
     painter->setPen(QColor(255,100,100,127));
     painter->drawPath( m_mainWindow->tensionCurve() );
+
+    if (m_editMode) {
+        painter->setPen(QColor(255,100,100));
+        painter->drawRect( QRectF(0,0,1,1) );
+    }
 
     painter->setRenderHints(oldHints, true);
 }
@@ -186,5 +196,11 @@ void TimeLineWidget::updateSelection()
         m_selectionRect->setVisible(false);
         m_selectionRect->setParentItem(0);
     }
+}
+
+void TimeLineWidget::setEditMode(bool on)
+{
+    m_editMode = on;
+    update();
 }
 

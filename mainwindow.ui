@@ -202,6 +202,9 @@
       <property name="frameShadow">
        <enum>QFrame::Plain</enum>
       </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
      </widget>
     </item>
     <item>

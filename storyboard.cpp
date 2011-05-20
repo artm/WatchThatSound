@@ -127,22 +127,15 @@ void StoryBoard::mousePressEvent ( QMouseEvent * event )
         m_dragLastP = mapToScene(event->pos());
         m_dragItem  = itemAt( event->pos() );
 
-        if (m_dragItem == m_itemPopup) {
-            QGraphicsView::mousePressEvent( event );
-            return;
-        }
-
         while (m_dragItem) {
             if (m_itemToMarker.contains(m_dragItem)) {
                 MainWindow::Marker * m = m_itemToMarker[m_dragItem];
                 m_mainWindow->seek( m->at() );
-                showItemPopup( m_dragItem );
                 return;
             }
             m_dragItem = m_dragItem->parentItem();
         }
     }
-    // not drag in thumb - hide popup
     TimeLineWidget::mousePressEvent( event );
 }
 

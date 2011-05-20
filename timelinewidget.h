@@ -34,14 +34,14 @@ signals:
 public slots:
     virtual void setCurrentTime(qint64 time);
     void setSeekOnDrag(bool on) { m_seekOnDrag = on; }
-    void setEditMode(bool on) { m_editMode = on; }
+    void setEditMode(bool on);
     virtual void updateSelection();
+
 
 protected:
     MainWindow * m_mainWindow;
     bool m_seekOnDrag;
     qint64 m_currentTime;
-    bool m_editMode, m_deafToSeek;
 
     QGraphicsLineItem * m_cursorLine;
     QGraphicsRectItem * m_selectionRect;
@@ -49,12 +49,17 @@ protected:
     void paintRange(QPainter * painter, qreal x, qreal w, const QColor& c);
 
     virtual void drawBackground ( QPainter * painter, const QRectF & rect );
+    virtual void drawForeground ( QPainter * painter, const QRectF & rect );
+
     virtual void resizeEvent ( QResizeEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mouseReleaseEvent(QMouseEvent *event);
 
     void doSeekOnDrag( QMouseEvent * event );
+
+private:
+    bool m_editMode, m_deafToSeek;
 };
 
 #endif // TIMELINEWIDGET_H
