@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QMouseEvent>
 
+#include "SharpLine.h"
 #include "BufferItem.h"
 #include "synced.h"
 
@@ -24,9 +25,11 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
     connect(m_mainWindow,SIGNAL(samplerClock(qint64)),SLOT(setCurrentTime(qint64)));
 
     setScene(new QGraphicsScene(0.0,0.0,1.0,1.0,this));
-    m_cursorLine = new QGraphicsLineItem(0,0,0,1.0,0,scene());
+    m_cursorLine = new SharpLine(scene());
     m_cursorLine->setPen( QPen(Qt::blue) );
     m_cursorLine->setZValue(10);
+
+
     m_selectionRect = new QGraphicsRectItem(0,scene());
     m_selectionRect->setVisible(false);
     m_selectionRect->setZValue(5);
