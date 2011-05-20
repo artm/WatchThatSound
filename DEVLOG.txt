@@ -209,8 +209,9 @@ Today - fix the timelines' drag and drop.
     [x] stick the cursor to some place...
     [ ] handle deletes
 
-[ ] do we have border controls?
+[x] do we have border controls?
     - can't control their color, make them disappear
+    - still have white extras - should draw background more enthusiastically
 
 [x] set edit mode's border different
     - draw in background

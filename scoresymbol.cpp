@@ -213,9 +213,10 @@ void ScoreSymbol::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 
 void ScoreSymbol::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (! boundingRect().contains(event->pos()) )
+    if (! boundingRect().contains(event->pos()) ) {
         event->ignore();
-    else  {
+        clearFocus();
+    } else  {
         setFocus(Qt::MouseFocusReason);
         scene()->clearSelection();
         setSelected( true );
@@ -233,4 +234,3 @@ void ScoreSymbol::keyReleaseEvent(QKeyEvent *event)
         break;
     }
 }
-
