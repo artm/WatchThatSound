@@ -4,6 +4,8 @@
 #include "timelinewidget.h"
 #include "soundbuffer.h"
 
+class BufferItem;
+
 class SequencerTimeLine : public TimeLineWidget
 {
     Q_OBJECT
@@ -17,6 +19,7 @@ public slots:
     void insertBufferAt(WtsAudio::BufferAt * buffer);
     void showScratch(WtsAudio::BufferAt * scratchAt, bool on);
     void updateBuffer(SoundBuffer * buffer);
+    virtual void updateSelection();
 
 protected:
     QPen m_pen;
@@ -26,15 +29,16 @@ protected:
     QGraphicsItem * m_dragItem;
     QPointF m_dragLastP;
 
-    QHash< QGraphicsItem *, WtsAudio::BufferAt * > m_itemToBuffer;
-    QList< QGraphicsItem * > m_bufferItems;
+    QList< BufferItem * > m_bufferItems;
 
     void restackItems();
     void showRange(QGraphicsItem * root, SoundBuffer * buffer);
 
+    /*
     virtual void mousePressEvent ( QMouseEvent * event );
-    virtual void mouseReleaseEvent ( QMouseEvent * event );
     virtual void mouseMoveEvent ( QMouseEvent * event );
+    */
+    virtual void mouseReleaseEvent ( QMouseEvent * event );
 };
 
 #endif // SEQUENCERTIMELINE_H

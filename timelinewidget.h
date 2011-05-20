@@ -21,6 +21,7 @@ public:
 
     enum {
         SYNCED = 1000,
+        CURSOR_OFFSET = 1001,
     };
     void assignSynced(QGraphicsItem * item, WTS::Synced * synced);
     // find synced associated with given item or its ancestor
@@ -34,7 +35,7 @@ public slots:
     virtual void setCurrentTime(qint64 time);
     void setSeekOnDrag(bool on) { m_seekOnDrag = on; }
     void setEditMode(bool on) { m_editMode = on; }
-    void updateSelection();
+    virtual void updateSelection();
 
 protected:
     MainWindow * m_mainWindow;
@@ -45,7 +46,6 @@ protected:
     QGraphicsLineItem * m_cursorLine;
     QGraphicsRectItem * m_selectionRect;
 
-    void seekTo(qint64 x);
     void paintRange(QPainter * painter, qreal x, qreal w, const QColor& c);
 
     virtual void drawBackground ( QPainter * painter, const QRectF & rect );
@@ -53,6 +53,8 @@ protected:
     virtual void mousePressEvent ( QMouseEvent * event );
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void mouseReleaseEvent(QMouseEvent *event);
+
+    void doSeekOnDrag( QMouseEvent * event );
 };
 
 #endif // TIMELINEWIDGET_H

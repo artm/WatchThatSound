@@ -1,4 +1,6 @@
 #include "sequencertimeline.h"
+#include "BufferItem.h"
+
 #include <QMultiMap>
 #include <QMouseEvent>
 
@@ -27,18 +29,12 @@ void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * bufferAt)
 {
     SoundBuffer * buffer = bufferAt->buffer();
 
-    QBrush brush(buffer->color());
-    float tt = (float)m_mainWindow->mediaObject()->totalTime();
-    float relX = (float)bufferAt->at() / tt;
-    float relW = (float)buffer->duration() / tt;
-    QGraphicsItem * item =
-            static_cast<QGraphicsItem*>(scene()->addRect(0, 0, relW, 0.3,
-                                                         Qt::NoPen, brush));
+    BufferItem * item = new BufferItem(bufferAt, m_mainWindow->mediaObject()->totalTime());
+    scene()->addItem(item);
 
-    item->moveBy(relX, 0);
+
     showRange(item, buffer);
 
-    m_itemToBuffer[item] = bufferAt;
     m_bufferItems.append(item);
 
     restackItems();
@@ -51,12 +47,12 @@ void SequencerTimeLine::restackItems()
 {
     QList<float> levelRight;
     qStableSort(m_bufferItems.begin(), m_bufferItems.end(), lefterItem);
-    QList< QGraphicsItem * >::iterator it;
+    QList< BufferItem * >::iterator it;
     for(it = m_bufferItems.begin(); it != m_bufferItems.end(); ++it) {
         QGraphicsItem * item = *it;
         int until = levelRight.size();
+        float x = item->x();
         for(int level = 0; level <= until ; ++level) {
-            float x = item->x();
             if (level == until)
                 levelRight.append( x );
 
@@ -86,59 +82,11 @@ void SequencerTimeLine::showScratch(WtsAudio::BufferAt * scratchAt, bool on)
     }
 }
 
-void SequencerTimeLine::mousePressEvent ( QMouseEvent * event )
-{
-    if (event->buttons() & Qt::LeftButton) {
-        m_dragLastP = mapToScene(event->pos());
-        m_dragItem  = itemAt( event->pos() );
-
-        while( m_dragItem && !m_itemToBuffer.contains(m_dragItem) ) {
-            m_dragItem = m_dragItem->parentItem();
-        }
-
-        if (m_dragItem) {
-            WtsAudio::BufferAt * buffer = m_itemToBuffer[m_dragItem];
-            emit bufferSelected( buffer );
-            m_mainWindow->seek( buffer->at() + WtsAudio::sampleCountToMs(buffer->buffer()->rangeStart()) );
-            return;
-        }
-    }
-    TimeLineWidget::mousePressEvent( event );
-}
-
 void SequencerTimeLine::mouseReleaseEvent ( QMouseEvent * event )
 {
-    if (event->button() == Qt::LeftButton) {
-        if (m_dragItem) {
-           m_dragItem = 0;
-           restackItems();
-       }
-    }
+    TimeLineWidget::mouseReleaseEvent(event);
+    restackItems();
     m_mainWindow->saveData();
-}
-
-void SequencerTimeLine::mouseMoveEvent ( QMouseEvent * event )
-{
-    if (event->buttons() & Qt::LeftButton) {
-        if (m_dragItem) {
-            QPointF newPos = mapToScene(event->pos());
-            float dx = newPos.x() - m_dragLastP.x();
-            m_dragLastP = newPos;
-
-
-            WtsAudio::BufferAt * bufferAt = m_itemToBuffer[m_dragItem];
-            qint64 dt = dx * m_mainWindow->mediaObject()->totalTime();
-            qint64 at = std::max( bufferAt->at() + dt, - WtsAudio::sampleCountToMs(bufferAt->buffer()->rangeStart()));
-            bufferAt->setAt( at );
-            m_dragItem->setX( (float)at / m_mainWindow->mediaObject()->totalTime() );
-
-            m_mainWindow->mediaObject()->seek( at + WtsAudio::sampleCountToMs(bufferAt->buffer()->rangeStart()) );
-
-            return;
-        }
-    }
-
-    TimeLineWidget::mouseMoveEvent( event );
 }
 
 void SequencerTimeLine::showRange(QGraphicsItem * root, SoundBuffer *buffer)
@@ -168,15 +116,30 @@ void SequencerTimeLine::showRange(QGraphicsItem * root, SoundBuffer *buffer)
 
 void SequencerTimeLine::updateBuffer(SoundBuffer *buffer)
 {
-    QHashIterator< QGraphicsItem *, WtsAudio::BufferAt * > i(m_itemToBuffer);
-    while(i.hasNext()) {
-        i.next();
-        if (i.value()->buffer() == buffer) {
-            foreach(QGraphicsItem * child, i.key()->childItems()) {
+    foreach(BufferItem * bi, m_bufferItems) {
+
+        if (bi->buffer()->buffer() == buffer) {
+            scene()->clearSelection();
+
+            foreach(QGraphicsItem * child, bi->childItems()) {
                 scene()->removeItem(child);
                 delete child;
             }
-            showRange(i.key(), buffer);
+            showRange(bi, buffer);
+            bi->setSelected(true);
         }
+    }
+}
+
+void SequencerTimeLine::updateSelection()
+{
+    TimeLineWidget::updateSelection();
+
+    QList<QGraphicsItem *> sel = scene()->selectedItems();
+    if (sel.length() > 0) {
+        BufferItem * bi = dynamic_cast<BufferItem*>(sel[0]);
+        if (bi)
+            emit bufferSelected( bi->buffer() );
+    } else {
     }
 }

@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QMouseEvent>
 
+#include "BufferItem.h"
 #include "synced.h"
 
 TimeLineWidget::TimeLineWidget(QWidget *parent)
@@ -101,33 +102,43 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     painter->setRenderHints(oldHints, true);
 }
 
-void TimeLineWidget::seekTo(qint64 x) {
-    m_deafToSeek = true;
-    m_mainWindow->seek(m_mainWindow->mediaObject()->totalTime() * x / (qint64)width());
-    m_cursorLine->setX( (double)x / width() );
-    m_deafToSeek = false;
-}
-
 void TimeLineWidget::mousePressEvent ( QMouseEvent * event )
 {
     if (m_editMode)
         QGraphicsView::mousePressEvent(event);
 
-    // check if a draggable item was hit
-    if (seekOnDrag()) {
-        if (event->buttons() & Qt::LeftButton) {
-            seekTo(event->x());
-        }
-    }
+    doSeekOnDrag(event);
 }
 
 void TimeLineWidget::mouseMoveEvent ( QMouseEvent * event )
 {
     QGraphicsView::mouseMoveEvent(event);
+    doSeekOnDrag(event);
+}
 
+void TimeLineWidget::doSeekOnDrag( QMouseEvent * event )
+{
     if (seekOnDrag()) {
         if (event->buttons() & Qt::LeftButton) {
-            seekTo(event->x());
+            qint64 t = m_mainWindow->mediaObject()->totalTime() * event->x() / (qint64)width();
+
+            QGraphicsItem * dragged = scene()->mouseGrabberItem();
+            BufferItem * dragged_b = dynamic_cast<BufferItem *>(dragged);
+
+            if (dragged_b) {
+                t = dragged_b->buffer()->rangeStartAt();
+            } else if (dragged) {
+                WTS::Synced * synced = 0;
+                findSynced(dragged, &synced);
+                if (synced) {
+                    t = synced->at();
+                }
+            }
+
+            m_deafToSeek = true;
+            m_mainWindow->seek( t );
+            m_cursorLine->setX( (double)t / m_mainWindow->mediaObject()->totalTime() );
+            m_deafToSeek = false;
         }
     }
 }
@@ -144,7 +155,7 @@ void TimeLineWidget::assignSynced(QGraphicsItem *item, WTS::Synced *synced)
 
 QGraphicsItem * TimeLineWidget::findSynced(QGraphicsItem *item, WTS::Synced **synced)
 {
-    while( item && !item->data(SYNCED) .isValid() ) {
+    while( item && !item->data(SYNCED).isValid() ) {
         item = item->parentItem();
     }
     if (item) {
@@ -162,8 +173,9 @@ void TimeLineWidget::updateSelection()
     if (sel.length() > 0) {
         if (sel[0] == m_selectionRect->parentItem())
             return;
-        float dx = 3, dy = 3;
-        QRectF r = sel[0]->boundingRect().adjusted(-dx,-dy,dx,dy);
+        //float dx = 3.0 / width(), dy = 3.0 / height();
+        QRectF marg = sel[0]->mapRectFromScene(0, 0, 3.0 / width(), 3.0 / height());
+        QRectF r = sel[0]->boundingRect().adjusted(-marg.width(),-marg.height(),marg.width(),marg.height());
         m_selectionRect->setRect( r );
         m_selectionRect->setParentItem( sel[0] );
         m_selectionRect->setVisible(true);

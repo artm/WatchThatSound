@@ -160,3 +160,8 @@ qint64 WtsAudio::currentSampleOffset() const
         return msToSampleCount(buffer->at()) + buffer->playOffset();
     }
 }
+
+qint64 WtsAudio::BufferAt::rangeStartAt()
+{
+    return at() + WtsAudio::sampleCountToMs( buffer()->rangeStart() );
+}

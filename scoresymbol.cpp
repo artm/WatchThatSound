@@ -206,7 +206,7 @@ QRectF ScoreSymbol::boundingRect() const
     return childrenBoundingRect();
 }
 
-void ScoreSymbol::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void ScoreSymbol::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 {
     return;
 }
@@ -215,10 +215,11 @@ void ScoreSymbol::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (! boundingRect().contains(event->pos()) )
         event->ignore();
-
-    setFocus(Qt::MouseFocusReason);
-    scene()->clearSelection();
-    setSelected( true );
+    else  {
+        setFocus(Qt::MouseFocusReason);
+        scene()->clearSelection();
+        setSelected( true );
+    }
 }
 
 void ScoreSymbol::keyReleaseEvent(QKeyEvent *event)

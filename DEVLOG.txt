@@ -201,3 +201,10 @@ Today - fix the timelines' drag and drop.
 
 [x] disable score editing when view isn't in edit mode
 
+[ ] dragging samples on sequencer timeline doesn't enjoy the latest fixes...
+    [x] made it use built in drag, but it picks the wrong item
+    [x] constrain to horizontal motions
+    [x] select buffer on click (via "update selection" overload)
+    [x] restack on release
+    [x] stick the cursor to some place...
+    [ ] handle deletes

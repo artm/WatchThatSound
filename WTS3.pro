@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     scoreeditor.cpp \
     scoresymbol.cpp \
     AutoUpdater.cpp \
-    vumeter.cpp
+    vumeter.cpp \
+    BufferItem.cpp
 HEADERS += mainwindow.h \
     timelinewidget.h \
     soundbuffer.h \
@@ -39,7 +40,8 @@ HEADERS += mainwindow.h \
     scoreeditor.h \
     scoresymbol.h \
     AutoUpdater.h \
-    vumeter.h
+    vumeter.h \
+    BufferItem.h
 FORMS += mainwindow.ui
 RESOURCES += WTS3Resources.qrc
 CONFIG += precompile_header
@@ -84,3 +86,5 @@ mac {
   QMAKE_POST_LINK = mkdir -p "$$TARGET".app/Contents/Frameworks \
     && cp -r /Library/Frameworks/Sparkle.framework "$$TARGET".app/Contents/Frameworks
 }
+
+

@@ -25,6 +25,8 @@ public:
         void setBuffer(SoundBuffer * buffer)
         { m_buffer = buffer; }
 
+        qint64 rangeStartAt();
+
     protected:
         SoundBuffer * m_buffer;
         qint64 m_playOffset;
