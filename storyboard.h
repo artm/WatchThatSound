@@ -21,7 +21,6 @@ protected:
     float m_thumbScale;
     float m_marginX;
 
-    QHash<QGraphicsItem *, MainWindow::Marker *> m_itemToMarker;
     QMap<qint64, QGraphicsItem *> m_msToItem;
     QGraphicsItem * m_selectedThumb;
 
@@ -32,7 +31,6 @@ protected:
     static const int s_levelCount = 5;
     static const float s_marginY = 0.05, s_marginBottom = 0.1;
 
-    virtual void mousePressEvent ( QMouseEvent * event );
     void drawBackground( QPainter * painter, const QRectF & rect ) ;
 };
 

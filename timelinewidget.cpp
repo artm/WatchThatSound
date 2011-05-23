@@ -152,11 +152,6 @@ void TimeLineWidget::doSeekOnDrag( QMouseEvent * event )
     }
 }
 
-void TimeLineWidget::mouseReleaseEvent(QMouseEvent *event)
-{
-    QGraphicsView::mouseReleaseEvent(event);
-}
-
 void TimeLineWidget::assignSynced(QGraphicsItem *item, WTS::Synced *synced)
 {
     item->setData(SYNCED, QVariant::fromValue(synced));

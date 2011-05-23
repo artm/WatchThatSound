@@ -1,5 +1,6 @@
 #include "storyboard.h"
 #include <cmath>
+#include <TimeLineItem.h>
 
 StoryBoard::StoryBoard(QWidget *parent)
     : TimeLineWidget(parent)
@@ -66,7 +67,6 @@ void StoryBoard::updateSnapshots()
     foreach(QGraphicsItem * item, m_msToItem) {
         scene()->removeItem(item);
     }
-    m_itemToMarker.clear();
     m_msToItem.clear();
     m_dragItem = 0;
     m_selectedThumb = 0;
@@ -83,19 +83,23 @@ void StoryBoard::updateSnapshots()
                   // fit centers between two margins + two halves
                   * (1.0 - s_marginY - s_marginBottom - m_thumbHeight) / (float)gapCount;
 
+        TimeLineItem * tli = new TimeLineItem(m, scene());
+
         QGraphicsItem * frameItem = scene()->addRect(
                 QRectF(x - m_marginX,
                        y - s_marginY,
                        m_thumbWidth + 2.0*m_marginX,
                        m_thumbHeight + s_marginY*2.0),
                 QPen(Qt::NoPen),QBrush(QColor(255,255,255,150)));
+        frameItem->setParentItem(tli);
+
         QGraphicsPixmapItem * gpi = scene()->addPixmap( m->snapshot() );
         gpi->setPos(x,y);
         gpi->scale(m_thumbScale/(float)width(), m_thumbScale/(float)height());
         gpi->setParentItem(frameItem);
 
-        m_itemToMarker[frameItem] = m;
-        m_msToItem[m->at()] = frameItem;
+        m_msToItem[m->at()] = tli;
+        assignSynced(tli, m);
     }
 }
 
@@ -111,24 +115,6 @@ void StoryBoard::resizeEvent ( QResizeEvent * event )
     m_marginX = s_marginY * (float)height() / (float)width();
 
     updateSnapshots();
-}
-
-void StoryBoard::mousePressEvent ( QMouseEvent * event )
-{
-    if (event->buttons() & Qt::LeftButton) {
-        m_dragLastP = mapToScene(event->pos());
-        m_dragItem  = itemAt( event->pos() );
-
-        while (m_dragItem) {
-            if (m_itemToMarker.contains(m_dragItem)) {
-                MainWindow::Marker * m = m_itemToMarker[m_dragItem];
-                m_mainWindow->seek( m->at() );
-                return;
-            }
-            m_dragItem = m_dragItem->parentItem();
-        }
-    }
-    TimeLineWidget::mousePressEvent( event );
 }
 
 void StoryBoard::setCurrentTime(qint64 time)

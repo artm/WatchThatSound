@@ -20,8 +20,7 @@ public:
     bool editMode() const { return m_editMode; }
 
     enum {
-        SYNCED = 1000,
-        CURSOR_OFFSET = 1001,
+        SYNCED = 1000
     };
     void assignSynced(QGraphicsItem * item, WTS::Synced * synced);
     // find synced associated with given item or its ancestor
@@ -53,7 +52,6 @@ protected:
     virtual void resizeEvent ( QResizeEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );
     virtual void mouseMoveEvent ( QMouseEvent * event );
-    virtual void mouseReleaseEvent(QMouseEvent *event);
 
     void doSeekOnDrag( QMouseEvent * event );
 
