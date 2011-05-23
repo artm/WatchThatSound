@@ -141,7 +141,7 @@ void StoryBoard::setCurrentTime(qint64 time)
     }
 }
 
-void StoryBoard::deleteSynced(WTS::Synced *synced)
+void StoryBoard::deleteSynced(QGraphicsItem *, WTS::Synced *synced)
 {
     MainWindow::Marker * m = dynamic_cast<MainWindow::Marker *>(synced);
     Q_ASSERT(m);

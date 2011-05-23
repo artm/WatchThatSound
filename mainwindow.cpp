@@ -590,3 +590,9 @@ void MainWindow::updateMarkerTension(int markerIndex, float tension)
     }
 }
 
+void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)
+{
+    m_sequence.removeAll(bufferAt);
+    saveData();
+}
+

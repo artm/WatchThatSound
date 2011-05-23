@@ -143,3 +143,16 @@ void SequencerTimeLine::updateSelection()
     } else {
     }
 }
+
+void SequencerTimeLine::deleteSynced(QGraphicsItem * item, WTS::Synced * synced)
+{
+    WtsAudio::BufferAt * bufferAt = dynamic_cast<WtsAudio::BufferAt *>(synced);
+    BufferItem * bi = dynamic_cast<BufferItem*>(item);
+    Q_ASSERT( bufferAt );
+    Q_ASSERT( bi );
+
+    m_bufferItems.removeAll(bi);
+    m_mainWindow->removeBuffer( bufferAt );
+
+    restackItems();
+}

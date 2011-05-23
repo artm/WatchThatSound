@@ -27,7 +27,7 @@ public:
     // find synced associated with given item or its ancestor
     // returns the item which has the synced associated
     static QGraphicsItem * findSynced(QGraphicsItem * item, WTS::Synced ** synced);
-    virtual void deleteSynced(WTS::Synced *) {}
+    virtual void deleteSynced(QGraphicsItem *, WTS::Synced *) {}
 
 signals:
     void dataChanged();

@@ -64,6 +64,7 @@ public:
 
     QPainterPath tensionCurve() const;
     void removeMark(Marker * m);
+    void removeBuffer(WtsAudio::BufferAt * bufferAt);
 
 public slots:
     void setFullscreen(bool fs);

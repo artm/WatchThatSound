@@ -225,7 +225,8 @@ Today - fix the timelines' drag and drop.
 
 [ ] finish deletion support
     [x] delete current bookmark
-    [ ] delete current sample
+    [x] delete current sample
+        [x] make sure sample items have Synced assigned...
     [ ] reimplement symbol deletion via new code (that'll fix the crash)
         - the old version marked symbols as deleted instead of really deleting: why?
 

@@ -205,8 +205,10 @@ void TimeLineWidget::keyPressEvent(QKeyEvent *event)
             scene()->removeItem(i);
 
             WTS::Synced * synced = 0;
-            if (findSynced(i,&synced))
-                deleteSynced(synced);
+            QGraphicsItem * syncedItem = findSynced(i,&synced);
+
+            if (syncedItem)
+                deleteSynced(syncedItem, synced);
 
             i->setSelected(false);
             delete i;

@@ -1,5 +1,6 @@
 #include "BufferItem.h"
 #include "soundbuffer.h"
+#include "timelinewidget.h"
 
 BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration)
     : QGraphicsRectItem()
@@ -14,6 +15,8 @@ BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration)
 
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemIsSelectable
              | QGraphicsItem::ItemSendsScenePositionChanges);
+
+    TimeLineWidget::assignSynced(this, buffer);
 }
 
 void BufferItem::mousePressEvent(QGraphicsSceneMouseEvent *event)

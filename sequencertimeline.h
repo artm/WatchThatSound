@@ -11,6 +11,7 @@ class SequencerTimeLine : public TimeLineWidget
     Q_OBJECT
 public:
     explicit SequencerTimeLine(QWidget *parent = 0);
+    virtual void deleteSynced(QGraphicsItem *, WTS::Synced *);
 
 signals:
     void bufferSelected(WtsAudio::BufferAt * buffer);
