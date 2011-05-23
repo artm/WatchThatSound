@@ -7,6 +7,6 @@ WatchThatSound*.zip
 moc_*
 *.o
 qrc_*.cpp
-ui_mainwindow.h
+ui_*.h
 /*.gch
 WTS3.pro.user*

@@ -202,6 +202,10 @@ void Exporter::run()
         finishUp();
 
         m_progress->setValue(100);
+
+        QProcess process;
+        process.startDetached("open", QStringList() << QFileInfo(m_filename).dir().path() );
+
     } catch (const AssertFailed& e) {
         qCritical() << e.cMessage();
 
@@ -216,6 +220,7 @@ void Exporter::run()
         dialog.setModal(true);
         dialog.exec();
     }
+
 }
 
 void Exporter::finishUp()

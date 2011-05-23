@@ -411,6 +411,7 @@ void MainWindow::exportMovie()
     // setting the parent to this makes it a "sheet" dialog on OSX
     QProgressDialog progress("Opslaan...", "Stop", 0, 100, this);
     progress.setWindowModality(Qt::WindowModal);
+    progress.setMinimumDuration(500);
 
     m_exporter->configure(m_dataDir.filePath("export.mov"),
                               m_videoFile,
