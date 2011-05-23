@@ -153,6 +153,5 @@ void SequencerTimeLine::deleteSynced(QGraphicsItem * item, WTS::Synced * synced)
 
     m_bufferItems.removeAll(bi);
     m_mainWindow->removeBuffer( bufferAt );
-
     restackItems();
 }

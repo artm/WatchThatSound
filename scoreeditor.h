@@ -36,7 +36,6 @@ protected:
     ScoreSymbol * m_newSymbol;
     QGraphicsItemGroup * m_colorWheel;
     QGraphicsEllipseItem * m_colorSelCircle;
-    QList<ScoreSymbol *> m_symbols;
 
     static const int s_wheelColorCount;
     static const float s_wheelInnerRadius;

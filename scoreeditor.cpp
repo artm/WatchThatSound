@@ -68,7 +68,6 @@ void ScoreEditor::mouseReleaseEvent(QMouseEvent * event)
     TimeLineWidget::mouseReleaseEvent(event);
     if (editMode()) {
         m_newSymbol->finish();
-        m_symbols.append( m_newSymbol );
         initNewSymbol();
         emit dataChanged();
     }
@@ -82,9 +81,12 @@ void ScoreEditor::mousePressEvent(QMouseEvent * event)
         if (event->buttons() & Qt::LeftButton) {
             QGraphicsItem * hitItem = itemAt( event->pos() );
 
-            if (hitItem) {
+            if (hitItem && hitItem != m_cursorLine) {
 
+                qDebug() << "Hit:" << hitItem;
                 // is this a petal?
+
+
                 QVariant vpindex = hitItem->data(PetalIndex);
                 if (vpindex.isValid() && !vpindex.isNull()) {
                     // yes, a petal, use its color
@@ -112,9 +114,12 @@ void ScoreEditor::resizeEvent(QResizeEvent *event)
 
     TimeLineWidget::resizeEvent(event);
     m_newSymbol->configure(scene(), width(), height());
-    foreach(ScoreSymbol * sym, m_symbols) {
-        sym->configure(scene(), width(), height());
-        sym->updateGraphics();
+
+    foreach(QGraphicsItem * item, scene()->items()) {
+        ScoreSymbol * symbol = dynamic_cast<ScoreSymbol *>(item);
+        if (!symbol) continue;
+        symbol->configure(scene(), width(), height());
+        symbol->updateGraphics();
     }
 
     m_colorWheel->setTransform( QTransform::fromScale( 1.0/width(), 1.0/height() ) );
@@ -148,7 +153,9 @@ void ScoreEditor::initNewSymbol()
 
 void ScoreEditor::saveData(QXmlStreamWriter &xml)
 {
-    foreach(ScoreSymbol * symbol, m_symbols) {
+    foreach(QGraphicsItem * item, scene()->items()) {
+        ScoreSymbol * symbol = dynamic_cast<ScoreSymbol *>(item);
+        if (!symbol) continue;
         symbol->saveData(xml);
     }
 }
@@ -159,7 +166,6 @@ void ScoreEditor::loadData(QXmlStreamReader &xml)
         ScoreSymbol * symbol = new ScoreSymbol();
         symbol->configure(scene(), width(), height());
         symbol->loadData(xml);
-        m_symbols << symbol;
         xml.readElementText();
     }
 }
