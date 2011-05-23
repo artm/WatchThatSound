@@ -223,20 +223,14 @@ Today - fix the timelines' drag and drop.
 
 [x] CRASH: on click the last tension knot
 
-[ ] delete current bookmark
-[ ] delete current sample
+[ ] finish deletion support
+    [x] delete current bookmark
+    [ ] delete current sample
+    [ ] reimplement symbol deletion via new code (that'll fix the crash)
+        - the old version marked symbols as deleted instead of really deleting: why?
+
+
 [ ] optional mute on record
 [ ] open finder after export
 [ ] timestamps in the storyboard
 [ ] windows versie
-
-* * *
-
-How to delete things:
-
-[ ] connect Synced instances to items
-[ ] make sure a Synced is selected
-[ ] give focus to a view when it's in edit mode
-[ ] handle keys in views
-[ ] when removing an item, call virtual method "remove(Synced)"
-

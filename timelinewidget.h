@@ -22,10 +22,12 @@ public:
     enum {
         SYNCED = 1000
     };
-    void assignSynced(QGraphicsItem * item, WTS::Synced * synced);
+
+    static void assignSynced(QGraphicsItem * item, WTS::Synced * synced);
     // find synced associated with given item or its ancestor
     // returns the item which has the synced associated
-    QGraphicsItem * findSynced(QGraphicsItem * item, WTS::Synced ** synced);
+    static QGraphicsItem * findSynced(QGraphicsItem * item, WTS::Synced ** synced);
+    virtual void deleteSynced(WTS::Synced *) {}
 
 signals:
     void dataChanged();
@@ -52,6 +54,7 @@ protected:
     virtual void resizeEvent ( QResizeEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );
     virtual void mouseMoveEvent ( QMouseEvent * event );
+    virtual void keyPressEvent(QKeyEvent *event);
 
     void doSeekOnDrag( QMouseEvent * event );
 

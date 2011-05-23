@@ -195,3 +195,22 @@ void TimeLineWidget::setEditMode(bool on)
     update();
 }
 
+void TimeLineWidget::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Backspace:
+    case Qt::Key_Delete:
+        QList<QGraphicsItem *> selection = scene()->selectedItems();
+        foreach(QGraphicsItem * i, selection) {
+            scene()->removeItem(i);
+
+            WTS::Synced * synced = 0;
+            if (findSynced(i,&synced))
+                deleteSynced(synced);
+
+            i->setSelected(false);
+            delete i;
+        }
+    }
+}
+

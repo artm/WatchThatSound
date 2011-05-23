@@ -99,7 +99,6 @@ void StoryBoard::updateSnapshots()
         gpi->setParentItem(frameItem);
 
         m_msToItem[m->at()] = tli;
-        assignSynced(tli, m);
     }
 }
 
@@ -140,5 +139,12 @@ void StoryBoard::setCurrentTime(qint64 time)
         QGraphicsRectItem * ri = dynamic_cast<QGraphicsRectItem *>(m_selectedThumb);
         if (ri) ri->setPen(QPen(Qt::blue));
     }
+}
+
+void StoryBoard::deleteSynced(WTS::Synced *synced)
+{
+    MainWindow::Marker * m = dynamic_cast<MainWindow::Marker *>(synced);
+    Q_ASSERT(m);
+    m_mainWindow->removeMark(m);
 }
 

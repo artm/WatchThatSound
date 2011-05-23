@@ -14,6 +14,7 @@ public slots:
     virtual void resizeEvent ( QResizeEvent * event );
     void setVideoSize(int w, int h) { m_videoWidth = w; m_videoHeight = h; }
     virtual void setCurrentTime(qint64 time);
+    virtual void deleteSynced(WTS::Synced * synced);
 
 protected:
     float m_thumbWidth, m_thumbHeight;

@@ -63,6 +63,7 @@ public:
     void buildMovieSelector();
 
     QPainterPath tensionCurve() const;
+    void removeMark(Marker * m);
 
 public slots:
     void setFullscreen(bool fs);

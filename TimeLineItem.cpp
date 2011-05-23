@@ -1,12 +1,14 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "TimeLineItem.h"
+#include "timelinewidget.h"
 
 TimeLineItem::TimeLineItem(WTS::Synced * synced, QGraphicsScene * scene)
     : QGraphicsItem(0, scene)
     , m_synced(synced)
 {
     setFlags( QGraphicsItem::ItemIsSelectable );
+    TimeLineWidget::assignSynced(this, synced);
 }
 
 void TimeLineItem::mousePressEvent(QGraphicsSceneMouseEvent *event)

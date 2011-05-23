@@ -367,6 +367,14 @@ void MainWindow::addMarker(MarkerType type, qint64 when, float tension)
     saveData();
 }
 
+void MainWindow::removeMark(Marker * m)
+{
+    m_markers.remove( m->at() );
+    refreshTension();
+    emit storyBoardChanged();
+    saveData();
+}
+
 QList<MainWindow::Marker *> MainWindow::getMarkers(MarkerType type, bool forward) const
 {
     QList<Marker *> scenes;
@@ -581,3 +589,4 @@ void MainWindow::updateMarkerTension(int markerIndex, float tension)
         m_finalTension = tension;
     }
 }
+
