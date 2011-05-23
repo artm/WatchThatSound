@@ -20,6 +20,7 @@ WtsAudio::WtsAudio(QObject *parent)
     : QObject(parent)
     , m_stream(0)
     , m_volume(0)
+    , m_mute(false)
 {
     Pa_Initialize();
 
@@ -81,6 +82,8 @@ void WtsAudio::samplerMix(qint64 ms, QVector<float>& mix)
 {
     m_clock = ms;
     mix.fill(0);
+
+    if (m_mute) return;
 
     QLinkedList< WtsAudio::BufferAt * >::iterator
             nextBufferIt = m_activeBuffers.begin();

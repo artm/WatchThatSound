@@ -64,12 +64,14 @@ public slots:
     void samplerClock(qint64 ms);
     void samplerSchedule(WtsAudio::BufferAt * buffer);
     void samplerClear();
+    void setMute(bool mute) { m_mute = mute; }
 
 protected:
     PaStream * m_stream;
     qint64 m_clock;
     QLinkedList< WtsAudio::BufferAt * > m_activeBuffers;
     float m_volume;
+    bool m_mute;
 };
 
 #endif // WTSAUDIO_H

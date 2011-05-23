@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_loading(false)
     , m_exporter(new Exporter(this))
     , m_finalTension(0.5)
+    , m_muteOnRecord(true)
 {
     ui->setupUi(this);
 
@@ -296,6 +297,9 @@ void MainWindow::onPlay(bool play)
 
 void MainWindow::onRecord(bool record)
 {
+    if (m_muteOnRecord)
+        m_audio.setMute( record );
+
     if (record) {
         // started recording
         m_scratch.buffer()->setWritePos(0);

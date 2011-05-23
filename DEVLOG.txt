@@ -209,27 +209,8 @@ Today - fix the timelines' drag and drop.
     [x] stick the cursor to some place...
     [ ] handle deletes
 
-[x] do we have border controls?
-    - can't control their color, make them disappear
-    - still have white extras - should draw background more enthusiastically
-
-[x] set edit mode's border different
-    - draw in background
-
-[ ] catch keys in the views and if in edit mode - try to act (if there is shown focused bit)
-
 [ ] CRASH: on resize of score editor
     - can't reproduce
-
-[x] CRASH: on click the last tension knot
-
-[ ] finish deletion support
-    [x] delete current bookmark
-    [x] delete current sample
-        [x] make sure sample items have Synced assigned...
-    [ ] reimplement symbol deletion via new code (that'll fix the crash)
-        - the old version marked symbols as deleted instead of really deleting: why?
-
 
 [ ] optional mute on record
 [ ] open finder after export

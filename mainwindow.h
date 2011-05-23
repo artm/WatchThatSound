@@ -124,6 +124,7 @@ protected:
     QActionGroup * m_tabActions;
 
     double m_finalTension;
+    bool m_muteOnRecord;
 };
 
 #endif // MAINWINDOW_H
