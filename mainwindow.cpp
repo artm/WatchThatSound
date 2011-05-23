@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "ui_Preferences.h"
 #include "rainbow.h"
 #include "exporter.h"
 
@@ -15,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_exporter(new Exporter(this))
     , m_finalTension(0.5)
     , m_muteOnRecord(true)
+    , m_settings("WatchThatSound","WTS-Workshop-Tool")
 {
     ui->setupUi(this);
 
@@ -46,6 +48,23 @@ MainWindow::MainWindow(QWidget *parent)
     buildMovieSelector();
 
     constructStateMachine();
+
+    m_preferences = new Preferences(this);
+    connect(ui->actionPreferences, SIGNAL(triggered()), m_preferences, SLOT(show()));
+    connect(m_preferences->ui->muteOnRecord, SIGNAL(toggled(bool)), SLOT(setMuteOnRecord(bool)));
+
+    m_preferences->ui->muteOnRecord->setChecked( m_settings.value("muteOnRecord", true).toBool() );
+    m_muteOnRecord = m_preferences->ui->muteOnRecord->isChecked();
+}
+
+MainWindow::~MainWindow()
+{
+    // this is necessary to ensure widgets won't get tick'ed after player is deaded
+    ui->videoPlayer->stop();
+
+    m_settings.setValue("muteOnRecord", m_muteOnRecord);
+
+    delete ui;
 }
 
 QString MainWindow::makeSampleName()
@@ -253,13 +272,6 @@ void MainWindow::loadData()
 
     m_loading = false;
 
-}
-
-MainWindow::~MainWindow()
-{
-    // this is necessary to ensure widgets won't get tick'ed after player is deaded
-    ui->videoPlayer->stop();
-    delete ui;
 }
 
 Phonon::MediaObject * MainWindow::mediaObject()

@@ -9,6 +9,7 @@
 #include "soundbuffer.h"
 #include "videofile.h"
 #include "synced.h"
+#include "Preferences.h"
 
 namespace Ui
 {
@@ -88,6 +89,7 @@ public slots:
 
     void refreshTension();
     void updateMarkerTension(int markerIndex, float tension);
+    void setMuteOnRecord(bool on) { m_muteOnRecord = on; }
 
 signals:
     void storyBoardChanged();
@@ -125,6 +127,9 @@ protected:
 
     double m_finalTension;
     bool m_muteOnRecord;
+
+    Preferences * m_preferences;
+    QSettings m_settings;
 };
 
 #endif // MAINWINDOW_H

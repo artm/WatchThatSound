@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     vumeter.cpp \
     BufferItem.cpp \
     SharpLine.cpp \
-    TimeLineItem.cpp
+    TimeLineItem.cpp \
+    Preferences.cpp
 HEADERS += mainwindow.h \
     timelinewidget.h \
     soundbuffer.h \
@@ -45,8 +46,10 @@ HEADERS += mainwindow.h \
     vumeter.h \
     BufferItem.h \
     SharpLine.h \
-    TimeLineItem.h
-FORMS += mainwindow.ui
+    TimeLineItem.h \
+    Preferences.h
+FORMS += mainwindow.ui \
+    Preferences.ui
 RESOURCES += WTS3Resources.qrc
 CONFIG += precompile_header
 PRECOMPILED_HEADER = stable.h
@@ -90,6 +93,9 @@ mac {
   QMAKE_POST_LINK = mkdir -p "$$TARGET".app/Contents/Frameworks \
     && cp -r /Library/Frameworks/Sparkle.framework "$$TARGET".app/Contents/Frameworks
 }
+
+
+
 
 
 

@@ -306,19 +306,14 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFilm">
-    <property name="title">
-     <string>Film</string>
-    </property>
-    <addaction name="actionPlay"/>
-   </widget>
    <widget class="QMenu" name="menuVenster">
     <property name="title">
-     <string>Venster</string>
+     <string>Tools</string>
     </property>
+    <addaction name="actionPlay"/>
     <addaction name="actionFullscreen"/>
+    <addaction name="actionPreferences"/>
    </widget>
-   <addaction name="menuFilm"/>
    <addaction name="menuVenster"/>
   </widget>
   <action name="actionPlay">
@@ -337,81 +332,6 @@
    </property>
    <property name="shortcut">
     <string>Space</string>
-   </property>
-  </action>
-  <action name="actionRecord">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="WTS3Resources.qrc">
-     <normaloff>:/Resources/rec-normal.png</normaloff>:/Resources/rec-normal.png</iconset>
-   </property>
-   <property name="text">
-    <string>Opnemen</string>
-   </property>
-   <property name="toolTip">
-    <string>Opnemen</string>
-   </property>
-  </action>
-  <action name="actionScreen1">
-   <property name="icon">
-    <iconset resource="WTS3Resources.qrc">
-     <normaloff>:/Resources/page-1.png</normaloff>:/Resources/page-1.png</iconset>
-   </property>
-   <property name="text">
-    <string>Film</string>
-   </property>
-   <property name="toolTip">
-    <string>Film</string>
-   </property>
-  </action>
-  <action name="actionScreen2">
-   <property name="icon">
-    <iconset resource="WTS3Resources.qrc">
-     <normaloff>:/Resources/page-2.png</normaloff>:/Resources/page-2.png</iconset>
-   </property>
-   <property name="text">
-    <string>Structuur</string>
-   </property>
-   <property name="toolTip">
-    <string>Structuur</string>
-   </property>
-  </action>
-  <action name="actionScreen3">
-   <property name="icon">
-    <iconset resource="WTS3Resources.qrc">
-     <normaloff>:/Resources/page-3.png</normaloff>:/Resources/page-3.png</iconset>
-   </property>
-   <property name="text">
-    <string>Spanningslijn</string>
-   </property>
-   <property name="toolTip">
-    <string>Spanningslijn</string>
-   </property>
-  </action>
-  <action name="actionScreen4">
-   <property name="icon">
-    <iconset resource="WTS3Resources.qrc">
-     <normaloff>:/Resources/page-4.png</normaloff>:/Resources/page-4.png</iconset>
-   </property>
-   <property name="text">
-    <string>Partituur</string>
-   </property>
-   <property name="toolTip">
-    <string>Partituur</string>
-   </property>
-  </action>
-  <action name="actionScreen5">
-   <property name="icon">
-    <iconset resource="WTS3Resources.qrc">
-     <normaloff>:/Resources/page-5.png</normaloff>:/Resources/page-5.png</iconset>
-   </property>
-   <property name="text">
-    <string>Opname studio</string>
-   </property>
-   <property name="toolTip">
-    <string>Opname studio</string>
    </property>
   </action>
   <action name="actionAddScene">
@@ -472,6 +392,26 @@
    </property>
    <property name="toolTip">
     <string>Opslaan het resultaat</string>
+   </property>
+  </action>
+  <action name="actionRecord">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="WTS3Resources.qrc">
+     <normaloff>:/Resources/rec-normal.png</normaloff>:/Resources/rec-normal.png</iconset>
+   </property>
+   <property name="text">
+    <string>Opnemen</string>
+   </property>
+   <property name="toolTip">
+    <string>Opnemen</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
    </property>
   </action>
  </widget>
@@ -551,22 +491,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionRecord</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>actionPlay</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionAddMarker</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -595,6 +519,38 @@
     <hint type="destinationlabel">
      <x>319</x>
      <y>222</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExport</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportMovie()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>276</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRecord</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>actionPlay</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
     </hint>
    </hints>
   </connection>
@@ -643,22 +599,6 @@
     <hint type="destinationlabel">
      <x>319</x>
      <y>229</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionExport</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>exportMovie()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>319</x>
-     <y>276</y>
     </hint>
    </hints>
   </connection>
