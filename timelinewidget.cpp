@@ -70,10 +70,6 @@ void TimeLineWidget::paintRange(QPainter * painter, qreal x, qreal w, const QCol
     painter->fillRect( r, QBrush(c) );
 }
 
-void TimeLineWidget::drawForeground(QPainter *painter, const QRectF &rect)
-{
-}
-
 void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*/ )
 {
     qreal total = m_mainWindow->mediaObject()->totalTime();

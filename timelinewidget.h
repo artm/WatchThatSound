@@ -49,7 +49,6 @@ protected:
     void paintRange(QPainter * painter, qreal x, qreal w, const QColor& c);
 
     virtual void drawBackground ( QPainter * painter, const QRectF & rect );
-    virtual void drawForeground ( QPainter * painter, const QRectF & rect );
 
     virtual void resizeEvent ( QResizeEvent * event );
     virtual void mousePressEvent ( QMouseEvent * event );

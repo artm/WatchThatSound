@@ -30,11 +30,6 @@ StoryBoard::StoryBoard(QWidget *parent)
     b->setFlat(true);
     b->setMaximumSize(QSize(16,16));
     layout->addWidget(b);
-
-    m_itemPopup = scene()->addWidget(box);
-    m_itemPopup->setZValue(2.0);
-    m_itemPopup->hide();
-    m_popupsItem = 0;
 }
 
 void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
@@ -115,9 +110,6 @@ void StoryBoard::resizeEvent ( QResizeEvent * event )
     m_thumbScale = pixH/(float) m_videoHeight;
     m_marginX = s_marginY * (float)height() / (float)width();
 
-    m_itemPopup->setScale(1.0);
-    m_itemPopup->scale(1.0/(qreal)width(),1.0/(qreal)height());
-
     updateSnapshots();
 }
 
@@ -164,31 +156,3 @@ void StoryBoard::setCurrentTime(qint64 time)
     }
 }
 
-void StoryBoard::showItemPopup( QGraphicsItem * item)
-{
-    if (m_popupsItem != item) {
-        // first click on item: calculate new geometry then hide
-        // have to "show" first to update the bounding rect
-        m_itemPopup->show();
-        m_itemPopup->setPos( item->boundingRect().bottomLeft() );
-
-        QRectF g = m_itemPopup->geometry();
-
-        // keep size to compensate for rounding errors
-        QSizeF keepSize = g.size();
-        qreal w = g.width() / width(), h = g.height() / height();
-        g.setTop( std::min(1.0 - h, g.top()) );
-        g.setLeft( item->boundingRect().right() - w );
-        g.setSize(keepSize);
-
-        m_itemPopup->setGeometry( g );
-
-        // now hide
-        m_itemPopup->hide();
-        // remember the daddy
-        m_popupsItem = item;
-    } else {
-        // not the first click on item - toggle
-        m_itemPopup->setVisible( ! m_itemPopup->isVisible() );
-    }
-}

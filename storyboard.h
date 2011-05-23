@@ -29,16 +29,11 @@ protected:
     QGraphicsItem * m_dragItem;
     QPointF m_dragLastP;
 
-    QGraphicsProxyWidget * m_itemPopup;
-    QGraphicsItem * m_popupsItem;
-
     static const int s_levelCount = 5;
     static const float s_marginY = 0.05, s_marginBottom = 0.1;
 
     virtual void mousePressEvent ( QMouseEvent * event );
     void drawBackground( QPainter * painter, const QRectF & rect ) ;
-
-    void showItemPopup( QGraphicsItem * item);
 };
 
 #endif // STORYBOARD_H
