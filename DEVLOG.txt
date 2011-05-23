@@ -226,3 +226,4 @@ Today - fix the timelines' drag and drop.
 [ ] optional mute on record
 [ ] open finder after export
 [ ] timestamps in the storyboard
+[ ] windows versie

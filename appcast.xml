@@ -81,6 +81,19 @@ length="4541362"
 type="application/octet-stream"/>
 </item>
 
+<item>
+<title>3-alpha-13</title>
+<sparkle:releaseNotesLink>
+https://ftp.v2.nl/~artm/WTS3/ReleaseNotes-3-alpha-13.html
+</sparkle:releaseNotesLink>
+<pubDate>Tue, May 20 2011 14:00:00 CEST</pubDate>
+<enclosure
+url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3-alpha-13.zip"
+sparkle:version="3-alpha-13"
+length="4544341"
+type="application/octet-stream"/>
+</item>
+
 
 </channel>
 </rss>
