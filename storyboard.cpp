@@ -37,6 +37,8 @@ void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
 {
     TimeLineWidget::drawBackground(painter, rect);
 
+    painter->setFont( QFont("Monaco", 9) );
+
     int maxLines = width() / 5;
 
     float totalMin = (float)m_mainWindow->mediaObject()->totalTime() / 60000.0f;
@@ -44,18 +46,28 @@ void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
     int Ncount = sizeof(N)/sizeof(N[0]);
 
     int i;
-    for(i = 0; i<(Ncount-1) && ((totalMin * N[i]) > maxLines) ; i++) {}
+    for(i = 0; i<(Ncount-1) && ((totalMin * N[i]) > maxLines) ; ++i) {}
     float dx = 1.0f / (N[i] * totalMin);
 
     painter->setPen(QColor(50,60,50));
-    int j0 = floor(rect.x() / dx), j1 = ceil(rect.right() / dx);
-    for(int j = j0; j<j1; ++j) {
+    for(int j = 0; j<maxLines; ++j) {
         float x = dx * j;
 
         int rem = j % (int)N[i];
         float y = 1.0 - (rem ? 0.5 * s_marginBottom : s_marginBottom);
 
         painter->drawLine(QPointF(x,y),QPointF(x,1.0));
+
+        if (!rem) {
+            QString text = QString("%1:00").arg( floor(j / N[i]) );
+
+            double x_pix = x * width() + 3;
+            double y_pix = y * height() - 2;
+
+            painter->setMatrixEnabled(false);
+            painter->drawText(QPointF(x_pix,y_pix), text);
+            painter->setMatrixEnabled(true);
+        }
     }
 
 }

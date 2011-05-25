@@ -1,4 +1,4 @@
-VERSION = 3-alpha-14.0
+VERSION = 3-alpha-15.1
 TARGET = WatchThatSound
 
 QT += phonon multimedia
