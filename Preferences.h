@@ -8,6 +8,8 @@ namespace Ui {
     class Preferences;
 }
 
+namespace WTS {
+
 class Preferences : public QDialog
 {
     Q_OBJECT
@@ -17,5 +19,7 @@ public:
     ~Preferences();
     Ui::Preferences *ui;
 };
+
+}
 
 #endif // PREFERENCES_H

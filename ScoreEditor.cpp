@@ -1,6 +1,8 @@
 #include "ScoreEditor.h"
 #include "Rainbow.h"
 
+using namespace WTS;
+
 const int ScoreEditor::s_wheelColorCount = 8;
 const float ScoreEditor::s_wheelInnerRadius = 7;
 const float ScoreEditor::s_wheelOuterRadius = 18;

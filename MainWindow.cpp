@@ -7,6 +7,8 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
+using namespace WTS;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)

@@ -5,6 +5,8 @@
 #include <QtGui>
 #include <QtDebug>
 
+using namespace WTS;
+
 class AssertFailed {
 public:
     AssertFailed(const QString& cond, const QString& file, int line,

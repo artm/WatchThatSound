@@ -2,6 +2,8 @@
 #include <QPainter>
 #include "SharpLine.h"
 
+using namespace WTS;
+
 SharpLine::SharpLine(QGraphicsScene * scene)
     : QGraphicsLineItem(0., 0., 0., 1., 0, scene)
 {

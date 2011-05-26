@@ -12,6 +12,8 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+namespace WTS {
+
 class VideoFile;
 
 class Exporter : public QObject
@@ -48,5 +50,7 @@ protected:
     AVStream * m_audioStream;
 
 };
+
+}
 
 #endif // EXPORTTHREAD_H

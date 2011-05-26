@@ -1,5 +1,7 @@
 #include "CurveEditor.h"
 
+using namespace WTS;
+
 CurveEditor::CurveEditor(QWidget *parent)
     : TimeLineWidget(parent)
     , m_nodePixelSize(8)

@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+namespace WTS {
+
 class VuMeter : public QWidget
 {
     Q_OBJECT
@@ -27,5 +29,7 @@ protected:
 
     float m_value;
 };
+
+}
 
 #endif // VUMETER_H

@@ -10,6 +10,8 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 
+namespace WTS {
+
 class VideoFile : public QObject
 {
     Q_OBJECT
@@ -45,5 +47,7 @@ protected:
 
     static bool s_ffInited;
 };
+
+}
 
 #endif // VIDEOFILE_H

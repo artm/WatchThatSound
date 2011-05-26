@@ -2,6 +2,8 @@
 
 #include <QtGui>
 
+using namespace WTS;
+
 VuMeter::VuMeter(QWidget *parent)
     : QWidget(parent)
     , m_ledCount(16)

@@ -3,6 +3,8 @@
 
 #include "TimeLineWidget.h"
 
+namespace WTS {
+
 class StoryBoard : public TimeLineWidget
 {
     Q_OBJECT
@@ -34,5 +36,7 @@ protected:
 
     void drawBackground( QPainter * painter, const QRectF & rect ) ;
 };
+
+}
 
 #endif // STORYBOARD_H

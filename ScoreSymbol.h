@@ -4,6 +4,8 @@
 #include <QGraphicsItem>
 #include <QTimer>
 
+namespace WTS {
+
 class ScoreSymbol : public QGraphicsItem
 {
 public:
@@ -54,5 +56,7 @@ protected:
 
     static const float s_maxThickness;
 };
+
+}
 
 #endif // SCORESYMBOL_H

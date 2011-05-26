@@ -6,6 +6,8 @@
 #include "BufferItem.h"
 #include "Synced.h"
 
+using namespace WTS;
+
 TimeLineWidget::TimeLineWidget(QWidget *parent)
     : QGraphicsView(parent)
     , m_seekOnDrag(false)
@@ -15,7 +17,7 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
 {
     // find the mainWindow
     QObject * iter = parent;
-    while(iter && !iter->inherits("MainWindow"))
+    while(iter && !iter->inherits("WTS::MainWindow"))
         iter = iter->parent();
     if (!iter)
         qFatal("TimeLineWidget should be descendant of MainWindow in view hierarchy");

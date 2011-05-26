@@ -7,6 +7,8 @@
 #include <QObject>
 #include <QLinkedList>
 
+namespace WTS {
+
 class SoundBuffer;
 
 class WtsAudio : public QObject
@@ -73,5 +75,7 @@ protected:
     float m_volume;
     bool m_mute;
 };
+
+}
 
 #endif // WTSAUDIO_H

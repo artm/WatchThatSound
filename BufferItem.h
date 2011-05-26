@@ -4,6 +4,9 @@
 #include "WtsAudio.h"
 #include <QGraphicsRectItem>
 
+namespace WTS {
+
+
 class BufferItem : public QGraphicsRectItem
 {
 public:
@@ -18,5 +21,7 @@ protected:
     WtsAudio::BufferAt * m_buffer;
     bool m_constrain;
 };
+
+}
 
 #endif // BUFFERITEM_H

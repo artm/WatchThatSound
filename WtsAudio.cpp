@@ -3,6 +3,8 @@
 
 #include <QDebug>
 
+using namespace WTS;
+
 struct PortAudioLogger {
     bool operator<<(PaError error) {
         if (error != paNoError) {

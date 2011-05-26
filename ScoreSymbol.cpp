@@ -2,6 +2,8 @@
 #include <QtGui>
 #include "TimeLineWidget.h"
 
+using namespace WTS;
+
 const float ScoreSymbol::s_maxThickness = 30;
 
 ScoreSymbol::ScoreSymbol()

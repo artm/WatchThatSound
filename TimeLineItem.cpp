@@ -3,6 +3,8 @@
 #include "TimeLineItem.h"
 #include "TimeLineWidget.h"
 
+using namespace WTS;
+
 TimeLineItem::TimeLineItem(WTS::Synced * synced, QGraphicsScene * scene)
     : QGraphicsItem(0, scene)
     , m_synced(synced)

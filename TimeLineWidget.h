@@ -6,7 +6,9 @@
 #include <QGraphicsLineItem>
 #include "MainWindow.h"
 
-namespace WTS { class Synced; }
+namespace WTS {
+
+class Synced;
 
 class TimeLineWidget : public QGraphicsView
 {
@@ -61,5 +63,7 @@ protected:
 private:
     bool m_editMode, m_deafToSeek;
 };
+
+}
 
 #endif // TIMELINEWIDGET_H

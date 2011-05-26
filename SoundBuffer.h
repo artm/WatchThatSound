@@ -7,6 +7,8 @@
 #include <QIODevice>
 #include <QColor>
 
+namespace WTS {
+
 class SoundBuffer
 {
 public:
@@ -67,5 +69,7 @@ public:
 protected:
     float m_normGain, m_gain;
 };
+
+}
 
 #endif // SOUNDBUFFER_H

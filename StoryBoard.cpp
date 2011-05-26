@@ -2,6 +2,8 @@
 #include <cmath>
 #include <TimeLineItem.h>
 
+using namespace WTS;
+
 StoryBoard::StoryBoard(QWidget *parent)
     : TimeLineWidget(parent)
     , m_videoWidth(640)

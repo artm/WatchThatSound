@@ -1,4 +1,4 @@
-VERSION = 3-alpha-15.1
+VERSION = 3-alpha-16
 TARGET = WatchThatSound
 
 QT += phonon multimedia
@@ -8,7 +8,7 @@ DEFINES += WTS_VERSION=\\\"$$VERSION\\\"
 TEMPLATE = app
 SOURCES += main.cpp \
     MainWindow.cpp \
-    Soundbuffer.cpp \
+    SoundBuffer.cpp \
     TimeLineWidget.cpp \
     SequencerTimeLine.cpp \
     Rainbow.cpp \

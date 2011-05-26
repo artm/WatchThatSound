@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "MainWindow.h"
 
+namespace WTS {
+
 class WaveformWidget : public QWidget
 {
     Q_OBJECT
@@ -34,5 +36,7 @@ protected:
     SoundBuffer * m_buffer;
     qint64 m_selStart;
 };
+
+}
 
 #endif // WAVEFORMWIDGET_H

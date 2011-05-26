@@ -4,6 +4,8 @@
 #include <QMultiMap>
 #include <QMouseEvent>
 
+using namespace WTS;
+
 SequencerTimeLine::SequencerTimeLine(QWidget *parent)
     : TimeLineWidget(parent)
     , m_pen(Qt::black)

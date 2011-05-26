@@ -16,6 +16,8 @@ namespace Ui
     class MainWindow;
 }
 
+namespace WTS {
+
 class Exporter;
 
 class MainWindow : public QMainWindow
@@ -131,5 +133,7 @@ protected:
     Preferences * m_preferences;
     QSettings m_settings;
 };
+
+}
 
 #endif // MAINWINDOW_H

@@ -1,6 +1,8 @@
 #include "SoundBuffer.h"
 #include "WtsAudio.h"
 
+using namespace WTS;
+
 SoundBuffer::SoundBuffer()
     : m_name("scratch")
     , m_saved(true)

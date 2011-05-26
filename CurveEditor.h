@@ -3,6 +3,8 @@
 
 #include "TimeLineWidget.h"
 
+namespace WTS {
+
 class CurveEditor : public TimeLineWidget
 {
     Q_OBJECT
@@ -31,5 +33,7 @@ protected:
     QGraphicsRectItem * m_dragItem;
     QPointF m_dragLastP;
 };
+
+}
 
 #endif // CURVEEDITOR_H

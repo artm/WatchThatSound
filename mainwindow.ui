@@ -53,7 +53,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="VuMeter" name="vuLeft" native="true">
+        <widget class="WTS::VuMeter" name="vuLeft" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -79,7 +79,7 @@
         </widget>
        </item>
        <item>
-        <widget class="VuMeter" name="vuRight" native="true">
+        <widget class="WTS::VuMeter" name="vuRight" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -143,7 +143,7 @@
         </widget>
        </item>
        <item>
-        <widget class="WaveformWidget" name="waveform" native="true">
+        <widget class="WTS::WaveformWidget" name="waveform" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -189,7 +189,7 @@
      </widget>
     </item>
     <item>
-     <widget class="SequencerTimeLine" name="timeLine">
+     <widget class="WTS::SequencerTimeLine" name="timeLine">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -208,7 +208,7 @@
      </widget>
     </item>
     <item>
-     <widget class="ScoreEditor" name="score">
+     <widget class="WTS::ScoreEditor" name="score">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -224,7 +224,7 @@
      </widget>
     </item>
     <item>
-     <widget class="CurveEditor" name="tension">
+     <widget class="WTS::CurveEditor" name="tension">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -246,7 +246,7 @@
      </widget>
     </item>
     <item>
-     <widget class="StoryBoard" name="storyboard">
+     <widget class="WTS::StoryBoard" name="storyboard">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -422,35 +422,35 @@
    <header location="global">phonon/videoplayer.h</header>
   </customwidget>
   <customwidget>
-   <class>SequencerTimeLine</class>
+   <class>WTS::SequencerTimeLine</class>
    <extends>QGraphicsView</extends>
-   <header>sequencertimeline.h</header>
+   <header>SequencerTimeLine.h</header>
   </customwidget>
   <customwidget>
-   <class>WaveformWidget</class>
+   <class>WTS::WaveformWidget</class>
    <extends>QWidget</extends>
-   <header>waveformwidget.h</header>
+   <header>WaveformWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>StoryBoard</class>
+   <class>WTS::StoryBoard</class>
    <extends>QGraphicsView</extends>
-   <header>storyboard.h</header>
+   <header>StoryBoard.h</header>
   </customwidget>
   <customwidget>
-   <class>CurveEditor</class>
+   <class>WTS::CurveEditor</class>
    <extends>QGraphicsView</extends>
-   <header>curveeditor.h</header>
+   <header>CurveEditor.h</header>
   </customwidget>
   <customwidget>
-   <class>ScoreEditor</class>
+   <class>WTS::ScoreEditor</class>
    <extends>QGraphicsView</extends>
-   <header>scoreeditor.h</header>
+   <header>ScoreEditor.h</header>
   </customwidget>
   <customwidget>
-   <class>VuMeter</class>
+   <class>WTS::VuMeter</class>
    <extends>QWidget</extends>
-   <header>vumeter.h</header>
+   <header>VuMeter.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

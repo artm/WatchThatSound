@@ -1,6 +1,6 @@
 #include "Synced.h"
 
-namespace WTS {
+using namespace WTS;
 
 Synced::Synced(qint64 at, QObject *parent)
     : QObject(parent)
@@ -8,4 +8,3 @@ Synced::Synced(qint64 at, QObject *parent)
 {
 }
 
-} // namespace WTS

@@ -2,6 +2,8 @@
 #include <QDebug>
 #include <QFileInfo>
 
+using namespace WTS;
+
 bool VideoFile::s_ffInited = false;
 
 struct LibAvLogger {

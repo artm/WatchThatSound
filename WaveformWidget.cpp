@@ -1,6 +1,8 @@
 #include "WaveformWidget.h"
 #include <QtGui>
 
+using namespace WTS;
+
 WaveformWidget::WaveformWidget(QWidget *parent) :
     QWidget(parent), m_scaleMax(m_minScaleMax), m_wasRecording(false), m_buffer(0)
 {

@@ -4,6 +4,8 @@
 #include "TimeLineWidget.h"
 #include "SoundBuffer.h"
 
+namespace WTS {
+
 class BufferItem;
 
 class SequencerTimeLine : public TimeLineWidget
@@ -41,5 +43,7 @@ protected:
     */
     virtual void mouseReleaseEvent ( QMouseEvent * event );
 };
+
+}
 
 #endif // SEQUENCERTIMELINE_H

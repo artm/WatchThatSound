@@ -4,8 +4,8 @@
 #include <QGraphicsItem>
 
 namespace WTS {
+
 class Synced;
-}
 
 class TimeLineItem : public QGraphicsItem
 {
@@ -22,5 +22,7 @@ protected:
 
     WTS::Synced * m_synced;
 };
+
+}
 
 #endif // TIMELINEITEM_H
