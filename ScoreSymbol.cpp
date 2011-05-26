@@ -1,6 +1,6 @@
-#include "scoresymbol.h"
+#include "ScoreSymbol.h"
 #include <QtGui>
-#include "timelinewidget.h"
+#include "TimeLineWidget.h"
 
 const float ScoreSymbol::s_maxThickness = 30;
 

@@ -1,6 +1,6 @@
 #include "BufferItem.h"
-#include "soundbuffer.h"
-#include "timelinewidget.h"
+#include "SoundBuffer.h"
+#include "TimeLineWidget.h"
 
 BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration)
     : QGraphicsRectItem()

@@ -7,43 +7,43 @@ DEFINES += WTS_VERSION=\\\"$$VERSION\\\"
 
 TEMPLATE = app
 SOURCES += main.cpp \
-    mainwindow.cpp \
-    timelinewidget.cpp \
-    soundbuffer.cpp \
-    sequencertimeline.cpp \
-    rainbow.cpp \
-    waveformwidget.cpp \
-    wtsaudio.cpp \
-    storyboard.cpp \
-    videofile.cpp \
-    synced.cpp \
-    exporter.cpp \
-    curveeditor.cpp \
-    scoreeditor.cpp \
-    scoresymbol.cpp \
+    MainWindow.cpp \
+    Soundbuffer.cpp \
+    TimeLineWidget.cpp \
+    SequencerTimeLine.cpp \
+    Rainbow.cpp \
+    WaveformWidget.cpp \
+    WtsAudio.cpp \
+    StoryBoard.cpp \
+    VideoFile.cpp \
+    Synced.cpp \
+    Exporter.cpp \
+    CurveEditor.cpp \
+    ScoreEditor.cpp \
+    ScoreSymbol.cpp \
     AutoUpdater.cpp \
-    vumeter.cpp \
+    VuMeter.cpp \
     BufferItem.cpp \
     SharpLine.cpp \
     TimeLineItem.cpp \
     Preferences.cpp
-HEADERS += mainwindow.h \
-    timelinewidget.h \
-    soundbuffer.h \
-    sequencertimeline.h \
-    rainbow.h \
-    waveformwidget.h \
-    wtsaudio.h \
-    storyboard.h \
-    videofile.h \
-    synced.h \
-    exporter.h \
+HEADERS += MainWindow.h \
+    TimeLineWidget.h \
+    SoundBuffer.h \
+    SequencerTimeLine.h \
+    Rainbow.h \
+    WaveformWidget.h \
+    WtsAudio.h \
+    StoryBoard.h \
+    VideoFile.h \
+    Synced.h \
+    Exporter.h \
     stable.h \
-    curveeditor.h \
-    scoreeditor.h \
-    scoresymbol.h \
+    CurveEditor.h \
+    ScoreEditor.h \
+    ScoreSymbol.h \
     AutoUpdater.h \
-    vumeter.h \
+    VuMeter.h \
     BufferItem.h \
     SharpLine.h \
     TimeLineItem.h \
@@ -83,8 +83,8 @@ mac {
   LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices
 
   InfoPlist.target = "$$TARGET".app/Contents/Info.plist
-  InfoPlist.source = WTS.plist
-  InfoPlist.depends = $$InfoPlist.source WTS3.pro
+  InfoPlist.source = $$PWD/WTS.plist
+  InfoPlist.depends = $$InfoPlist.source $$PWD/WTS3.pro
   InfoPlist.commands = sed \"s/@VERSION@/$$VERSION/g;s/@EXECUTABLE@/$$TARGET/g;s/@TYPEINFO@/WTS3/g;s/@ICON@/$$ICON/g\" \
                        $$InfoPlist.source > $$InfoPlist.target
 

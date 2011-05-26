@@ -1,4 +1,4 @@
-#include "vumeter.h"
+#include "VuMeter.h"
 
 #include <QtGui>
 

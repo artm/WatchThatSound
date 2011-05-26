@@ -1,5 +1,5 @@
-#include "scoreeditor.h"
-#include "rainbow.h"
+#include "ScoreEditor.h"
+#include "Rainbow.h"
 
 const int ScoreEditor::s_wheelColorCount = 8;
 const float ScoreEditor::s_wheelInnerRadius = 7;

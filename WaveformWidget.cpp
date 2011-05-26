@@ -1,4 +1,4 @@
-#include "waveformwidget.h"
+#include "WaveformWidget.h"
 #include <QtGui>
 
 WaveformWidget::WaveformWidget(QWidget *parent) :

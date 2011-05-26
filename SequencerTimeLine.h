@@ -1,8 +1,8 @@
 #ifndef SEQUENCERTIMELINE_H
 #define SEQUENCERTIMELINE_H
 
-#include "timelinewidget.h"
-#include "soundbuffer.h"
+#include "TimeLineWidget.h"
+#include "SoundBuffer.h"
 
 class BufferItem;
 

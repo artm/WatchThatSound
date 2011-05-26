@@ -1,8 +1,8 @@
 #ifndef SCOREEDITOR_H
 #define SCOREEDITOR_H
 
-#include "timelinewidget.h"
-#include "scoresymbol.h"
+#include "TimeLineWidget.h"
+#include "ScoreSymbol.h"
 
 class ScoreEditor : public TimeLineWidget
 {

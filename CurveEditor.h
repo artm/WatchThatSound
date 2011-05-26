@@ -1,7 +1,7 @@
 #ifndef CURVEEDITOR_H
 #define CURVEEDITOR_H
 
-#include "timelinewidget.h"
+#include "TimeLineWidget.h"
 
 class CurveEditor : public TimeLineWidget
 {

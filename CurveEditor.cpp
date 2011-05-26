@@ -1,4 +1,4 @@
-#include "curveeditor.h"
+#include "CurveEditor.h"
 
 CurveEditor::CurveEditor(QWidget *parent)
     : TimeLineWidget(parent)

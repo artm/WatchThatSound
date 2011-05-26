@@ -1,5 +1,5 @@
-#include "soundbuffer.h"
-#include "wtsaudio.h"
+#include "SoundBuffer.h"
+#include "WtsAudio.h"
 
 SoundBuffer::SoundBuffer()
     : m_name("scratch")

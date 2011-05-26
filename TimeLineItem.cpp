@@ -1,7 +1,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "TimeLineItem.h"
-#include "timelinewidget.h"
+#include "TimeLineWidget.h"
 
 TimeLineItem::TimeLineItem(WTS::Synced * synced, QGraphicsScene * scene)
     : QGraphicsItem(0, scene)

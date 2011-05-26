@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "mainwindow.h"
+#include "MainWindow.h"
 
 #ifdef Q_WS_MAC
 #include "CocoaInitializer.h"

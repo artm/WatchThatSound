@@ -1,7 +1,7 @@
 #ifndef WTSAUDIO_H
 #define WTSAUDIO_H
 
-#include "synced.h"
+#include "Synced.h"
 
 #include <portaudio.h>
 #include <QObject>

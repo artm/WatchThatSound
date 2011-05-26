@@ -1,10 +1,10 @@
-#include "timelinewidget.h"
-#include "ui_mainwindow.h"
+#include "TimeLineWidget.h"
+#include "ui_MainWindow.h"
 #include <QMouseEvent>
 
 #include "SharpLine.h"
 #include "BufferItem.h"
-#include "synced.h"
+#include "Synced.h"
 
 TimeLineWidget::TimeLineWidget(QWidget *parent)
     : QGraphicsView(parent)

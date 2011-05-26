@@ -1,6 +1,6 @@
-#include "exporter.h"
-#include "videofile.h"
-#include "soundbuffer.h"
+#include "Exporter.h"
+#include "VideoFile.h"
+#include "SoundBuffer.h"
 
 #include <QtGui>
 #include <QtDebug>

@@ -1,7 +1,7 @@
 #ifndef BUFFERITEM_H
 #define BUFFERITEM_H
 
-#include "wtsaudio.h"
+#include "WtsAudio.h"
 #include <QGraphicsRectItem>
 
 class BufferItem : public QGraphicsRectItem

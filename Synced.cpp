@@ -1,4 +1,4 @@
-#include "synced.h"
+#include "Synced.h"
 
 namespace WTS {
 

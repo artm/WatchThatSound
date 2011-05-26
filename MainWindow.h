@@ -5,10 +5,10 @@
 #include <QDir>
 #include <Phonon>
 
-#include "wtsaudio.h"
-#include "soundbuffer.h"
-#include "videofile.h"
-#include "synced.h"
+#include "WtsAudio.h"
+#include "SoundBuffer.h"
+#include "VideoFile.h"
+#include "Synced.h"
 #include "Preferences.h"
 
 namespace Ui

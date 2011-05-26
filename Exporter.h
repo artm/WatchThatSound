@@ -1,7 +1,7 @@
 #ifndef EXPORTTHREAD_H
 #define EXPORTTHREAD_H
 
-#include "wtsaudio.h"
+#include "WtsAudio.h"
 
 #include <QByteArray>
 #include <QVector>

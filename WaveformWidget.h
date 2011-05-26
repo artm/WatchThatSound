@@ -2,7 +2,7 @@
 #define WAVEFORMWIDGET_H
 
 #include <QWidget>
-#include "mainwindow.h"
+#include "MainWindow.h"
 
 class WaveformWidget : public QWidget
 {

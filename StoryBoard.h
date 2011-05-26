@@ -1,7 +1,7 @@
 #ifndef STORYBOARD_H
 #define STORYBOARD_H
 
-#include "timelinewidget.h"
+#include "TimeLineWidget.h"
 
 class StoryBoard : public TimeLineWidget
 {

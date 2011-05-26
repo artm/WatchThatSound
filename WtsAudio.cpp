@@ -1,5 +1,5 @@
-#include "wtsaudio.h"
-#include "soundbuffer.h"
+#include "WtsAudio.h"
+#include "SoundBuffer.h"
 
 #include <QDebug>
 

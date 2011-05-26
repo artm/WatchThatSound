@@ -1,4 +1,4 @@
-#include "sequencertimeline.h"
+#include "SequencerTimeLine.h"
 #include "BufferItem.h"
 
 #include <QMultiMap>

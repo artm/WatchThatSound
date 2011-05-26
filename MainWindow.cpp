@@ -1,8 +1,8 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "MainWindow.h"
+#include "ui_MainWindow.h"
 #include "ui_Preferences.h"
-#include "rainbow.h"
-#include "exporter.h"
+#include "Rainbow.h"
+#include "Exporter.h"
 
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>

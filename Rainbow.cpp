@@ -1,4 +1,4 @@
-#include "rainbow.h"
+#include "Rainbow.h"
 
 QColor Rainbow::getColor(int i, int a, int l)
 {

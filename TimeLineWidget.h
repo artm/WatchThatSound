@@ -4,7 +4,7 @@
 #include <QtCore>
 #include <QGraphicsView>
 #include <QGraphicsLineItem>
-#include "mainwindow.h"
+#include "MainWindow.h"
 
 namespace WTS { class Synced; }
 
