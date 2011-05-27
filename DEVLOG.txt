@@ -213,3 +213,17 @@ the best place seems next to the film (right and left of) - there is almost alwa
 [x] open finder after export
 [x] timestamps in the storyboard
 [ ] windows versie
+
+* * *
+
+[x] CRASH: ScoreEditor::resizeEvent() >> dynamic_cast< ... >
+    - feels like corrupted memory...
+    - something todo with time spent in the program? how?
+    - No. To reproduce: move something.
+    - No. To reproduce: select something, change size, select something, change size, ...
+
+[ ] CRASH: StoryBoard::setCurrentTime >> QGraphicsItem::setZValue() after having deleted all markers
+[x] BUG: creating new symbols when moving symbols
+[ ] IMPROVEMENT: upon save clean up unused raws
+[ ] IMPROVEMENT: saving via renaming (save to new file and only rename on success)
+

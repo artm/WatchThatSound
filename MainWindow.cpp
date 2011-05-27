@@ -133,7 +133,6 @@ void MainWindow::resetData()
 {
     m_dataDir.setPath("");;
     m_scratch.setAt(0);
-    //m_scratch = SoundBuffer();
     m_sequence.clear();;
     m_sequenceCursor = m_sequence.begin();
     m_markers.clear();
