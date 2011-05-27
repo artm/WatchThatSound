@@ -148,7 +148,7 @@ void MainWindow::saveData()
     if (m_loading)
         return;
 
-    QFile dataFile( m_dataDir.filePath("metadata.xml") );
+    QFile dataFile( m_dataDir.filePath("metadata.xml.tmp") );
     dataFile.open(QFile::WriteOnly | QFile::Text);
 
     QXmlStreamWriter xml( &dataFile );
@@ -196,6 +196,9 @@ void MainWindow::saveData()
 
     xml.writeEndElement();
     xml.writeEndDocument();
+    dataFile.close();
+    QFile::remove( m_dataDir.filePath("metadata.xml") );
+    dataFile.rename(  m_dataDir.filePath("metadata.xml") );
 }
 
 void MainWindow::loadData()
