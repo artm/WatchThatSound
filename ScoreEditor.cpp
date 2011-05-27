@@ -81,22 +81,22 @@ void ScoreEditor::mousePressEvent(QMouseEvent * event)
 {
     TimeLineWidget::mousePressEvent(event);
     if (editMode()) {
-        /* first see if we hit something */
+
+        if (scene()->selectedItems().size() > 0) {
+            // something is selected - don't bother...
+            return;
+        }
+
         if (event->buttons() & Qt::LeftButton) {
             QGraphicsItem * hitItem = itemAt( event->pos() );
 
             if (hitItem && hitItem != m_cursorLine) {
-
-                qDebug() << "Hit:" << hitItem;
-                // is this a petal?
-
-
+                // FIXME: color wheel should be a custom item handling the mouse
                 QVariant vpindex = hitItem->data(PetalIndex);
                 if (vpindex.isValid() && !vpindex.isNull()) {
                     // yes, a petal, use its color
                     selectPetal(hitItem);
                 }
-
             } else
                 m_newSymbol->start(mapToScene(event->pos()));
         }
