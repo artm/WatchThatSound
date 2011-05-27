@@ -133,13 +133,17 @@ void StoryBoard::resizeEvent ( QResizeEvent * event )
 void StoryBoard::setCurrentTime(qint64 time)
 {
     TimeLineWidget::setCurrentTime(time);
+
+    if (m_msToItem.size() == 0)
+        return; // no thumbs to select
+
     // find the last marker / item that we've passed
     QMap<qint64, QGraphicsItem *>::iterator iter = m_msToItem.upperBound(time);
     if (iter != m_msToItem.begin())
         iter--;
     QGraphicsItem * lastItem = iter.value();
 
-    if (lastItem != m_selectedThumb) {
+    if (lastItem && lastItem != m_selectedThumb) {
 
         if (m_selectedThumb) {
             m_selectedThumb->setZValue(0.0);
