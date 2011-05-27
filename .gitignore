@@ -1,12 +1,4 @@
 /movie
 /release
 /Shoulders
-Makefile
-WatchThatSound*.app
-WatchThatSound*.zip
-moc_*
-*.o
-qrc_*.cpp
-ui_*.h
-/*.gch
 WTS3.pro.user*
