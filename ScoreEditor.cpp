@@ -69,7 +69,9 @@ void ScoreEditor::mouseReleaseEvent(QMouseEvent * event)
 {
     TimeLineWidget::mouseReleaseEvent(event);
     if (editMode()) {
-        m_newSymbol->finish();
+        if (m_newSymbol->finish())
+            m_newSymbol->setSelected(true);
+
         initNewSymbol();
         emit dataChanged();
     }

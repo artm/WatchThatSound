@@ -96,13 +96,14 @@ void ScoreSymbol::pull(const QPointF &pullPos)
     updateGraphics();
 }
 
-void ScoreSymbol::finish()
+bool ScoreSymbol::finish()
 {
-    if (!m_running) return;
+    if (!m_running) return false;
 
     m_running = false;
     m_inkTimer.stop();
     m_inkTimer.disconnect(SIGNAL(timeout()));
+    return true;
 }
 
 void ScoreSymbol::configure(QGraphicsScene *theScene, int width, int height)

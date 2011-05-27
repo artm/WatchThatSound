@@ -28,7 +28,7 @@ public:
 
     void start(const QPointF& pos);
     void pull(const QPointF& pos);
-    void finish();
+    bool finish();
 
     void saveData(QXmlStreamWriter& xml);
     void loadData(QXmlStreamReader& xml);
