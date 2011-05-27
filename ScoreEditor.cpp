@@ -117,9 +117,18 @@ void ScoreEditor::resizeEvent(QResizeEvent *event)
     TimeLineWidget::resizeEvent(event);
     m_newSymbol->configure(scene(), width(), height());
 
+    /*
+      First copy only symbols then resize them. Two phases are necessary because reconfiguring /
+      updating a symbol destroys some items which scene()->items() would return and trying to
+      access those causes software to crash
+    */
+    QList<ScoreSymbol*> symbols;
     foreach(QGraphicsItem * item, scene()->items()) {
         ScoreSymbol * symbol = dynamic_cast<ScoreSymbol *>(item);
-        if (!symbol) continue;
+        if (symbol) symbols << symbol;
+    }
+
+    foreach(ScoreSymbol * symbol, symbols) {
         symbol->configure(scene(), width(), height());
         symbol->updateGraphics();
     }
