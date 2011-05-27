@@ -1,0 +1,3 @@
+#ifndef WTS_VERSION
+#define WTS_VERSION "@VERSION@"
+#endif

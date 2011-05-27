@@ -1,3 +1,5 @@
+#include "wts_version.h"
+
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"

@@ -1,9 +1,17 @@
-VERSION = 3-alpha-16
+VERSION = 3-alpha-15.2
 TARGET = WatchThatSound
 
 QT += phonon multimedia
 
-DEFINES += WTS_VERSION=\\\"$$VERSION\\\"
+WtsVersion.target = $$OUT_PWD/wts_version.h
+WtsVersion.source = $$PWD/wts_version.h.in
+WtsVersion.depends = $$WtsVersion.source $$PWD/WTS3.pro
+WtsVersion.commands = sed \"s/@VERSION@/$$VERSION/g\" $$WtsVersion.source > "$$WtsVersion.target".tmp \
+  && diff "$$WtsVersion.target".tmp $$WtsVersion.target > /dev/null \
+  || mv "$$WtsVersion.target".tmp $$WtsVersion.target
+
+QMAKE_EXTRA_TARGETS += WtsVersion
+PRE_TARGETDEPS += $$OUT_PWD/wts_version.h
 
 TEMPLATE = app
 SOURCES += main.cpp \
@@ -66,7 +74,8 @@ OTHER_FILES += \
     DEVLOG.txt \
     appcast.xml \
     WTS.plist \
-    .gitignore
+    .gitignore \
+    wts_version.h.in
 
 mac {
   ICON = WTS.icns
