@@ -53,12 +53,23 @@ MainWindow::MainWindow(QWidget *parent)
 
     constructStateMachine();
 
+    // right aligning the logo (idea from http://www.ffuts.org/blog/right-aligning-a-button-in-a-qtoolbar/ )
+    QWidget* spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->toolBar->addWidget(spacer);
+
+    QLabel * logo = new QLabel();
+    logo->setPixmap( QPixmap(":Resources/favicon.png") );
+    ui->toolBar->addWidget( logo );
+
+
     m_preferences = new Preferences(this);
     connect(ui->actionPreferences, SIGNAL(triggered()), m_preferences, SLOT(show()));
     connect(m_preferences->ui->muteOnRecord, SIGNAL(toggled(bool)), SLOT(setMuteOnRecord(bool)));
 
     m_preferences->ui->muteOnRecord->setChecked( m_settings.value("muteOnRecord", true).toBool() );
     m_muteOnRecord = m_preferences->ui->muteOnRecord->isChecked();
+
 }
 
 MainWindow::~MainWindow()
@@ -520,13 +531,13 @@ void MainWindow::buildMovieSelector()
     QVBoxLayout * layout0 = new QVBoxLayout;
     ui->movieSelector->setLayout(layout0);
 
-    QLabel * title = new QLabel("<center>Watch that Sound<br/><img src=':Resources/Icon-nobg.png'/></center>");
-    //title->setPixmap( QPixmap(":Resources/Icon-nobg.png") );
+    QLabel * title = new QLabel("Watch That Sound");
     QFont titleFont("Sans-Serif", 32, 500);
     title->setFont(titleFont);
-    layout0->addWidget(title, 0/*, Qt::AlignHCenter*/);
+    layout0->addWidget(title, 0, Qt::AlignCenter);
 
-    QLabel * version = new QLabel( WTS_VERSION );
+    QLabel * version = new QLabel( QString("<center>%1<br/><img src='%2'/></center>")
+                                   .arg(WTS_VERSION).arg(":Resources/Icon-nobg.png") );
     layout0->addWidget(version, 0, Qt::AlignCenter);
 
     QWidget * grid = new QWidget;
