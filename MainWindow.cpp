@@ -535,7 +535,16 @@ void MainWindow::buildMovieSelector()
     QGridLayout * layout = new QGridLayout;
     grid->setLayout(layout);
 
-    QDir movDir(QCoreApplication::applicationDirPath () + "/../../../movie");
+    QDir movDir(QCoreApplication::applicationDirPath () + "/../../../WTSmovie");
+
+    if (!movDir.exists()) {
+        QDir tryDir(QCoreApplication::applicationDirPath () + "/../../../movie");
+        if (tryDir.exists()) {
+            QDir().rename(tryDir.path(),movDir.path());
+        } else {
+            movDir.mkdir(movDir.path());
+        }
+    }
 
     QSignalMapper * mapper = new QSignalMapper(this);
 
