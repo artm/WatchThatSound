@@ -520,10 +520,11 @@ void MainWindow::buildMovieSelector()
     QVBoxLayout * layout0 = new QVBoxLayout;
     ui->movieSelector->setLayout(layout0);
 
-    QLabel * title = new QLabel("Watch that Sound");
+    QLabel * title = new QLabel("<center>Watch that Sound<br/><img src=':Resources/Icon-nobg.png'/></center>");
+    //title->setPixmap( QPixmap(":Resources/Icon-nobg.png") );
     QFont titleFont("Sans-Serif", 32, 500);
     title->setFont(titleFont);
-    layout0->addWidget(title, 0, Qt::AlignHCenter);
+    layout0->addWidget(title, 0/*, Qt::AlignHCenter*/);
 
     QLabel * version = new QLabel( WTS_VERSION );
     layout0->addWidget(version, 0, Qt::AlignCenter);
