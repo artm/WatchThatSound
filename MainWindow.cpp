@@ -581,7 +581,7 @@ void MainWindow::buildMovieSelector()
 
         connect(mapper, SIGNAL(mapped(QString)), SLOT(loadMovie(QString)));
     } else {
-        QLabel * oops = new QLabel("De WTSmovie map bevat geen Quick Time filmpjes (bestanden met een naam die eindigt met'.mov' uitgang).\n"
+        QLabel * oops = new QLabel("De WTSmovie map bevat geen Quick Time filmpjes (bestanden met een naam met '.mov' uitgang).\n"
                                    "Plaats een aantal van zulke bestanden in de map en start de tool opnieuw.");
         layout->addWidget(oops,0,0);
         layout->setAlignment(oops, Qt::AlignHCenter);
