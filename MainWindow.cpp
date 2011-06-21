@@ -550,34 +550,42 @@ void MainWindow::buildMovieSelector()
 
     QFileInfoList movList = movDir.entryInfoList(QStringList() << "*.mov");
 
-    int minColWidth = 100, maxCols = width() / minColWidth;
-    int cols = (movList.size()>3) ? (int)ceilf( sqrtf( (float) movList.size() ) ) : 1;
-    if (cols > maxCols)
-        cols = maxCols;
+    if (movList.size() > 0) {
 
-    QSize iconSize = size() / cols;
+        int minColWidth = 100, maxCols = width() / minColWidth;
+        int cols = (movList.size()>3) ? (int)ceilf( sqrtf( (float) movList.size() ) ) : 1;
+        if (cols > maxCols)
+            cols = maxCols;
 
-    int i = 0, offs = 1;
-    foreach(QFileInfo fi, movList) {
-        QPushButton * button = new QPushButton( );
-        layout->addWidget( button, offs + i/cols, i%cols );
-        i++;
-        button->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-        mapper->setMapping( button, fi.absoluteFilePath() );
-        connect(button, SIGNAL(clicked()), mapper, SLOT(map()));
+        QSize iconSize = size() / cols;
 
-        VideoFile vf(fi.absoluteFilePath());
-        vf.seek( vf.duration()/3 );
-        QPixmap thumb = QPixmap::fromImage( vf.frame().scaled(iconSize,Qt::KeepAspectRatio) );
+        int i = 0, offs = 1;
+        foreach(QFileInfo fi, movList) {
+            QPushButton * button = new QPushButton( );
+            layout->addWidget( button, offs + i/cols, i%cols );
+            i++;
+            button->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+            mapper->setMapping( button, fi.absoluteFilePath() );
+            connect(button, SIGNAL(clicked()), mapper, SLOT(map()));
 
-        qint64 tt = vf.duration(), min = tt / 60000, sec = tt / 1000 % 60;
-        button->setToolTip(QString("%1\n%2x%3\n%4:%5").arg(fi.fileName()).arg(vf.width()).arg(vf.height())
-                           .arg(min).arg(sec,2,10,QLatin1Char('0')) );
-        button->setIcon(QIcon(thumb));
-        button->setIconSize(iconSize);
+            VideoFile vf(fi.absoluteFilePath());
+            vf.seek( vf.duration()/3 );
+            QPixmap thumb = QPixmap::fromImage( vf.frame().scaled(iconSize,Qt::KeepAspectRatio) );
+
+            qint64 tt = vf.duration(), min = tt / 60000, sec = tt / 1000 % 60;
+            button->setToolTip(QString("%1\n%2x%3\n%4:%5").arg(fi.fileName()).arg(vf.width()).arg(vf.height())
+                               .arg(min).arg(sec,2,10,QLatin1Char('0')) );
+            button->setIcon(QIcon(thumb));
+            button->setIconSize(iconSize);
+        }
+
+        connect(mapper, SIGNAL(mapped(QString)), SLOT(loadMovie(QString)));
+    } else {
+        QLabel * oops = new QLabel("De WTSmovie map bevat geen Quick Time filmpjes (bestanden met een naam die eindigt met'.mov' uitgang).\n"
+                                   "Plaats een aantal van zulke bestanden in de map en start de tool opnieuw.");
+        layout->addWidget(oops,0,0);
+        layout->setAlignment(oops, Qt::AlignHCenter);
     }
-
-    connect(mapper, SIGNAL(mapped(QString)), SLOT(loadMovie(QString)));
 }
 
 void MainWindow::refreshTension()
