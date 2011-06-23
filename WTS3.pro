@@ -1,5 +1,5 @@
-VERSION = 3-alpha-15.4
-TARGET = WatchThatSound
+VERSION = 3.0
+TARGET = "Watch That Sound tool"
 
 QT += phonon multimedia
 
@@ -7,8 +7,8 @@ WtsVersion.target = $$OUT_PWD/wts_version.h
 WtsVersion.source = $$PWD/wts_version.h.in
 WtsVersion.depends = $$WtsVersion.source $$PWD/WTS3.pro
 WtsVersion.commands = sed \"s/@VERSION@/$$VERSION/g\" $$WtsVersion.source > "$$WtsVersion.target".tmp \
-  && diff "$$WtsVersion.target".tmp $$WtsVersion.target > /dev/null \
-  || mv "$$WtsVersion.target".tmp $$WtsVersion.target
+  && diff "$$WtsVersion.target".tmp "$$WtsVersion.target" > /dev/null \
+  || mv "$$WtsVersion.target".tmp "$$WtsVersion.target"
 
 QMAKE_EXTRA_TARGETS += WtsVersion
 PRE_TARGETDEPS += $$OUT_PWD/wts_version.h
@@ -75,7 +75,8 @@ OTHER_FILES += \
     appcast.xml \
     WTS.plist \
     .gitignore \
-    wts_version.h.in
+    wts_version.h.in \
+    LICENSE.txt
 
 mac {
   ICON = WTS.icns
@@ -95,13 +96,14 @@ mac {
   InfoPlist.source = $$PWD/WTS.plist
   InfoPlist.depends = $$InfoPlist.source $$PWD/WTS3.pro
   InfoPlist.commands = sed \"s/@VERSION@/$$VERSION/g;s/@EXECUTABLE@/$$TARGET/g;s/@TYPEINFO@/WTS3/g;s/@ICON@/$$ICON/g\" \
-                       $$InfoPlist.source > $$InfoPlist.target
+                       \"$$InfoPlist.source\" > \"$$InfoPlist.target\"
 
   QMAKE_EXTRA_TARGETS += InfoPlist
 
-  QMAKE_POST_LINK = mkdir -p "$$TARGET".app/Contents/Frameworks \
-    && cp -r /Library/Frameworks/Sparkle.framework "$$TARGET".app/Contents/Frameworks
+  QMAKE_POST_LINK = mkdir -p \"$$TARGET\".app/Contents/Frameworks \
+    && cp -r /Library/Frameworks/Sparkle.framework \"$$TARGET\".app/Contents/Frameworks
 }
+
 
 
 
