@@ -63,11 +63,11 @@ CONFIG += precompile_header
 PRECOMPILED_HEADER = stable.h
 
 INCLUDEPATH += Shoulders/portaudio/include Shoulders/ffmpeg
-LIBS += -L$$PWD/Shoulders/portaudio/lib -lportaudio
-LIBS += -L$$PWD/Shoulders/ffmpeg/libavcodec -lavcodec
-LIBS += -L$$PWD/Shoulders/ffmpeg/libavformat -lavformat -lz -lbz2
-LIBS += -L$$PWD/Shoulders/ffmpeg/libavutil -lavutil
-LIBS += -L$$PWD/Shoulders/ffmpeg/libswscale -lswscale
+LIBS += $$PWD/Shoulders/portaudio/lib/.libs/libportaudio.a
+LIBS += $$PWD/Shoulders/ffmpeg/libavcodec/libavcodec.a
+LIBS += $$PWD/Shoulders/ffmpeg/libavformat/libavformat.a -lz -lbz2
+LIBS += $$PWD/Shoulders/ffmpeg/libavutil/libavutil.a
+LIBS += $$PWD/Shoulders/ffmpeg/libswscale/libswscale.a
 
 OTHER_FILES += \
     MEMO.txt \
