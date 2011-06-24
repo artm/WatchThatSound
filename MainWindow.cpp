@@ -562,10 +562,12 @@ void MainWindow::buildMovieSelector()
 
     QFileInfoList movList = movDir.entryInfoList(QStringList() << "*.mov");
 
-    if (movList.size() > 0) {
+    int count = movList.size();
+
+    if (count > 0) {
 
         int minColWidth = 100, maxCols = width() / minColWidth;
-        int cols = (movList.size()>3) ? (int)ceilf( sqrtf( (float) movList.size() ) ) : 1;
+        int cols = (count>3) ? (int)ceilf( sqrtf( (float) count ) ) : count;
         if (cols > maxCols)
             cols = maxCols;
 
