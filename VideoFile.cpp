@@ -56,7 +56,7 @@ VideoFile::VideoFile(QString path, QObject *parent)
     // Find the first video stream
     m_streamIndex=-1;
     for (unsigned int i = 0; i < m_formatContext->nb_streams; i++) {
-        if ( m_formatContext->streams[i]->codec->codec_type == CODEC_TYPE_VIDEO ) {
+        if ( m_formatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO ) {
             m_streamIndex=(int)i;
             break;
         }
@@ -65,6 +65,14 @@ VideoFile::VideoFile(QString path, QObject *parent)
 
     m_codecContext = m_formatContext->streams[m_streamIndex]->codec;
     m_codec = avcodec_find_decoder(m_codecContext->codec_id);
+
+    if (!m_codec) {
+        qFatal("Can't decode file %s, missing codec: %s\n",
+               path.toLocal8Bit().data(),
+               m_formatContext->streams[m_streamIndex]->codec->codec_name);
+    }
+
+
     Q_ASSERT (m_codec);
     Q_ASSERT (avcodec_open(m_codecContext, m_codec) >= 0);
 

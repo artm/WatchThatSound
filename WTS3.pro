@@ -1,17 +1,17 @@
-VERSION = 3.0
+VERSION = 3.0.1
 TARGET = "Watch That Sound tool"
 
-QT += phonon multimedia
+QT += phonon
 
-WtsVersion.target = $$OUT_PWD/wts_version.h
-WtsVersion.source = $$PWD/wts_version.h.in
-WtsVersion.depends = $$WtsVersion.source $$PWD/WTS3.pro
-WtsVersion.commands = sed \"s/@VERSION@/$$VERSION/g\" $$WtsVersion.source > "$$WtsVersion.target".tmp \
-  && diff "$$WtsVersion.target".tmp "$$WtsVersion.target" > /dev/null \
-  || mv "$$WtsVersion.target".tmp "$$WtsVersion.target"
+WtsVersion.target = $$quote($$OUT_PWD/wts_version.h)
+WtsVersion.source = $$quote($$PWD/wts_version.h.in)
+WtsVersion.depends = $$quote($$WtsVersion.source) $$quote($$PWD/WTS3.pro)
+WtsVersion.commands = sed \"s/@VERSION@/$$VERSION/g\" $$quote($$WtsVersion.source) > $$quote($$WtsVersion.target).tmp \
+  && diff $$quote($$WtsVersion.target).tmp $$quote($$WtsVersion.target) > /dev/null \
+  || mv $$quote($$WtsVersion.target).tmp $$quote($$WtsVersion.target)
 
 QMAKE_EXTRA_TARGETS += WtsVersion
-PRE_TARGETDEPS += $$OUT_PWD/wts_version.h
+PRE_TARGETDEPS += $$quote($$OUT_PWD/wts_version.h)
 
 TEMPLATE = app
 SOURCES += main.cpp \
@@ -62,12 +62,8 @@ RESOURCES += WTS3Resources.qrc
 CONFIG += precompile_header
 PRECOMPILED_HEADER = stable.h
 
-INCLUDEPATH += Shoulders/portaudio/include Shoulders/ffmpeg
-LIBS += $$PWD/Shoulders/portaudio/lib/.libs/libportaudio.a
-LIBS += $$PWD/Shoulders/ffmpeg/libavcodec/libavcodec.a
-LIBS += $$PWD/Shoulders/ffmpeg/libavformat/libavformat.a -lz -lbz2
-LIBS += $$PWD/Shoulders/ffmpeg/libavutil/libavutil.a
-LIBS += $$PWD/Shoulders/ffmpeg/libswscale/libswscale.a
+LIBS += -lportaudio
+LIBS += -lavcodec -lavformat -lz -lbz2 -lavutil -lswscale
 
 OTHER_FILES += \
     MEMO.txt \
@@ -92,16 +88,16 @@ mac {
   LIBS += -framework Sparkle -framework AppKit
   LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices
 
-  InfoPlist.target = "$$TARGET".app/Contents/Info.plist
-  InfoPlist.source = $$PWD/WTS.plist
-  InfoPlist.depends = $$InfoPlist.source $$PWD/WTS3.pro
+  InfoPlist.target = $$quote($$TARGET).app/Contents/Info.plist
+  InfoPlist.source = $$quote($$PWD/WTS.plist)
+  InfoPlist.depends = $$quote($$InfoPlist.source) $$quote($$PWD/WTS3.pro)
   InfoPlist.commands = sed \"s/@VERSION@/$$VERSION/g;s/@EXECUTABLE@/$$TARGET/g;s/@TYPEINFO@/WTS3/g;s/@ICON@/$$ICON/g\" \
-                       \"$$InfoPlist.source\" > \"$$InfoPlist.target\"
+                       \"$$quote($$InfoPlist.source)\" > \"$$quote($$InfoPlist.target)\"
 
   QMAKE_EXTRA_TARGETS += InfoPlist
 
-  QMAKE_POST_LINK = mkdir -p \"$$TARGET\".app/Contents/Frameworks \
-    && cp -r /Library/Frameworks/Sparkle.framework \"$$TARGET\".app/Contents/Frameworks
+  QMAKE_POST_LINK = mkdir -p \"$$quote($$TARGET).app/Contents/Frameworks\" \
+    && cp -r /Library/Frameworks/Sparkle.framework \"$$quote($$TARGET).app/Contents/Frameworks\"
 }
 
 
