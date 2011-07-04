@@ -34,6 +34,8 @@ protected:
 
     QList< BufferItem * > m_bufferItems;
 
+    float m_levelH, m_sampleH;
+
     void restackItems();
     void showRange(QGraphicsItem * root, SoundBuffer * buffer);
 

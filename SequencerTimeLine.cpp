@@ -12,6 +12,8 @@ SequencerTimeLine::SequencerTimeLine(QWidget *parent)
     , m_brush(Qt::white)
     , m_muteBrush(QColor(0,0,0,70))
     , m_dragItem(0)
+    , m_levelH(0.15)
+    , m_sampleH(0.17)
 {
     connect(m_mainWindow,SIGNAL(newBufferAt(WtsAudio::BufferAt*)),
             SLOT(insertBufferAt(WtsAudio::BufferAt*)));
@@ -31,7 +33,7 @@ void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * bufferAt)
 {
     SoundBuffer * buffer = bufferAt->buffer();
 
-    BufferItem * item = new BufferItem(bufferAt, m_mainWindow->mediaObject()->totalTime());
+    BufferItem * item = new BufferItem(bufferAt, m_mainWindow->mediaObject()->totalTime(), m_sampleH);
     scene()->addItem(item);
 
 
@@ -60,7 +62,7 @@ void SequencerTimeLine::restackItems()
 
             if (x >= levelRight[level]) {
                 // insert on level
-                item->setY(0.25 * (float) level);
+                item->setY(m_levelH * (float) level);
                 levelRight[level] = x + item->boundingRect().width();
                 break;
             }
@@ -99,18 +101,18 @@ void SequencerTimeLine::showRange(QGraphicsItem * root, SoundBuffer *buffer)
     float selX2 = (float)WtsAudio::sampleCountToMs(buffer->rangeEnd()) / tt;
 
     scene()->addRect(
-                0, 0, selX1, 0.3,
+                0, 0, selX1, m_sampleH,
                 Qt::NoPen, m_muteBrush )
             ->setParentItem(root);
 
     scene()->addRect(
-                selX2, 0, relW-selX2, 0.3,
+                selX2, 0, relW-selX2, m_sampleH,
                 Qt::NoPen, m_muteBrush )
             ->setParentItem(root);
 
     scene()->addRect(
                 0, 0,
-                relW, 0.3,
+                relW, m_sampleH,
                 m_pen, Qt::NoBrush )
             ->setParentItem(root);
 

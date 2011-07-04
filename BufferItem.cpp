@@ -4,14 +4,14 @@
 
 using namespace WTS;
 
-BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration)
+BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float height)
     : QGraphicsRectItem()
     , m_duration(duration)
     , m_buffer(buffer)
     , m_constrain(false)
 {
     setX( (qreal) m_buffer->at() / m_duration );
-    setRect(0,0, (float)m_buffer->buffer()->duration() / m_duration, 0.3);
+    setRect(0,0, (float)m_buffer->buffer()->duration() / m_duration, height);
     setPen(Qt::NoPen);
     setBrush(buffer->buffer()->color());
 
