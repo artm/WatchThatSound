@@ -1,4 +1,4 @@
-VERSION = 3.0
+VERSION = 3.0.1
 TARGET = "Watch That Sound tool"
 
 QT += phonon multimedia
