@@ -10,7 +10,7 @@ namespace WTS {
 class BufferItem : public QGraphicsRectItem
 {
 public:
-    BufferItem(WtsAudio::BufferAt * buffer, qint64 duration);
+    BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float height);
     WtsAudio::BufferAt * buffer() { return m_buffer; }
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

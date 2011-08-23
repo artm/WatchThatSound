@@ -1,5 +1,6 @@
-VERSION = 3.16
-TARGET = WatchThatSound
+VERSION = 3.0.2
+TARGET = "Watch That Sound tool"
+
 QT += phonon multimedia
 CONFIG += precompile_header
 
@@ -7,8 +8,8 @@ WtsVersion.target = $$OUT_PWD/wts_version.h
 WtsVersion.source = $$PWD/wts_version.h.in
 WtsVersion.depends = $$WtsVersion.source $$PWD/WTS3.pro
 WtsVersion.commands = sed \"s/@VERSION@/$$VERSION/g\" $$WtsVersion.source > "$$WtsVersion.target".tmp \
-  && diff "$$WtsVersion.target".tmp $$WtsVersion.target > /dev/null \
-  || mv "$$WtsVersion.target".tmp $$WtsVersion.target
+  && diff "$$WtsVersion.target".tmp "$$WtsVersion.target" > /dev/null \
+  || mv "$$WtsVersion.target".tmp "$$WtsVersion.target"
 
 QMAKE_EXTRA_TARGETS += WtsVersion
 PRE_TARGETDEPS += $$OUT_PWD/wts_version.h
@@ -66,7 +67,8 @@ OTHER_FILES += \
     appcast.xml \
     WTS.plist \
     .gitignore \
-    wts_version.h.in
+    wts_version.h.in \
+    LICENSE.txt
 
 
 INCLUDEPATH += $$PWD/Shoulders/portaudio/include $$PWD/Shoulders/ffmpeg
@@ -90,11 +92,12 @@ mac {
     SparkleAutoUpdater.mm \
     CocoaInitializer.mm
 
-  LIBS += -L$$PWD/Shoulders/portaudio/lib -lportaudio
-  LIBS += -L$$PWD/Shoulders/ffmpeg/libavformat -lavformat -lz -lbz2
-  LIBS += -L$$PWD/Shoulders/ffmpeg/libavcodec -lavcodec
-  LIBS += -L$$PWD/Shoulders/ffmpeg/libavutil -lavutil
-  LIBS += -L$$PWD/Shoulders/ffmpeg/libswscale -lswscale
+  INCLUDEPATH += Shoulders/portaudio/include Shoulders/ffmpeg
+  LIBS += $$PWD/Shoulders/portaudio/lib/.libs/libportaudio.a
+  LIBS += $$PWD/Shoulders/ffmpeg/libavcodec/libavcodec.a
+  LIBS += $$PWD/Shoulders/ffmpeg/libavformat/libavformat.a -lz -lbz2
+  LIBS += $$PWD/Shoulders/ffmpeg/libavutil/libavutil.a
+  LIBS += $$PWD/Shoulders/ffmpeg/libswscale/libswscale.a
 
   LIBS += -framework Sparkle -framework AppKit
   LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices
@@ -103,13 +106,14 @@ mac {
   InfoPlist.source = $$PWD/WTS.plist
   InfoPlist.depends = $$InfoPlist.source $$PWD/WTS3.pro
   InfoPlist.commands = sed \"s/@VERSION@/$$VERSION/g;s/@EXECUTABLE@/$$TARGET/g;s/@TYPEINFO@/WTS3/g;s/@ICON@/$$ICON/g\" \
-                       $$InfoPlist.source > $$InfoPlist.target
+                       \"$$InfoPlist.source\" > \"$$InfoPlist.target\"
 
   QMAKE_EXTRA_TARGETS += InfoPlist
 
-  QMAKE_POST_LINK = mkdir -p "$$TARGET".app/Contents/Frameworks \
-    && cp -r /Library/Frameworks/Sparkle.framework "$$TARGET".app/Contents/Frameworks
+  QMAKE_POST_LINK = mkdir -p \"$$TARGET\".app/Contents/Frameworks \
+    && cp -r /Library/Frameworks/Sparkle.framework \"$$TARGET\".app/Contents/Frameworks
 }
+
 
 
 

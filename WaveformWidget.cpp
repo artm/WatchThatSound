@@ -86,6 +86,9 @@ void WaveformWidget::resizeEvent(QResizeEvent *event)
 
 void WaveformWidget::mousePressEvent(QMouseEvent * e)
 {
+    if (!m_buffer)
+        return;
+
     m_selStart = e->x() * m_buffer->sampleCount() / width();
     m_buffer->setRange(m_selStart, m_selStart);
     update();

@@ -53,12 +53,23 @@ MainWindow::MainWindow(QWidget *parent)
 
     constructStateMachine();
 
+    // right aligning the logo (idea from http://www.ffuts.org/blog/right-aligning-a-button-in-a-qtoolbar/ )
+    QWidget* spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->toolBar->addWidget(spacer);
+
+    QLabel * logo = new QLabel();
+    logo->setPixmap( QPixmap(":Resources/favicon.png") );
+    ui->toolBar->addWidget( logo );
+
+
     m_preferences = new Preferences(this);
     connect(ui->actionPreferences, SIGNAL(triggered()), m_preferences, SLOT(show()));
     connect(m_preferences->ui->muteOnRecord, SIGNAL(toggled(bool)), SLOT(setMuteOnRecord(bool)));
 
     m_preferences->ui->muteOnRecord->setChecked( m_settings.value("muteOnRecord", true).toBool() );
     m_muteOnRecord = m_preferences->ui->muteOnRecord->isChecked();
+
 }
 
 MainWindow::~MainWindow()
@@ -303,6 +314,12 @@ void MainWindow::onPlay(bool play)
         m_audio.start();
         qSort(m_sequence.begin(), m_sequence.end(), WtsAudio::startsBefore);
         m_sequenceCursor = m_sequence.begin();
+
+        // if at the very end of the film - start from the beginning
+        if (mediaObject()->totalTime() - mediaObject()->currentTime() < 40) {
+            ui->videoPlayer->seek(0);
+        }
+
         ui->videoPlayer->play();
     } else {
         m_audio.stop();
@@ -520,12 +537,13 @@ void MainWindow::buildMovieSelector()
     QVBoxLayout * layout0 = new QVBoxLayout;
     ui->movieSelector->setLayout(layout0);
 
-    QLabel * title = new QLabel("Watch that Sound");
+    QLabel * title = new QLabel("Watch That Sound");
     QFont titleFont("Sans-Serif", 32, 500);
     title->setFont(titleFont);
-    layout0->addWidget(title, 0, Qt::AlignHCenter);
+    layout0->addWidget(title, 0, Qt::AlignCenter);
 
-    QLabel * version = new QLabel( WTS_VERSION );
+    QLabel * version = new QLabel( QString("<center>%1<br/><img src='%2'/></center>")
+                                   .arg(WTS_VERSION).arg(":Resources/Icon-nobg.png") );
     layout0->addWidget(version, 0, Qt::AlignCenter);
 
     QWidget * grid = new QWidget;
@@ -535,40 +553,59 @@ void MainWindow::buildMovieSelector()
     QGridLayout * layout = new QGridLayout;
     grid->setLayout(layout);
 
-    QDir movDir(QCoreApplication::applicationDirPath () + "/../../../movie");
+    QDir movDir(QCoreApplication::applicationDirPath () + "/../../../WTSmovie");
+
+    if (!movDir.exists()) {
+        QDir tryDir(QCoreApplication::applicationDirPath () + "/../../../movie");
+        if (tryDir.exists()) {
+            QDir().rename(tryDir.path(),movDir.path());
+        } else {
+            movDir.mkdir(movDir.path());
+        }
+    }
 
     QSignalMapper * mapper = new QSignalMapper(this);
 
     QFileInfoList movList = movDir.entryInfoList(QStringList() << "*.mov");
 
-    int minColWidth = 100, maxCols = width() / minColWidth;
-    int cols = (movList.size()>3) ? (int)ceilf( sqrtf( (float) movList.size() ) ) : 1;
-    if (cols > maxCols)
-        cols = maxCols;
+    int count = movList.size();
 
-    QSize iconSize = size() / cols;
+    if (count > 0) {
 
-    int i = 0, offs = 1;
-    foreach(QFileInfo fi, movList) {
-        QPushButton * button = new QPushButton( );
-        layout->addWidget( button, offs + i/cols, i%cols );
-        i++;
-        button->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-        mapper->setMapping( button, fi.absoluteFilePath() );
-        connect(button, SIGNAL(clicked()), mapper, SLOT(map()));
+        int minColWidth = 100, maxCols = width() / minColWidth;
+        int cols = (count>3) ? (int)ceilf( sqrtf( (float) count ) ) : count;
+        if (cols > maxCols)
+            cols = maxCols;
 
-        VideoFile vf(fi.absoluteFilePath());
-        vf.seek( vf.duration()/3 );
-        QPixmap thumb = QPixmap::fromImage( vf.frame().scaled(iconSize,Qt::KeepAspectRatio) );
+        QSize iconSize = size() / cols;
 
-        qint64 tt = vf.duration(), min = tt / 60000, sec = tt / 1000 % 60;
-        button->setToolTip(QString("%1\n%2x%3\n%4:%5").arg(fi.fileName()).arg(vf.width()).arg(vf.height())
-                           .arg(min).arg(sec,2,10,QLatin1Char('0')) );
-        button->setIcon(QIcon(thumb));
-        button->setIconSize(iconSize);
+        int i = 0, offs = 1;
+        foreach(QFileInfo fi, movList) {
+            QPushButton * button = new QPushButton( );
+            layout->addWidget( button, offs + i/cols, i%cols );
+            i++;
+            button->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+            mapper->setMapping( button, fi.absoluteFilePath() );
+            connect(button, SIGNAL(clicked()), mapper, SLOT(map()));
+
+            VideoFile vf(fi.absoluteFilePath());
+            vf.seek( vf.duration()/3 );
+            QPixmap thumb = QPixmap::fromImage( vf.frame().scaled(iconSize,Qt::KeepAspectRatio) );
+
+            qint64 tt = vf.duration(), min = tt / 60000, sec = tt / 1000 % 60;
+            button->setToolTip(QString("%1\n%2x%3\n%4:%5").arg(fi.fileName()).arg(vf.width()).arg(vf.height())
+                               .arg(min).arg(sec,2,10,QLatin1Char('0')) );
+            button->setIcon(QIcon(thumb));
+            button->setIconSize(iconSize);
+        }
+
+        connect(mapper, SIGNAL(mapped(QString)), SLOT(loadMovie(QString)));
+    } else {
+        QLabel * oops = new QLabel("De WTSmovie map bevat geen Quick Time filmpjes (bestanden met een naam met '.mov' uitgang).\n"
+                                   "Plaats een aantal van zulke bestanden in de map en start de tool opnieuw.");
+        layout->addWidget(oops,0,0);
+        layout->setAlignment(oops, Qt::AlignHCenter);
     }
-
-    connect(mapper, SIGNAL(mapped(QString)), SLOT(loadMovie(QString)));
 }
 
 void MainWindow::refreshTension()
