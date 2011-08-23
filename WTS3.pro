@@ -1,5 +1,10 @@
 VERSION = 3.0.2
-TARGET = "Watch That Sound tool"
+mac {
+  TARGET = "Watch That Sound tool"
+}
+win32 {
+  TARGET = "WatchThatSoundTool"
+}
 
 QT += phonon multimedia
 CONFIG += precompile_header
