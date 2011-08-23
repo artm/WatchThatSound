@@ -2,6 +2,10 @@
 #include <QDebug>
 #include <QFileInfo>
 
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
+
 using namespace WTS;
 
 bool VideoFile::s_ffInited = false;
@@ -56,7 +60,7 @@ VideoFile::VideoFile(QString path, QObject *parent)
     // Find the first video stream
     m_streamIndex=-1;
     for (unsigned int i = 0; i < m_formatContext->nb_streams; i++) {
-        if ( m_formatContext->streams[i]->codec->codec_type == CODEC_TYPE_VIDEO ) {
+        if ( m_formatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO ) {
             m_streamIndex=(int)i;
             break;
         }

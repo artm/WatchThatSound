@@ -1,7 +1,7 @@
-VERSION = 3-alpha-15.4
+VERSION = 3.16
 TARGET = WatchThatSound
-
 QT += phonon multimedia
+CONFIG += precompile_header
 
 WtsVersion.target = $$OUT_PWD/wts_version.h
 WtsVersion.source = $$PWD/wts_version.h.in
@@ -59,16 +59,7 @@ HEADERS += MainWindow.h \
 FORMS += mainwindow.ui \
     Preferences.ui
 RESOURCES += WTS3Resources.qrc
-CONFIG += precompile_header
 PRECOMPILED_HEADER = stable.h
-
-INCLUDEPATH += Shoulders/portaudio/include Shoulders/ffmpeg
-LIBS += -L$$PWD/Shoulders/portaudio/lib -lportaudio
-LIBS += -L$$PWD/Shoulders/ffmpeg/libavcodec -lavcodec
-LIBS += -L$$PWD/Shoulders/ffmpeg/libavformat -lavformat -lz -lbz2
-LIBS += -L$$PWD/Shoulders/ffmpeg/libavutil -lavutil
-LIBS += -L$$PWD/Shoulders/ffmpeg/libswscale -lswscale
-
 OTHER_FILES += \
     MEMO.txt \
     DEVLOG.txt \
@@ -76,6 +67,17 @@ OTHER_FILES += \
     WTS.plist \
     .gitignore \
     wts_version.h.in
+
+
+INCLUDEPATH += $$PWD/Shoulders/portaudio/include $$PWD/Shoulders/ffmpeg
+
+win32 {
+  LIBS += -L$$PWD/Shoulders/portaudio/lib/.libs -lportaudio -lwinmm
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libavformat -lavformat
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libavcodec -lavcodec
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libavutil -lavutil
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libswscale -lswscale
+}
 
 mac {
   ICON = WTS.icns
@@ -87,6 +89,12 @@ mac {
   OBJECTIVE_SOURCES += \
     SparkleAutoUpdater.mm \
     CocoaInitializer.mm
+
+  LIBS += -L$$PWD/Shoulders/portaudio/lib -lportaudio
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libavformat -lavformat -lz -lbz2
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libavcodec -lavcodec
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libavutil -lavutil
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libswscale -lswscale
 
   LIBS += -framework Sparkle -framework AppKit
   LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices
