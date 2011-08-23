@@ -300,10 +300,13 @@ Phonon::MediaObject * MainWindow::mediaObject()
 
 void MainWindow::setFullscreen(bool fs) {
     ui->actionFullscreen->setChecked(fs);
-    if (fs)
+    if (fs) {
+        menuBar()->hide();
         showFullScreen();
-    else
+    } else {
         showNormal();
+        menuBar()->show();
+    }
 }
 
 
@@ -553,10 +556,18 @@ void MainWindow::buildMovieSelector()
     QGridLayout * layout = new QGridLayout;
     grid->setLayout(layout);
 
-    QDir movDir(QCoreApplication::applicationDirPath () + "/../../../WTSmovie");
+
+#if defined(__APPLE__)
+#define nextToExe(p) QCoreApplication::applicationDirPath () + "/../../.." + p
+#else
+#define nextToExe(p) QCoreApplication::applicationDirPath () + p
+#endif
+
+    QDir movDir(nextToExe("/WTSmovie"));
 
     if (!movDir.exists()) {
-        QDir tryDir(QCoreApplication::applicationDirPath () + "/../../../movie");
+        QDir tryDir(nextToExe("/movie"));
+        // upgrade from beta to actual version
         if (tryDir.exists()) {
             QDir().rename(tryDir.path(),movDir.path());
         } else {
