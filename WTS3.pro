@@ -79,8 +79,8 @@ OTHER_FILES += \
 INCLUDEPATH += $$PWD/Shoulders/portaudio/include $$PWD/Shoulders/ffmpeg
 
 win32 {
-  LIBS += -L$$PWD/Shoulders/portaudio/lib/.libs -lportaudio -lwinmm
-  LIBS += -L$$PWD/Shoulders/ffmpeg/libavformat -lavformat
+  LIBS += -L$$PWD/Shoulders/portaudio/lib/.libs -lportaudio -lwinmm -lm -lole32 -luuid
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libavformat -lavformat -lavicap32 -lm -lpsapi
   LIBS += -L$$PWD/Shoulders/ffmpeg/libavcodec -lavcodec
   LIBS += -L$$PWD/Shoulders/ffmpeg/libavutil -lavutil
   LIBS += -L$$PWD/Shoulders/ffmpeg/libswscale -lswscale
@@ -97,7 +97,6 @@ mac {
     SparkleAutoUpdater.mm \
     CocoaInitializer.mm
 
-  INCLUDEPATH += Shoulders/portaudio/include Shoulders/ffmpeg
   LIBS += $$PWD/Shoulders/portaudio/lib/.libs/libportaudio.a
   LIBS += $$PWD/Shoulders/ffmpeg/libavcodec/libavcodec.a
   LIBS += $$PWD/Shoulders/ffmpeg/libavformat/libavformat.a -lz -lbz2
@@ -118,13 +117,3 @@ mac {
   QMAKE_POST_LINK = mkdir -p \"$$TARGET\".app/Contents/Frameworks \
     && cp -r /Library/Frameworks/Sparkle.framework \"$$TARGET\".app/Contents/Frameworks
 }
-
-
-
-
-
-
-
-
-
-
