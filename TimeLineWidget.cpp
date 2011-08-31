@@ -20,7 +20,7 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
     while(iter && !iter->inherits("WTS::MainWindow"))
         iter = iter->parent();
     if (!iter)
-        qFatal("TimeLineWidget should be descendant of MainWindow in view hierarchy");
+        qCritical("TimeLineWidget should be descendant of MainWindow in view hierarchy");
     m_mainWindow = qobject_cast<MainWindow *>(iter);
 
     connect(m_mainWindow,SIGNAL(storyBoardChanged()),SLOT(update()));
