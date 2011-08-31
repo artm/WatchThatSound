@@ -344,20 +344,23 @@ void MainWindow::onRecord(bool record)
         m_scratch.buffer()->setColor(Qt::red);
     } else {
         // done with recording - make a new sample buffer
-        WtsAudio::BufferAt * newBuff =
-                new WtsAudio::BufferAt(
-                    new SoundBuffer(makeSampleName(),
-                                    *m_scratch.buffer(),
-                                    m_scratch.buffer()->m_writePos),
-                    m_scratch.at(),
-                    this);
-        newBuff->buffer()->setColor( Rainbow::getColor(m_lastSampleNameNum) );
-        newBuff->buffer()->initGains();
-        m_sequence.append(newBuff);
-        emit scratchUpdated(newBuff, false);
-        emit newBufferAt(newBuff);
-        ui->videoPlayer->seek(m_scratch.at());
-        saveData();
+
+        if (m_scratch.buffer()->sampleCount() > 0) {
+            WtsAudio::BufferAt * newBuff =
+                    new WtsAudio::BufferAt(
+                        new SoundBuffer(makeSampleName(),
+                                        *m_scratch.buffer(),
+                                        m_scratch.buffer()->m_writePos),
+                        m_scratch.at(),
+                        this);
+            newBuff->buffer()->setColor( Rainbow::getColor(m_lastSampleNameNum) );
+            newBuff->buffer()->initGains();
+            m_sequence.append(newBuff);
+            emit scratchUpdated(newBuff, false);
+            emit newBufferAt(newBuff);
+            ui->videoPlayer->seek(m_scratch.at());
+            saveData();
+        }
     }
 }
 
