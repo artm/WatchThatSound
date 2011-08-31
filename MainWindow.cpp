@@ -301,11 +301,9 @@ Phonon::MediaObject * MainWindow::mediaObject()
 void MainWindow::setFullscreen(bool fs) {
     ui->actionFullscreen->setChecked(fs);
     if (fs) {
-        menuBar()->hide();
         showFullScreen();
     } else {
         showNormal();
-        menuBar()->show();
     }
 }
 
@@ -455,6 +453,9 @@ void MainWindow::constructStateMachine()
     QState * selector = new QState();
     QState * firstPlay = new QState();
     m_workshop = new QState();
+
+
+    selector->assignProperty(menuBar(), "visible", false);
 
     selector->addTransition(this,SIGNAL(loaded()), firstPlay);
     connect(selector, SIGNAL(exited()), ui->movieSelectorScrollArea, SLOT(hide()));
