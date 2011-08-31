@@ -32,11 +32,13 @@ WtsAudio::WtsAudio(QObject *parent)
     iParams.channelCount = 1;
     iParams.sampleFormat = paFloat32;
     iParams.suggestedLatency = 0;
+    iParams.hostApiSpecificStreamInfo = 0;
 
     oParams.device = Pa_GetDefaultOutputDevice();
     oParams.channelCount = 1;
     oParams.sampleFormat = paFloat32;
     oParams.suggestedLatency = 0;
+    oParams.hostApiSpecificStreamInfo = 0;
 
     PortAudioLogger() << Pa_OpenStream( &m_stream, &iParams, &oParams, 44100, 2048, paClipOff , 0, 0);
 }
