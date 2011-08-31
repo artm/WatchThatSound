@@ -25,9 +25,7 @@ configuration:
 When building on Windows, had to add c:\MinGW\msys\1.0\bin to the end of PATH and only then build it (need sed, diff, mv etc). After having changed PATH had to rerun qmake.
 
 portaudio:
-./configure --disable-shared --enable-static
-# the above breaks at the very end (doing chmod) but we can continue manually:
-./config.status
+PATH=/bin:/c/QtSDK/mingw/bin ./configure --disable-shared --enable-static
 # again, chmod complains, but we don't care
 make
 
@@ -35,7 +33,7 @@ ffmpeg:
 
 # without resctricting the PATH it was picking up some cygwin executable and failed to configure
 # there is no yasm in (my) msys, disable it as well
-PATH=/bin:/mingw/bin ./configure \
+PATH=/bin:/c/QtSDK/mingw/bin ./configure \
 --disable-doc \
 --disable-ffmpeg \
 --disable-ffplay \
@@ -44,6 +42,9 @@ PATH=/bin:/mingw/bin ./configure \
 --disable-avdevice \
 --disable-avfilter \
 --disable-network \
+--disable-pthreads \
 --disable-yasm
 
 make
+
+hypothesis: when built with plain mingw (not from the QtSDK, ffmpeg seems to break WTStool.
