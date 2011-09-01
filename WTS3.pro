@@ -78,12 +78,20 @@ OTHER_FILES += \
 
 INCLUDEPATH += $$PWD/Shoulders/portaudio/include $$PWD/Shoulders/ffmpeg
 
+LIBS += $$PWD/Shoulders/portaudio/lib/.libs/libportaudio.a
+LIBS += $$PWD/Shoulders/ffmpeg/libavformat/libavformat.a
+LIBS += $$PWD/Shoulders/ffmpeg/libavcodec/libavcodec.a
+LIBS += $$PWD/Shoulders/ffmpeg/libavutil/libavutil.a
+LIBS += $$PWD/Shoulders/ffmpeg/libswscale/libswscale.a
+
+
 win32 {
-  LIBS += -L$$PWD/Shoulders/portaudio/lib/.libs -lportaudio -lwinmm -lm -lole32 -luuid
-  LIBS += -L$$PWD/Shoulders/ffmpeg/libavformat -lavformat -lavicap32 -lm -lpsapi
-  LIBS += -L$$PWD/Shoulders/ffmpeg/libavcodec -lavcodec
-  LIBS += -L$$PWD/Shoulders/ffmpeg/libavutil -lavutil
-  LIBS += -L$$PWD/Shoulders/ffmpeg/libswscale -lswscale
+  DEFINES += PA_LOG_API_CALLS
+
+  # portaudio dependencies
+  LIBS += -L$$PWD/Shoulders/dx9mgw/lib -ldsound -lole32 -lwinmm
+  # ffmpeg dependencies
+  LIBS += -lavicap32 -lm -lpsapi
 }
 
 mac {
@@ -97,15 +105,12 @@ mac {
     SparkleAutoUpdater.mm \
     CocoaInitializer.mm
 
-  LIBS += $$PWD/Shoulders/portaudio/lib/.libs/libportaudio.a
-  LIBS += $$PWD/Shoulders/ffmpeg/libavcodec/libavcodec.a
-  LIBS += $$PWD/Shoulders/ffmpeg/libavformat/libavformat.a -lz -lbz2
-  LIBS += $$PWD/Shoulders/ffmpeg/libavutil/libavutil.a
-  LIBS += $$PWD/Shoulders/ffmpeg/libswscale/libswscale.a
+  # portaudio dependencies
+  LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices
+  # ffmpeg dependencies
+  LIBS += -lz -lbz2
 
   LIBS += -framework Sparkle -framework AppKit
-  LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices
-
   InfoPlist.target = "$$TARGET".app/Contents/Info.plist
   InfoPlist.source = $$PWD/WTS.plist
   InfoPlist.depends = $$InfoPlist.source $$PWD/WTS3.pro

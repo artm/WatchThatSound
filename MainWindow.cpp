@@ -117,9 +117,14 @@ void MainWindow::loadMovie(const QString& path)
     ui->score->setSeekOnDrag(true);
 
     // scratch should be big enough to fit a movie-long sound
+    // this should happen before loadData so we know video size and have
+    // access to thumbnails
+    if (m_videoFile) delete m_videoFile;
+    m_videoFile = new VideoFile(path, this);
+
     m_scratch.setBuffer(
                 new SoundBuffer(
-                    WtsAudio::msToSampleCount(mediaObject()->totalTime())));
+                    WtsAudio::msToSampleCount(m_videoFile->duration())));
     m_scratch.buffer()->setColor( Qt::red );
 
     // now setup dataPath and try to load files from there
@@ -129,10 +134,6 @@ void MainWindow::loadMovie(const QString& path)
 
     if (! m_dataDir.exists() ) { movieDir.mkdir( m_dataDir.dirName() ); }
 
-    // this should happen before loadData so we know video size and have
-    // access to thumbnails
-    if (m_videoFile) delete m_videoFile;
-    m_videoFile = new VideoFile(path, this);
     ui->storyboard->setVideoSize(m_videoFile->width(), m_videoFile->height());
 
     loadData();

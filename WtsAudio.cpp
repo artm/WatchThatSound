@@ -6,11 +6,18 @@
 using namespace WTS;
 
 struct PortAudioLogger {
+    QString m_successMessage;
+
+    PortAudioLogger() {}
+    PortAudioLogger(const QString& success) : m_successMessage(success) {}
+
     bool operator<<(PaError error) {
-        if (error != paNoError) {
+        if (error < 0) {
             qCritical() << Pa_GetErrorText(error);
             return false;
         }
+        if (!m_successMessage.isEmpty())
+            qDebug() << qPrintable(m_successMessage);
         return true;
     }
 };
@@ -26,21 +33,37 @@ WtsAudio::WtsAudio(QObject *parent)
 {
     Pa_Initialize();
 
+    for(int i = 0; i<Pa_GetHostApiCount(); ++i) {
+        const PaHostApiInfo * pahai = Pa_GetHostApiInfo(i);
+        qDebug() << "Available API: " << pahai->name;
+    }
+
+
     PaStreamParameters iParams, oParams;
 
     iParams.device = Pa_GetDefaultInputDevice();
     iParams.channelCount = 1;
     iParams.sampleFormat = paFloat32;
-    iParams.suggestedLatency = 0;
+    iParams.suggestedLatency = Pa_GetDeviceInfo( iParams.device )->defaultHighInputLatency;
     iParams.hostApiSpecificStreamInfo = 0;
 
     oParams.device = Pa_GetDefaultOutputDevice();
     oParams.channelCount = 1;
     oParams.sampleFormat = paFloat32;
-    oParams.suggestedLatency = 0;
+    oParams.suggestedLatency =  Pa_GetDeviceInfo( oParams.device )->defaultHighOutputLatency;
     oParams.hostApiSpecificStreamInfo = 0;
 
     PortAudioLogger() << Pa_OpenStream( &m_stream, &iParams, &oParams, 44100, 2048, paClipOff , 0, 0);
+
+    const PaDeviceInfo * padi = Pa_GetDeviceInfo(iParams.device);
+    const PaHostApiInfo * pahai = Pa_GetHostApiInfo(padi->hostApi);
+    qDebug() << "Input device: " << padi->name;
+    qDebug() << "Input API: " << pahai->name;
+
+    padi = Pa_GetDeviceInfo(oParams.device);
+    pahai = Pa_GetHostApiInfo(padi->hostApi);
+    qDebug() << "Output device: " << padi->name;
+    qDebug() << "Output API: " << pahai->name;
 }
 
 WtsAudio::~WtsAudio()
@@ -55,22 +78,27 @@ WtsAudio::~WtsAudio()
 void WtsAudio::start()
 {
     Q_ASSERT(m_stream);
-    PortAudioLogger() << Pa_StartStream(m_stream);
+    PortAudioLogger("Portaudio stream started") << Pa_StartStream(m_stream);
 }
 
 void WtsAudio::stop()
 {
     Q_ASSERT(m_stream);
-    PortAudioLogger() << Pa_StopStream(m_stream);
+    PortAudioLogger("Portaudio stream stopped") << Pa_StopStream(m_stream);
 }
 
 qint64 WtsAudio::capture(SoundBuffer * buffer)
 {
     Q_ASSERT(m_stream);
+#if 0
     qint64 availSamples = Pa_GetStreamReadAvailable(m_stream);
-    if (availSamples) {
+#else
+    qint64 availSamples = 2048;
+#endif
+    if (PortAudioLogger() << availSamples) {
         float * chunk = buffer->chunkToWrite(availSamples);
-        Pa_ReadStream(m_stream, chunk, availSamples);
+        PortAudioLogger()
+                << Pa_ReadStream(m_stream, chunk, availSamples);
     }
     return availSamples;
 }
