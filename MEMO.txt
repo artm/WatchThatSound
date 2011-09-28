@@ -29,9 +29,18 @@ directx sdk compatible with mingw comes from
 http://trent.gamblin.ca/dx/dx9mgw.zip
 
 portaudio:
+## Building with DirectSound:
 # WINVER=0x0501 makes sure we can use XP features -- necessary to build directsound backend
-CFLAGS='-DWINVER=0x0501' PATH=/bin:/mingw/bin ./configure --disable-shared --enable-static --with-winapi=wmme,directx --with-dxdir=../dx9mgw
+CFLAGS='-DWINVER=0x0501' PATH=/bin:/mingw/bin ./configure \
+    --disable-shared --enable-static \
+    --with-winapi=wmme,directx \
+    --with-dxdir=../dx9mgw
 # again, chmod complains, but we don'``t care
+make
+
+## Building without DirectSound is simpler:
+PATH=/bin:/mingw/bin ./configure \
+    --disable-shared --enable-static
 make
 
 ffmpeg:
