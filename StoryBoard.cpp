@@ -43,7 +43,7 @@ void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
 
     int maxLines = width() / 5;
 
-    float totalMin = (float)m_mainWindow->mediaObject()->totalTime() / 60000.0f;
+    float totalMin = (float)m_mainWindow->duration() / 60000.0f;
     float N[] = { 60, 30, 15, 12, 6, 5, 4, 3, 2 };
     int Ncount = sizeof(N)/sizeof(N[0]);
 
@@ -76,7 +76,7 @@ void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
 
 void StoryBoard::updateSnapshots()
 {
-    float tt = m_mainWindow->mediaObject()->totalTime();
+    float tt = m_mainWindow->duration();
 
     foreach(QGraphicsItem * item, m_msToItem) {
         scene()->removeItem(item);

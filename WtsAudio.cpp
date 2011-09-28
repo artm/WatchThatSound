@@ -33,12 +33,6 @@ WtsAudio::WtsAudio(QObject *parent)
 {
     Pa_Initialize();
 
-    for(int i = 0; i<Pa_GetHostApiCount(); ++i) {
-        const PaHostApiInfo * pahai = Pa_GetHostApiInfo(i);
-        qDebug() << "Available API: " << pahai->name;
-    }
-
-
     PaStreamParameters iParams, oParams;
 
     iParams.device = Pa_GetDefaultInputDevice();
@@ -57,13 +51,9 @@ WtsAudio::WtsAudio(QObject *parent)
 
     const PaDeviceInfo * padi = Pa_GetDeviceInfo(iParams.device);
     const PaHostApiInfo * pahai = Pa_GetHostApiInfo(padi->hostApi);
-    qDebug() << "Input device: " << padi->name;
-    qDebug() << "Input API: " << pahai->name;
 
     padi = Pa_GetDeviceInfo(oParams.device);
     pahai = Pa_GetHostApiInfo(padi->hostApi);
-    qDebug() << "Output device: " << padi->name;
-    qDebug() << "Output API: " << pahai->name;
 }
 
 WtsAudio::~WtsAudio()

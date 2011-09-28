@@ -74,7 +74,7 @@ void TimeLineWidget::paintRange(QPainter * painter, qreal x, qreal w, const QCol
 
 void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*/ )
 {
-    qreal total = m_mainWindow->mediaObject()->totalTime();
+    qreal total = m_mainWindow->duration();
     qreal relX1 = 0.0f;
 
     QPainter::RenderHints oldHints = painter->renderHints();
@@ -131,7 +131,7 @@ void TimeLineWidget::doSeekOnDrag( QMouseEvent * event )
 {
     if (seekOnDrag()) {
         if (event->buttons() & Qt::LeftButton) {
-            qint64 t = m_mainWindow->mediaObject()->totalTime() * event->x() / (qint64)width();
+            qint64 t = m_mainWindow->duration() * event->x() / (qint64)width();
 
             QGraphicsItem * dragged = scene()->mouseGrabberItem();
             BufferItem * dragged_b = dynamic_cast<BufferItem *>(dragged);
@@ -148,7 +148,7 @@ void TimeLineWidget::doSeekOnDrag( QMouseEvent * event )
 
             m_deafToSeek = true;
             m_mainWindow->seek( t );
-            m_cursorLine->setX( (double)t / m_mainWindow->mediaObject()->totalTime() );
+            m_cursorLine->setX( (double)t / m_mainWindow->duration() );
             m_deafToSeek = false;
         }
     }

@@ -69,6 +69,8 @@ public:
     void removeMark(Marker * m);
     void removeBuffer(WtsAudio::BufferAt * bufferAt);
 
+    qint64 duration() { return m_videoFile->duration(); }
+
 public slots:
     void setFullscreen(bool fs);
     void onPlay(bool play);

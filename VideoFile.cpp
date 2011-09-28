@@ -46,7 +46,6 @@ VideoFile::VideoFile(QString path, QObject *parent)
     QFileInfo fi(path);
     path = fi.canonicalFilePath();
 
-    qDebug() << "Opening" << path.toLocal8Bit().data();
     Q_ASSERT( LibAvLogger() << av_open_input_file( &m_formatContext,
                                                    path.toLocal8Bit().data(),
                                                    NULL, 0, NULL) );

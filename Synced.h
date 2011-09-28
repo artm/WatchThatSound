@@ -16,7 +16,9 @@ public:
     explicit Synced(qint64 at, QObject *parent = 0);
 
     qint64 at() const { return m_at; }
-    virtual void setAt(qint64 at) { m_at = at; }
+    virtual void setAt(qint64 at) {
+        m_at = at;
+    }
     bool operator<(const Synced& other) const { return at() < other.at(); }
 
 protected:

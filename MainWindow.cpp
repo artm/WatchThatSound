@@ -194,7 +194,9 @@ void MainWindow::saveData()
     xml.writeAttribute("counter",QString("%1").arg(m_lastSampleNameNum));
     foreach(WtsAudio::BufferAt * buffer, m_sequence) {
         xml.writeStartElement("sample");
-        xml.writeAttribute("ms",QString("%1").arg(buffer->at()));
+        qint64 at_int = buffer->at();
+        QString at_s = QString("%1").arg(at_int);
+        xml.writeAttribute("ms",at_s);
         xml.writeAttribute("id",buffer->buffer()->name());
         // FIXME: this shouldn't be here, but in a separate samples chunk
         xml.writeAttribute("range_start", QString("%1").arg(buffer->buffer()->rangeStart()));
@@ -260,9 +262,11 @@ void MainWindow::loadData()
                     sb->setRange(xml.attributes().value("range_start").toString().toLongLong(),
                                  xml.attributes().value("range_end").toString().toLongLong());
 
+                    QString at_s =  xml.attributes().value("ms").toString();
+                    qint64 at_int = at_s.toLongLong();
                     WtsAudio::BufferAt * buffer =
                             new WtsAudio::BufferAt(sb,
-                                                   xml.attributes().value("ms").toString().toLongLong(),
+                                                   at_int,
                                                    this);
                     m_sequence.append( buffer );
 
@@ -318,7 +322,7 @@ void MainWindow::onPlay(bool play)
         m_sequenceCursor = m_sequence.begin();
 
         // if at the very end of the film - start from the beginning
-        if (mediaObject()->totalTime() - mediaObject()->currentTime() < 40) {
+        if (duration() - mediaObject()->currentTime() < 40) {
             ui->videoPlayer->seek(0);
         }
 
