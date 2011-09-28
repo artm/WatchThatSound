@@ -1,7 +1,9 @@
+TODO: move this to Readme.md
+
 assumed dependency(-ies):
 - Qt (LGPL v2.1 or GPL v3)
 
-dependencies in 'Shoulders' (of giants) subdir:
+dependencies:
 
 - PortAudio (MIT, GPL compatible), daily snapshot (see directory name)
 (statically linked, does this break any licensing terms?)
@@ -19,45 +21,4 @@ configuration:
 --disable-network
 
 (without licensing switches it is LGPL v2)
-
-* * *
-
-When building on Windows, had to add c:\MinGW\msys\1.0\bin to the end of PATH and only then build it (need sed, diff, mv etc). After having changed PATH had to rerun qmake.
-
-
-directx sdk compatible with mingw comes from
-http://trent.gamblin.ca/dx/dx9mgw.zip
-
-portaudio:
-## Building with DirectSound:
-# WINVER=0x0501 makes sure we can use XP features -- necessary to build directsound backend
-CFLAGS='-DWINVER=0x0501' PATH=/bin:/mingw/bin ./configure \
-    --disable-shared --enable-static \
-    --with-winapi=wmme,directx \
-    --with-dxdir=../dx9mgw
-# again, chmod complains, but we don'``t care
-make
-
-## Building without DirectSound is simpler:
-PATH=/bin:/mingw/bin ./configure \
-    --disable-shared --enable-static
-make
-
-ffmpeg:
-
-# without resctricting the PATH it was picking up some cygwin executable and failed to configure
-# there is no yasm in (my) msys, disable it as well
-PATH=/bin:/mingw/bin ./configure \
---disable-doc \
---disable-ffmpeg \
---disable-ffplay \
---disable-ffprobe \
---disable-ffserver \
---disable-avdevice \
---disable-avfilter \
---disable-network \
---disable-pthreads \
---disable-yasm
-
-make
 
