@@ -73,23 +73,24 @@ OTHER_FILES += \
     WTS.plist \
     .gitignore \
     wts_version.h.in \
-    LICENSE.txt
+    LICENSE.txt \
+    Readme.md
 
 
-INCLUDEPATH += $$PWD/Shoulders/portaudio/include $$PWD/Shoulders/ffmpeg
+INCLUDEPATH += $$PWD/../portaudio/include $$PWD/../ffmpeg
 
-LIBS += $$PWD/Shoulders/portaudio/lib/.libs/libportaudio.a
-LIBS += $$PWD/Shoulders/ffmpeg/libavformat/libavformat.a
-LIBS += $$PWD/Shoulders/ffmpeg/libavcodec/libavcodec.a
-LIBS += $$PWD/Shoulders/ffmpeg/libavutil/libavutil.a
-LIBS += $$PWD/Shoulders/ffmpeg/libswscale/libswscale.a
+LIBS += $$PWD/../portaudio/lib/.libs/libportaudio.a
+LIBS += $$PWD/../ffmpeg/libavformat/libavformat.a
+LIBS += $$PWD/../ffmpeg/libavcodec/libavcodec.a
+LIBS += $$PWD/../ffmpeg/libavutil/libavutil.a
+LIBS += $$PWD/../ffmpeg/libswscale/libswscale.a
 
 
 win32 {
   DEFINES += PA_LOG_API_CALLS
 
   # portaudio dependencies
-  LIBS += -L$$PWD/Shoulders/dx9mgw/lib -ldsound -lole32 -lwinmm
+  LIBS += -L$$PWD/../dx9mgw/lib -ldsound -lole32 -lwinmm
   # ffmpeg dependencies
   LIBS += -lavicap32 -lm -lpsapi
 }
@@ -122,3 +123,4 @@ mac {
   QMAKE_POST_LINK = mkdir -p \"$$TARGET\".app/Contents/Frameworks \
     && cp -r /Library/Frameworks/Sparkle.framework \"$$TARGET\".app/Contents/Frameworks
 }
+
