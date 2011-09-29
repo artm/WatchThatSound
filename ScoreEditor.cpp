@@ -69,10 +69,10 @@ void ScoreEditor::mouseReleaseEvent(QMouseEvent * event)
 {
     TimeLineWidget::mouseReleaseEvent(event);
     if (editMode()) {
-        if (m_newSymbol->finish())
+        if (m_newSymbol->finish()) {
             m_newSymbol->setSelected(true);
-
-        initNewSymbol();
+            initNewSymbol();
+        }
         emit dataChanged();
     }
 }
@@ -168,7 +168,7 @@ void ScoreEditor::saveData(QXmlStreamWriter &xml)
 {
     foreach(QGraphicsItem * item, scene()->items()) {
         ScoreSymbol * symbol = dynamic_cast<ScoreSymbol *>(item);
-        if (!symbol) continue;
+        if (!symbol || symbol == m_newSymbol) continue;
         symbol->saveData(xml);
     }
 }
