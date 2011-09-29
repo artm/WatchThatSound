@@ -8,6 +8,7 @@ using namespace WTS;
 TimeLineItem::TimeLineItem(WTS::Synced * synced, QGraphicsScene * scene)
     : QGraphicsItem(0, scene)
     , m_synced(synced)
+    , m_editModeOnly(true)
 {
     setFlags( QGraphicsItem::ItemIsSelectable );
     TimeLineWidget::assignSynced(this, synced);
@@ -15,6 +16,10 @@ TimeLineItem::TimeLineItem(WTS::Synced * synced, QGraphicsScene * scene)
 
 void TimeLineItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    TimeLineWidget * timeline = dynamic_cast<TimeLineWidget *>(event->widget());
+    if (timeline && m_editModeOnly && !timeline->editMode())
+        return;
+
     if (! boundingRect().contains(event->pos()) ) {
         event->ignore();
         clearFocus();

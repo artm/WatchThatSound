@@ -113,8 +113,7 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
 
 void TimeLineWidget::mousePressEvent ( QMouseEvent * event )
 {
-    if (m_editMode)
-        QGraphicsView::mousePressEvent(event);
+    QGraphicsView::mousePressEvent(event);
 
     doSeekOnDrag(event);
 }

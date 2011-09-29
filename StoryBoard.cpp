@@ -97,6 +97,7 @@ void StoryBoard::updateSnapshots()
                   * (1.0 - s_marginY - s_marginBottom - m_thumbHeight) / (float)gapCount;
 
         TimeLineItem * tli = new TimeLineItem(m, scene());
+        tli->setEditModeOnly(false);
 
         QGraphicsItem * frameItem = scene()->addRect(
                 QRectF(x - m_marginX,
