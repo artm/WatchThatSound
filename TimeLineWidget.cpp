@@ -55,12 +55,9 @@ void TimeLineWidget::setCurrentTime(qint64 time)
 {
     if (m_deafToSeek) return;
 
-    Phonon::MediaObject * mo = m_mainWindow->mediaObject();
-    if (!mo) return;
-
     if (time != m_currentTime) {
         m_currentTime = time;
-        m_cursorLine->setX( (double)m_currentTime / mo->totalTime() );
+        m_cursorLine->setX( (double)m_currentTime / m_mainWindow->duration() );
     }
 }
 
