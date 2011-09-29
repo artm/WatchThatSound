@@ -39,7 +39,11 @@ public slots:
     void setSeekOnDrag(bool on) { m_seekOnDrag = on; }
     void setEditMode(bool on);
     virtual void updateSelection();
-
+    void invalidateBackground() {
+        invalidateScene(
+                    sceneRect(),
+                    QGraphicsScene::BackgroundLayer);
+    }
 
 protected:
     MainWindow * m_mainWindow;

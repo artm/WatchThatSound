@@ -11,8 +11,7 @@ StoryBoard::StoryBoard(QWidget *parent)
     , m_selectedThumb(0)
     , m_dragItem(0)
 {
-    disconnect(m_mainWindow, SIGNAL(storyBoardChanged()), this, SLOT(repaint()));
-    connect(m_mainWindow,SIGNAL(storyBoardChanged()),SLOT(updateSnapshots()));       
+    connect(m_mainWindow,SIGNAL(storyBoardChanged()),SLOT(updateSnapshots()));
 
     QFrame * box = new QFrame();
     box->setFrameShadow( QFrame::Raised );
@@ -114,6 +113,7 @@ void StoryBoard::updateSnapshots()
 
         m_msToItem[m->at()] = tli;
     }
+
 }
 
 void StoryBoard::resizeEvent ( QResizeEvent * event )
