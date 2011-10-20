@@ -1,6 +1,8 @@
 #include "StoryBoard.h"
 #include <cmath>
 #include <TimeLineItem.h>
+#include <QHBoxLayout>
+#include <QPushButton>
 
 using namespace WTS;
 

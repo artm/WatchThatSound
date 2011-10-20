@@ -2,6 +2,8 @@
 #include "SoundBuffer.h"
 #include "TimeLineWidget.h"
 
+#include <QGraphicsSceneMouseEvent>
+
 using namespace WTS;
 
 BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float height)

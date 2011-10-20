@@ -6,6 +6,7 @@
 #include "Rainbow.h"
 #include "Exporter.h"
 
+#include <QLabel>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 

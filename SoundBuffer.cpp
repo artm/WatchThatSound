@@ -1,6 +1,9 @@
 #include "SoundBuffer.h"
 #include "WtsAudio.h"
 
+#include <cmath>
+#include <QFileInfo>
+
 using namespace WTS;
 
 SoundBuffer::SoundBuffer()

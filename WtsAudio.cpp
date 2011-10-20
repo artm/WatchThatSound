@@ -1,6 +1,7 @@
 #include "WtsAudio.h"
 #include "SoundBuffer.h"
 
+#include <cmath>
 #include <QDebug>
 
 using namespace WTS;

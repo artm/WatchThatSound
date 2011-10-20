@@ -1,5 +1,6 @@
 #include "ScoreEditor.h"
 #include "Rainbow.h"
+#include <QMouseEvent>
 
 using namespace WTS;
 

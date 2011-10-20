@@ -3,7 +3,7 @@
 
 #include <QVector>
 #include <QFile>
-#include <QtMultimedia>
+//#include <QtMultimedia>
 #include <QIODevice>
 #include <QColor>
 

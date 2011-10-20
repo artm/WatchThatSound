@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QDir>
 #include <Phonon>
+#include <QStateMachine>
+#include <QActionGroup>
 
 #include "WtsAudio.h"
 #include "SoundBuffer.h"
