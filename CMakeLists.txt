@@ -2,7 +2,7 @@ PROJECT(WatchThatSound)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 SET(PROJECT_VERSION 3.0.3)
 CONFIGURE_FILE(wts_version.h.in wts_version.h)
-INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR})
+SET(CMAKE_INCLUDE_CURRENT_DIR true)
 
 MESSAGE(STATUS "
 Welcome to WatchThatSound build system.
@@ -26,7 +26,7 @@ INCLUDE(${QT_USE_FILE})
 FIND_PACKAGE(FFmpeg REQUIRED)
 INCLUDE_DIRECTORIES(${FFmpeg_INCLUDE_DIRS})
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FFmpeg_CXX_FLAGS}")
-
+# Disable warnings caused by the ffmpeg headers
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-deprecated-declarations -Wno-attributes")
 
 FIND_PACKAGE(Portaudio REQUIRED)
@@ -92,12 +92,22 @@ QT4_ADD_RESOURCES(WatchThatSound_RCC ${WatchThatSound_RESOURCES})
 SET(MACOSX_BUNDLE_GUI_IDENTIFIER "nl.v2.${PROJECT_NAME}")
 SET(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
 
+SET(WatchThatSound_ALL_SOURCES
+  ${WatchThatSound_SOURCES}
+  ${WatchThatSound_HEADERS_MOC}
+  ${WatchThatSound_HEADERS_UI}
+  ${WatchThatSound_RCC})
+
+# Precompiled headers support
+INCLUDE("Gch")
+ADD_PCH_RULE(stable.h WatchThatSound_ALL_SOURCES)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Winvalid-pch -I${CMAKE_CURRENT_BINARY_DIR} -include stable.h")
+# This speeds up `make clean all -j 5` by 30 seconds on core i3 CPU
+SET_PROPERTY(DIRECTORY PROPERTY CLEAN_NO_CUSTOM true)
+
 ADD_EXECUTABLE(WatchThatSound
                MACOSX_BUNDLE
-               ${WatchThatSound_SOURCES}
-               ${WatchThatSound_HEADERS_MOC}
-               ${WatchThatSound_HEADERS_UI}
-               ${WatchThatSound_RCC})
+               ${WatchThatSound_ALL_SOURCES})
 
 TARGET_LINK_LIBRARIES(WatchThatSound
   ${QT_LIBRARIES}
