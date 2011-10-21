@@ -2,9 +2,6 @@
 #define STABLE_H
 
 extern "C" {
-#define __STDC_CONSTANT_MACROS
-#include <stdint.h>
-
 #include <portaudio.h>
 
 #include <libavcodec/avcodec.h>
