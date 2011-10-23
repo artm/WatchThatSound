@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cmake ../WatchThatSound \
+      -G 'MSYS Makefiles' \
+      -DQT_QMAKE_EXECUTABLE=C:/QtSDK/Desktop/Qt/4.8.0/mingw/bin/qmake.exe \
+      -DPortaudio_SRCDIR=../portaudio \
+      -DFFmpeg_SRCDIR=../ffmpeg-0.8.5 \
+      -DFFmpeg_BUILDDIR=../ffmpeg-0.8.5-build \
+      -DCMAKE_BUILD_TYPE=Debug \
+      "$@"
+
