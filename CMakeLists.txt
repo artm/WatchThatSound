@@ -4,19 +4,6 @@ SET(PROJECT_VERSION 3.0.3)
 CONFIGURE_FILE(wts_version.h.in wts_version.h)
 SET(CMAKE_INCLUDE_CURRENT_DIR true)
 
-MESSAGE(STATUS "
-Welcome to WatchThatSound build system.
-
-Example usage (windows):
-  C:/Program\\ Files\\ \\(x86\\)/CMake\\ 2.8/bin/cmake.exe \\
-    ../WatchThatSound \\
-    -G 'MSYS Makefiles' \\
-    -DQT_QMAKE_EXECUTABLE=C:/QtSDK/Desktop/Qt/4.8.0/mingw/bin/qmake.exe \\
-    -DPortaudio_SRCDIR=../portaudio \\
-    -DFFmpeg_SRCDIR=../ffmpeg \\
-    -DCMAKE_BUILD_TYPE=Debug
-")
-
 SET(CMAKE_MODULE_PATH "${WatchThatSound_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 
 SET(QT_USE_PHONON true)
