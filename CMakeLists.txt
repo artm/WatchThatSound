@@ -37,6 +37,27 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FFmpeg_CXX_FLAGS}")
 # Disable warnings caused by the ffmpeg headers
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-deprecated-declarations -Wno-attributes")
 
+MACRO(FIND_LIBRARY_VERBOSE VAR Lib)
+  IF(NOT ${VAR}_LIBRARY)
+    FIND_LIBRARY(${VAR}_LIBRARY ${Lib})
+    IF("${${VAR}_LIBRARY}" STREQUAL "")
+      MESSAGE(SEND_ERROR "Required library ${VAR} not found")
+    ELSE("${${VAR}_LIBRARY}" STREQUAL "")
+      MESSAGE(STATUS "Found ${VAR}: ${${VAR}_LIBRARY}")
+    ENDIF("${${VAR}_LIBRARY}" STREQUAL "")
+  ENDIF(NOT ${VAR}_LIBRARY)
+ENDMACRO(FIND_LIBRARY_VERBOSE VAR Lib)
+
+IF(APPLE)
+  FIND_LIBRARY_VERBOSE(Sparkle Sparkle)
+  FIND_LIBRARY_VERBOSE(AppKit AppKit)
+  SET(Sparkle_LIBRARIES ${Sparkle_LIBRARY} ${AppKit_LIBRARY})
+
+  SET(WatchThatSound_OBJC_SOURCES 
+    SparkleAutoUpdater.mm
+    CocoaInitializer.mm)
+ENDIF(APPLE)
+
 FIND_PACKAGE(Portaudio REQUIRED)
 INCLUDE_DIRECTORIES(${Portaudio_INCLUDE_DIRS})
 
@@ -110,7 +131,8 @@ SET(WatchThatSound_ALL_SOURCES
 # Precompiled headers support
 INCLUDE("Gch")
 ADD_PCH_RULE(stable.h WatchThatSound_ALL_SOURCES)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Winvalid-pch -I${CMAKE_CURRENT_BINARY_DIR} -include stable.h")
+SET(CMAKE_CXX_FLAGS 
+  "${CMAKE_CXX_FLAGS} -Winvalid-pch -I${CMAKE_CURRENT_BINARY_DIR} -include stable.h")
 # This speeds up `make clean all -j 5` by 30 seconds on core i3 CPU
 SET_PROPERTY(DIRECTORY PROPERTY CLEAN_NO_CUSTOM true)
 
@@ -121,19 +143,25 @@ ENDIF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 ADD_EXECUTABLE(${PROJECT_EXE_NAME}
                ${GUI}
                MACOSX_BUNDLE
-               ${WatchThatSound_ALL_SOURCES})
+               ${WatchThatSound_ALL_SOURCES}
+               ${WatchThatSound_OBJC_SOURCES})
 
 SET(WatchThatSound_LIBRARIES 
   ${QT_LIBRARIES}
   ${FFmpeg_LIBRARIES}
-  ${Portaudio_LIBRARIES})
+  ${Portaudio_LIBRARIES}
+  ${Sparkle_LIBRARIES})
 
-TARGET_LINK_LIBRARIES(${PROJECT_EXE_NAME}
-  ${WatchThatSound_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_EXE_NAME} ${WatchThatSound_LIBRARIES})
+SET_TARGET_PROPERTIES(${PROJECT_EXE_NAME}
+  PROPERTIES LINK_FLAGS "${PKG_Portaudio_LDFLAGS_OTHER}")
 
 INSTALL(
   TARGETS ${PROJECT_EXE_NAME}
-  RUNTIME DESTINATION bin)
+  RUNTIME DESTINATION bin
+  BUNDLE DESTINATION .)
 
-INCLUDE(TakeAway)
-COLLECT_TAKEAWAY(WatchThatSound_LIBRARIES)
+IF(WIN32)
+  INCLUDE(TakeAway)
+  COLLECT_TAKEAWAY(WatchThatSound_LIBRARIES)
+ENDIF(WIN32)
