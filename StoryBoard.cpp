@@ -1,6 +1,8 @@
 #include "StoryBoard.h"
 #include <cmath>
 #include <TimeLineItem.h>
+#include <QHBoxLayout>
+#include <QPushButton>
 
 using namespace WTS;
 
@@ -11,8 +13,7 @@ StoryBoard::StoryBoard(QWidget *parent)
     , m_selectedThumb(0)
     , m_dragItem(0)
 {
-    disconnect(m_mainWindow, SIGNAL(storyBoardChanged()), this, SLOT(repaint()));
-    connect(m_mainWindow,SIGNAL(storyBoardChanged()),SLOT(updateSnapshots()));       
+    connect(m_mainWindow,SIGNAL(storyBoardChanged()),SLOT(updateSnapshots()));
 
     QFrame * box = new QFrame();
     box->setFrameShadow( QFrame::Raised );
@@ -43,7 +44,7 @@ void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
 
     int maxLines = width() / 5;
 
-    float totalMin = (float)m_mainWindow->mediaObject()->totalTime() / 60000.0f;
+    float totalMin = (float)m_mainWindow->duration() / 60000.0f;
     float N[] = { 60, 30, 15, 12, 6, 5, 4, 3, 2 };
     int Ncount = sizeof(N)/sizeof(N[0]);
 
@@ -76,7 +77,7 @@ void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
 
 void StoryBoard::updateSnapshots()
 {
-    float tt = m_mainWindow->mediaObject()->totalTime();
+    float tt = m_mainWindow->duration();
 
     foreach(QGraphicsItem * item, m_msToItem) {
         scene()->removeItem(item);
@@ -98,6 +99,7 @@ void StoryBoard::updateSnapshots()
                   * (1.0 - s_marginY - s_marginBottom - m_thumbHeight) / (float)gapCount;
 
         TimeLineItem * tli = new TimeLineItem(m, scene());
+        tli->setEditModeOnly(false);
 
         QGraphicsItem * frameItem = scene()->addRect(
                 QRectF(x - m_marginX,
@@ -114,6 +116,7 @@ void StoryBoard::updateSnapshots()
 
         m_msToItem[m->at()] = tli;
     }
+
 }
 
 void StoryBoard::resizeEvent ( QResizeEvent * event )

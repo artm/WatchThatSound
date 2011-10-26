@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QDir>
 #include <Phonon>
+#include <QStateMachine>
+#include <QActionGroup>
 
 #include "WtsAudio.h"
 #include "SoundBuffer.h"
@@ -69,6 +71,9 @@ public:
     void removeMark(Marker * m);
     void removeBuffer(WtsAudio::BufferAt * bufferAt);
 
+    qint64 duration() { return m_videoFile->duration(); }
+    QDir movDir();
+
 public slots:
     void setFullscreen(bool fs);
     void onPlay(bool play);
@@ -108,6 +113,9 @@ signals:
 protected:
     QString makeSampleName();
     void constructStateMachine();
+
+    QDir m_movDir;
+    bool m_movDirFound;
 
     WtsAudio m_audio;
     Ui::MainWindow *ui;

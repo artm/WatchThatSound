@@ -25,7 +25,6 @@ int main(int argc, char *argv[])
     }
 #endif
 
-
     w.setFullscreen(true);
-    return a.exec();
+    exit(a.exec());
 }

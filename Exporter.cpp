@@ -2,6 +2,8 @@
 #include "VideoFile.h"
 #include "SoundBuffer.h"
 
+#include "Common.h"
+
 #include <QtGui>
 #include <QtDebug>
 
@@ -57,9 +59,9 @@ void Exporter::initExport()
 {
     AVOutputFormat * format = av_guess_format(NULL, m_filename.constData(), NULL);
     if (!format) {
-        qWarning() << "Could not deduce output format "
-                      "from file extension: using MOV (QuickTime).";
-        format = av_guess_format("mov", NULL, NULL);
+        qWarning() << "Could not deduce output format from file extension: using "
+                      << VIDEO_FormatTitle;
+        format = av_guess_format(VIDEO_FMT, NULL, NULL);
     }
 
     TRY_ASSERT_X(format, "Could not find suitable output format");

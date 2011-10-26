@@ -1,4 +1,5 @@
 #include "CurveEditor.h"
+#include <QMouseEvent>
 
 using namespace WTS;
 

@@ -3,6 +3,10 @@
 
 #include <QGraphicsItem>
 #include <QTimer>
+#include <QXmlStreamWriter>
+#include <QXmlStreamReader>
+#include <QPen>
+#include <QBrush>
 
 namespace WTS {
 
