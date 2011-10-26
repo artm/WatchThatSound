@@ -1,7 +1,8 @@
-VERSION = 3.0.1
+VERSION = 3.0.2
 TARGET = "Watch That Sound tool"
 
-QT += phonon
+QT += phonon multimedia
+CONFIG += precompile_header
 
 WtsVersion.target = $$quote($$OUT_PWD/wts_version.h)
 WtsVersion.source = $$quote($$PWD/wts_version.h.in)
@@ -59,7 +60,6 @@ HEADERS += MainWindow.h \
 FORMS += mainwindow.ui \
     Preferences.ui
 RESOURCES += WTS3Resources.qrc
-CONFIG += precompile_header
 PRECOMPILED_HEADER = stable.h
 
 LIBS += -lportaudio
@@ -74,6 +74,17 @@ OTHER_FILES += \
     wts_version.h.in \
     LICENSE.txt
 
+
+INCLUDEPATH += $$PWD/Shoulders/portaudio/include $$PWD/Shoulders/ffmpeg
+
+win32 {
+  LIBS += -L$$PWD/Shoulders/portaudio/lib/.libs -lportaudio -lwinmm
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libavformat -lavformat
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libavcodec -lavcodec
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libavutil -lavutil
+  LIBS += -L$$PWD/Shoulders/ffmpeg/libswscale -lswscale
+}
+
 mac {
   ICON = WTS.icns
 
@@ -84,6 +95,13 @@ mac {
   OBJECTIVE_SOURCES += \
     SparkleAutoUpdater.mm \
     CocoaInitializer.mm
+
+  INCLUDEPATH += Shoulders/portaudio/include Shoulders/ffmpeg
+  LIBS += $$PWD/Shoulders/portaudio/lib/.libs/libportaudio.a
+  LIBS += $$PWD/Shoulders/ffmpeg/libavcodec/libavcodec.a
+  LIBS += $$PWD/Shoulders/ffmpeg/libavformat/libavformat.a -lz -lbz2
+  LIBS += $$PWD/Shoulders/ffmpeg/libavutil/libavutil.a
+  LIBS += $$PWD/Shoulders/ffmpeg/libswscale/libswscale.a
 
   LIBS += -framework Sparkle -framework AppKit
   LIBS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices

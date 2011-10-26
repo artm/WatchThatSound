@@ -2,6 +2,10 @@
 #include <QDebug>
 #include <QFileInfo>
 
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
+
 using namespace WTS;
 
 bool VideoFile::s_ffInited = false;

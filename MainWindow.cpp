@@ -314,6 +314,12 @@ void MainWindow::onPlay(bool play)
         m_audio.start();
         qSort(m_sequence.begin(), m_sequence.end(), WtsAudio::startsBefore);
         m_sequenceCursor = m_sequence.begin();
+
+        // if at the very end of the film - start from the beginning
+        if (mediaObject()->totalTime() - mediaObject()->currentTime() < 40) {
+            ui->videoPlayer->seek(0);
+        }
+
         ui->videoPlayer->play();
     } else {
         m_audio.stop();

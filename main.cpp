@@ -16,14 +16,14 @@ int main(int argc, char *argv[])
 
     MainWindow w;
 
-    AutoUpdater* updater = 0;
 #ifdef Q_WS_MAC
+    AutoUpdater* updater = 0;
     CocoaInitializer initializer;
     updater = new SparkleAutoUpdater("https://ftp.v2.nl/~artm/WTS3/appcast.xml");
-#endif
     if (updater) {
             updater->checkForUpdates();
     }
+#endif
 
 
     w.setFullscreen(true);
