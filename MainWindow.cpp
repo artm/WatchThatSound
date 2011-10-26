@@ -6,6 +6,8 @@
 #include "Rainbow.h"
 #include "Exporter.h"
 
+#include "Common.h"
+
 #include <QLabel>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
@@ -15,6 +17,7 @@ using namespace WTS;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , m_movDirFound(false)
     , m_lastSampleNameNum(0)
     , m_videoFile(0)
     , m_loading(false)
@@ -446,7 +449,7 @@ void MainWindow::exportMovie()
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(500);
 
-    m_exporter->configure(m_dataDir.filePath("export.mov"),
+    m_exporter->configure(m_dataDir.filePath(QString("export.%1").arg(VIDEO_FMT)),
                               m_videoFile,
                               m_sequence,
                               &m_audio,
@@ -561,27 +564,9 @@ void MainWindow::buildMovieSelector()
     grid->setLayout(layout);
 
 
-#if defined(__APPLE__)
-#define nextToExe(p) QCoreApplication::applicationDirPath () + "/../../.." + p
-#else
-#define nextToExe(p) QCoreApplication::applicationDirPath () + p
-#endif
-
-    QDir movDir(nextToExe("/WTSmovie"));
-
-    if (!movDir.exists()) {
-        QDir tryDir(nextToExe("/movie"));
-        // upgrade from beta to actual version
-        if (tryDir.exists()) {
-            QDir().rename(tryDir.path(),movDir.path());
-        } else {
-            movDir.mkdir(movDir.path());
-        }
-    }
-
     QSignalMapper * mapper = new QSignalMapper(this);
 
-    QFileInfoList movList = movDir.entryInfoList(QStringList() << "*.mov");
+    QFileInfoList movList = movDir().entryInfoList(QStringList() << QString("*.%1").arg(VIDEO_FMT));
 
     int count = movList.size();
 
@@ -616,8 +601,10 @@ void MainWindow::buildMovieSelector()
 
         connect(mapper, SIGNAL(mapped(QString)), SLOT(loadMovie(QString)));
     } else {
-        QLabel * oops = new QLabel("De WTSmovie map bevat geen Quick Time filmpjes (bestanden met een naam met '.mov' uitgang).\n"
-                                   "Plaats een aantal van zulke bestanden in de map en start de tool opnieuw.");
+        QLabel * oops = new QLabel(
+                QString("De map '%1' bevat geen filmpjes (formaat '%2').\n"
+                    "Plaats een aantal van zulke bestanden in de map en start de tool opnieuw.")
+                .arg(movDir().path()).arg(VIDEO_FormatTitle));
         layout->addWidget(oops,0,0);
         layout->setAlignment(oops, Qt::AlignHCenter);
     }
@@ -671,3 +658,47 @@ void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)
     saveData();
 }
 
+
+#if defined(__APPLE__)
+#define nextToExe(p) QCoreApplication::applicationDirPath () + "/../../.." + p
+#else
+#define nextToExe(p) QCoreApplication::applicationDirPath () + p
+#endif
+
+QDir MainWindow::movDir()
+{
+    if (!m_movDirFound) {
+
+        QString stdMoviesPath = QDesktopServices::storageLocation( 
+                QDesktopServices::MoviesLocation );
+
+        m_movDir = QDir(stdMoviesPath).filePath("Watch That Sound Movies");
+
+        if (!m_movDir.exists()) {
+            // first try pre 3.0.3 convention
+
+            QDir tryDir;
+            tryDir = QDir(nextToExe("/WTSmovie"));
+            if (!tryDir.exists()) 
+                // then try 3-beta convention
+                tryDir = QDir(nextToExe("/movie"));
+
+            // upgrade from beta to actual version
+            if (tryDir.exists()) {
+                QDir().rename(tryDir.path(),m_movDir.path());
+
+                QString info = 
+                    QString("Oude movie map %1 verplaatst naar de nieuwe locatie: %2")
+                    .arg(tryDir.path()).arg(m_movDir.path());
+
+                QMessageBox message(QMessageBox::Information, "Upgrade info", 
+                        info, QMessageBox::Ok);
+                message.exec();
+            } else {
+                m_movDir.mkdir(m_movDir.path());
+            }
+        }
+    }
+
+    return m_movDir;
+}

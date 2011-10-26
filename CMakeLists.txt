@@ -80,6 +80,7 @@ SET(WatchThatSound_QT_HEADERS
     Preferences.h)
 
 LIST(APPEND WatchThatSound_HEADERS
+            Common.h
             AutoUpdater.h
             Rainbow.h
             SoundBuffer.h

@@ -72,6 +72,7 @@ public:
     void removeBuffer(WtsAudio::BufferAt * bufferAt);
 
     qint64 duration() { return m_videoFile->duration(); }
+    QDir movDir();
 
 public slots:
     void setFullscreen(bool fs);
@@ -112,6 +113,9 @@ signals:
 protected:
     QString makeSampleName();
     void constructStateMachine();
+
+    QDir m_movDir;
+    bool m_movDirFound;
 
     WtsAudio m_audio;
     Ui::MainWindow *ui;

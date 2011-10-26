@@ -18,17 +18,9 @@ MSYS on Windows
 
 #### Prerequisites
 
-- We need [K-Lite codecs][k-lite] to support the movies in original
-  WTS format: Jpeg encoded QuickTime (.mov). An alternative solution
-would be to use avi on windows. It's better because doesn't require
-additional software installation.
-  - this just needs to be installed that's all
-- [ffmpeg][]. I build against ffmpeg-8.4.0, but have to rename the
-  ffmpeg sources directory to `ffmpeg`.
-- [portaudio][] v19. I build against a stable snapshot from
-  2011-03-26.
+- [ffmpeg][]. I build against ffmpeg-8.5.0
+- [portaudio][] v19. I build against a stable snapshot from 2011-03-26.
 
-[k-lite]: http://www.codecguide.com/klcp_update.htm
 [ffmpeg]: http://ffmpeg.org/download.html
 [portaudio]:http://www.portaudio.com/download.html
 
