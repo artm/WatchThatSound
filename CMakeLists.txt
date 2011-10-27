@@ -180,6 +180,17 @@ SET_TARGET_PROPERTIES(${APPLICATION_NAME}
   MACOSX_BUNDLE_GUI_IDENTIFIER "NL.WatchThatSound"
   MACOSX_BUNDLE_COPYRIGHT "Stichting Watch That Sound / V2_")
 
+IF(APPLE)
+  ADD_CUSTOM_COMMAND(
+    TARGET ${APPLICATION_NAME} POST_BUILD
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    # macdeploy misses Sparkle
+    COMMAND rm -rf ${APPLICATION_NAME}.app/Contents/{Frameworks,PlugIns,Resources/qt.conf}
+    COMMAND ${QT_BINARY_DIR}/macdeployqt ${APPLICATION_NAME}.app > ${PROJECT_NAME}-macdeployqt.log 2>&1
+    COMMAND cp -R ${Sparkle_LIBRARY} ${APPLICATION_NAME}.app/Contents/Frameworks/
+    COMMENT "Fixing up the app bundle")
+ENDIF(APPLE)
+
 INSTALL(
   TARGETS ${APPLICATION_NAME}
   RUNTIME DESTINATION bin
