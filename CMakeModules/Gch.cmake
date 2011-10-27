@@ -1,7 +1,11 @@
-# Based on a script from 
+# Based on a script from
 # http://www.cmake.org/Bug/view.php?id=1260#c21475
 MACRO (ADD_PCH_RULE HEADER SOURCES)
   SET(PRECOMPILED_HEADER "${HEADER}.gch")
+  SET_SOURCE_FILES_PROPERTIES(
+    ${${SOURCES}}
+    PROPERTIES
+    COMPILE_FLAGS "-Winvalid-pch -include stable.h")
   LIST(APPEND ${SOURCES} ${PRECOMPILED_HEADER})
 
   SET(CURRENT_INC_FLAGS)

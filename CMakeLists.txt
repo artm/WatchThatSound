@@ -135,7 +135,7 @@ QT4_ADD_RESOURCES(WatchThatSound_RCC ${WatchThatSound_RESOURCES})
 SET(MACOSX_BUNDLE_GUI_IDENTIFIER "nl.v2.${PROJECT_NAME}")
 SET(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
 
-SET(WatchThatSound_ALL_SOURCES
+SET(WatchThatSound_CXX_SOURCES
   ${WatchThatSound_SOURCES}
   ${WatchThatSound_HEADERS_MOC}
   ${WatchThatSound_HEADERS_UI}
@@ -143,9 +143,7 @@ SET(WatchThatSound_ALL_SOURCES
 
 # Precompiled headers support
 INCLUDE("Gch")
-ADD_PCH_RULE(stable.h WatchThatSound_ALL_SOURCES)
-SET(CMAKE_CXX_FLAGS
-  "${CMAKE_CXX_FLAGS} -Winvalid-pch -I${CMAKE_CURRENT_BINARY_DIR} -include stable.h")
+ADD_PCH_RULE(stable.h WatchThatSound_CXX_SOURCES)
 # This speeds up `make clean all -j 5` by 30 seconds on core i3 CPU
 SET_PROPERTY(DIRECTORY PROPERTY CLEAN_NO_CUSTOM true)
 
@@ -156,7 +154,7 @@ ENDIF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 ADD_EXECUTABLE(${APPLICATION_NAME}
                ${GUI}
                MACOSX_BUNDLE
-               ${WatchThatSound_ALL_SOURCES}
+               ${WatchThatSound_CXX_SOURCES}
                ${WatchThatSound_OBJC_SOURCES})
 
 SET(WatchThatSound_LIBRARIES
@@ -184,9 +182,9 @@ IF(APPLE)
   ADD_CUSTOM_COMMAND(
     TARGET ${APPLICATION_NAME} POST_BUILD
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    # macdeploy misses Sparkle
     COMMAND rm -rf ${APPLICATION_NAME}.app/Contents/{Frameworks,PlugIns,Resources/qt.conf}
     COMMAND ${QT_BINARY_DIR}/macdeployqt ${APPLICATION_NAME}.app > ${PROJECT_NAME}-macdeployqt.log 2>&1
+    # macdeploy misses Sparkle
     COMMAND cp -R ${Sparkle_LIBRARY} ${APPLICATION_NAME}.app/Contents/Frameworks/
     COMMENT "Fixing up the app bundle")
 ENDIF(APPLE)
