@@ -75,10 +75,8 @@ void Exporter::initExport()
              "%s",
              m_filename.constData());
 
-    if (format->audio_codec != CODEC_ID_NONE)
-        initAudioStream(format->audio_codec);
-    if (format->video_codec != CODEC_ID_NONE)
-        initVideoStream();
+    initAudioStream(CODEC_ID_PCM_S16LE);
+    initVideoStream();
 
 
     // set the output parameters (must be done even if no parameters)
@@ -244,12 +242,10 @@ void Exporter::finishUp()
 
 void Exporter::initAudioStream(CodecID codec_id)
 {
-    AVCodecContext * codecContext;
-
     m_audioStream = av_new_stream(m_container, 1);
     TRY_ASSERT_X(m_audioStream, "Could not alloc stream");
 
-    codecContext = m_audioStream->codec;
+    AVCodecContext * codecContext = m_audioStream->codec;
     codecContext->codec_id = codec_id;
     codecContext->codec_type = AVMEDIA_TYPE_AUDIO;
 
