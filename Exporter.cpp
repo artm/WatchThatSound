@@ -75,7 +75,7 @@ void Exporter::initExport()
              "%s",
              m_filename.constData());
 
-    initAudioStream(CODEC_ID_PCM_S16LE);
+    initAudioStream(CODEC_ID_AAC);
     initVideoStream();
 
 
@@ -91,7 +91,7 @@ void Exporter::initExport()
                  "Could not open audio encoder");
 
     AVCodec * videoCodec = avcodec_find_encoder(m_videoStream->codec->codec_id);
-    TRY_ASSERT_X(videoCodec, "Video codec not found");
+    TRY_ASSERT_X(videoCodec != 0, "Video codec not found");
     TRY_ASSERT_X((avcodec_open(m_videoStream->codec, videoCodec) >= 0),
                  "Could not open video codec");
 
@@ -289,7 +289,9 @@ void Exporter::initVideoStream()
     // copy codec from input file
     m_videoStream->codec = avcodec_alloc_context();
     TRY_ASSERT_X(m_videoStream->codec, "Could not allocate memory");
-    avcodec_copy_context(m_videoStream->codec, m_originalVideoFile->codec());
+    TRY_ASSERT_X(
+            (avcodec_copy_context(m_videoStream->codec, m_originalVideoFile->codec()) == 0),
+            "Couldn't copy decoder context to encoder context");
     // can't copy mjpeg without this
     m_videoStream->codec->strict_std_compliance = FF_COMPLIANCE_UNOFFICIAL;
     m_videoStream->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
