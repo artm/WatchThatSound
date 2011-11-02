@@ -75,10 +75,8 @@ void Exporter::initExport()
              "%s",
              m_filename.constData());
 
-    if (format->audio_codec != CODEC_ID_NONE)
-        initAudioStream(format->audio_codec);
-    if (format->video_codec != CODEC_ID_NONE)
-        initVideoStream();
+    initAudioStream(CODEC_ID_AAC);
+    initVideoStream();
 
 
     // set the output parameters (must be done even if no parameters)
@@ -93,7 +91,7 @@ void Exporter::initExport()
                  "Could not open audio encoder");
 
     AVCodec * videoCodec = avcodec_find_encoder(m_videoStream->codec->codec_id);
-    TRY_ASSERT_X(videoCodec, "Video codec not found");
+    TRY_ASSERT_X(videoCodec != 0, "Video codec not found");
     TRY_ASSERT_X((avcodec_open(m_videoStream->codec, videoCodec) >= 0),
                  "Could not open video codec");
 
@@ -244,12 +242,10 @@ void Exporter::finishUp()
 
 void Exporter::initAudioStream(CodecID codec_id)
 {
-    AVCodecContext * codecContext;
-
     m_audioStream = av_new_stream(m_container, 1);
     TRY_ASSERT_X(m_audioStream, "Could not alloc stream");
 
-    codecContext = m_audioStream->codec;
+    AVCodecContext * codecContext = m_audioStream->codec;
     codecContext->codec_id = codec_id;
     codecContext->codec_type = AVMEDIA_TYPE_AUDIO;
 
@@ -293,7 +289,9 @@ void Exporter::initVideoStream()
     // copy codec from input file
     m_videoStream->codec = avcodec_alloc_context();
     TRY_ASSERT_X(m_videoStream->codec, "Could not allocate memory");
-    avcodec_copy_context(m_videoStream->codec, m_originalVideoFile->codec());
+    TRY_ASSERT_X(
+            (avcodec_copy_context(m_videoStream->codec, m_originalVideoFile->codec()) == 0),
+            "Couldn't copy decoder context to encoder context");
     // can't copy mjpeg without this
     m_videoStream->codec->strict_std_compliance = FF_COMPLIANCE_UNOFFICIAL;
     m_videoStream->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
