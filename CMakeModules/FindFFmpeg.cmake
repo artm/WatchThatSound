@@ -6,7 +6,9 @@
 #
 # if found, defines additionally:
 #
-#   FFmpeg_INCLUDE_DIRS FFmpeg_LIBRARIES FFmpeg_CXX_FLAGS
+#   FFmpeg_INCLUDE_DIRS
+#   FFmpeg_LIBRARIES
+#   FFmpeg_CXX_FLAGS
 #
 #  Copyright 2011 Watch that Sound / V2_ Lab
 #
@@ -47,7 +49,7 @@ ELSE (FFmpeg_LIBRARIES AND FFmpeg_INCLUDE_DIRS)
 
   IF(FFmpeg_BUILDDIR)
     FOREACH(COMPONENT ${COMPONENTS})
-      SET(ENV{PKG_CONFIG_PATH} 
+      SET(ENV{PKG_CONFIG_PATH}
           "${FFmpeg_BUILDDIR}/lib${COMPONENT}${dirsep}$ENV{PKG_CONFIG_PATH}")
     ENDFOREACH(COMPONENT ${COMPONENTS})
   ENDIF(FFmpeg_BUILDDIR)
@@ -67,20 +69,20 @@ ELSE (FFmpeg_LIBRARIES AND FFmpeg_INCLUDE_DIRS)
     FIND_PATH(FFmpeg_${COMPONENT}_INCLUDE_DIR
       NAMES lib${COMPONENT}/${COMPONENT}.h
       HINTS ${FFmpeg_SRCDIR}
-            ${FFmpeg_${COMPONENT}_INCLUDE_DIRS} 
-      PATHS /usr/include 
-            /usr/local/include 
-            /opt/local/include 
+            ${FFmpeg_${COMPONENT}_INCLUDE_DIRS}
+      PATHS /usr/include
+            /usr/local/include
+            /opt/local/include
             /sw/include)
 
     FIND_LIBRARY(FFmpeg_${COMPONENT}_LIBRARY
       NAMES ${COMPONENT}
       HINTS ${FFmpeg_BUILDDIR}/lib${COMPONENT}
             ${FFmpeg_SRCDIR}/lib${COMPONENT}
-            ${FFmpeg_${COMPONENT}_LIBRARY_DIRS} 
+            ${FFmpeg_${COMPONENT}_LIBRARY_DIRS}
       PATHS /usr/lib
-            /usr/local/lib 
-            /opt/local/lib 
+            /usr/local/lib
+            /opt/local/lib
             /sw/lib)
   ENDMACRO(FFmpeg_FIND)
 
@@ -90,10 +92,10 @@ ELSE (FFmpeg_LIBRARIES AND FFmpeg_INCLUDE_DIRS)
     NAMES libavutil/avconfig.h
     HINTS ${FFmpeg_BUILDDIR}
           ${FFmpeg_SRCDIR}
-          ${FFmpeg_avutil_INCLUDE_DIRS} 
-    PATHS /usr/include 
-          /usr/local/include 
-          /opt/local/include 
+          ${FFmpeg_avutil_INCLUDE_DIRS}
+    PATHS /usr/include
+          /usr/local/include
+          /opt/local/include
           /sw/include)
 
   FFmpeg_FIND(avformat)
@@ -101,13 +103,13 @@ ELSE (FFmpeg_LIBRARIES AND FFmpeg_INCLUDE_DIRS)
   FFmpeg_FIND(avutil)
   FFmpeg_FIND(swscale)
 
-  SET(FFmpeg_PROCESS_INCLUDES 
+  SET(FFmpeg_PROCESS_INCLUDES
     FFmpeg_avformat_INCLUDE_DIR
     FFmpeg_avcodec_INCLUDE_DIR
     FFmpeg_avutil_INCLUDE_DIR
     FFmpeg_avconfig_h_INCLUDE_DIR
     FFmpeg_swscale_INCLUDE_DIR)
-  SET(FFmpeg_PROCESS_LIBS 
+  SET(FFmpeg_PROCESS_LIBS
     FFmpeg_avformat_LIBRARY FFmpeg_avformat_LIBRARIES
     FFmpeg_avcodec_LIBRARY FFmpeg_avcodec_LIBRARIES
     FFmpeg_avutil_LIBRARY FFmpeg_avutil_LIBRARIES
