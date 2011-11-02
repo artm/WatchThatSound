@@ -6,6 +6,7 @@
 #include "Rainbow.h"
 #include "Exporter.h"
 
+#include "WatchThatCode.h"
 #include "Common.h"
 
 #include <QLabel>
@@ -581,6 +582,15 @@ void MainWindow::buildMovieSelector()
 
         int i = 0, offs = 1;
         foreach(QFileInfo fi, movList) {
+            VideoFile vf;
+            try {
+                vf.open(fi.absoluteFilePath());
+            } catch (const WTS::AssertFailed& e) {
+                qDebug() << "Skipping movie" << qPrintable(fi.fileName());
+                qDebug() << e.pMessage();
+                continue;
+            }
+
             QPushButton * button = new QPushButton( );
             layout->addWidget( button, offs + i/cols, i%cols );
             i++;
@@ -588,13 +598,16 @@ void MainWindow::buildMovieSelector()
             mapper->setMapping( button, fi.absoluteFilePath() );
             connect(button, SIGNAL(clicked()), mapper, SLOT(map()));
 
-            VideoFile vf(fi.absoluteFilePath());
             vf.seek( vf.duration()/3 );
-            QPixmap thumb = QPixmap::fromImage( vf.frame().scaled(iconSize,Qt::KeepAspectRatio) );
+            QPixmap thumb = QPixmap::fromImage(
+                    vf.frame().scaled(iconSize,Qt::KeepAspectRatio) );
 
             qint64 tt = vf.duration(), min = tt / 60000, sec = tt / 1000 % 60;
-            button->setToolTip(QString("%1\n%2x%3\n%4:%5").arg(fi.fileName()).arg(vf.width()).arg(vf.height())
-                               .arg(min).arg(sec,2,10,QLatin1Char('0')) );
+            button->setToolTip(QString("%1\n%2x%3\n%4:%5")
+                    .arg(fi.fileName())
+                    .arg(vf.width()).arg(vf.height())
+                    .arg(min).arg(sec,2,10,QLatin1Char('0')) );
+
             button->setIcon(QIcon(thumb));
             button->setIconSize(iconSize);
         }
@@ -620,7 +633,7 @@ void MainWindow::refreshTension()
         Marker * m = iter.value();
 
         float x = (float)ui->tension->sceneRect().width()
-                * m->at() / m_videoFile->duration();
+            * m->at() / m_videoFile->duration();
 
         if (init) {
             curve.moveTo(QPointF(x, m->tension()));
@@ -669,7 +682,7 @@ QDir MainWindow::movDir()
 {
     if (!m_movDirFound) {
 
-        QString stdMoviesPath = QDesktopServices::storageLocation( 
+        QString stdMoviesPath = QDesktopServices::storageLocation(
                 QDesktopServices::MoviesLocation );
 
         m_movDir = QDir(stdMoviesPath).filePath("Watch That Sound Movies");
@@ -679,7 +692,7 @@ QDir MainWindow::movDir()
 
             QDir tryDir;
             tryDir = QDir(nextToExe("/WTSmovie"));
-            if (!tryDir.exists()) 
+            if (!tryDir.exists())
                 // then try 3-beta convention
                 tryDir = QDir(nextToExe("/movie"));
 
@@ -687,11 +700,11 @@ QDir MainWindow::movDir()
             if (tryDir.exists()) {
                 QDir().rename(tryDir.path(),m_movDir.path());
 
-                QString info = 
+                QString info =
                     QString("Oude movie map %1 verplaatst naar de nieuwe locatie: %2")
                     .arg(tryDir.path()).arg(m_movDir.path());
 
-                QMessageBox message(QMessageBox::Information, "Upgrade info", 
+                QMessageBox message(QMessageBox::Information, "Upgrade info",
                         info, QMessageBox::Ok);
                 message.exec();
             } else {

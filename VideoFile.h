@@ -16,9 +16,11 @@ class VideoFile : public QObject
 {
     Q_OBJECT
 public:
+    explicit VideoFile(QObject *parent = 0);
     explicit VideoFile(QString path, QObject *parent = 0);
     virtual ~VideoFile();
 
+    void open(QString path);
     int width() const;
     int height() const;
     QImage frame();

@@ -2,35 +2,13 @@
 #include "VideoFile.h"
 #include "SoundBuffer.h"
 
+#include "WatchThatCode.h"
 #include "Common.h"
 
 #include <QtGui>
 #include <QtDebug>
 
 using namespace WTS;
-
-class AssertFailed {
-public:
-    AssertFailed(const QString& cond, const QString& file, int line,
-                 QString extra = QString())
-    {
-        m_message = QString("%1:%2: assertion '%3' failed")
-                .arg(file).arg(line).arg(cond);
-
-        if (extra.size())
-            m_message += ". " + extra + ".";
-    }
-    QString message() const { return m_message; }
-    const char * cMessage() const { return m_message.toLocal8Bit().constData(); }
-protected:
-    QString m_message;
-};
-
-#define TRY_ASSERT(cond) \
-    do { if (!cond) { throw AssertFailed(#cond, __FILE__, __LINE__); } } while (0)
-#define TRY_ASSERT_X(cond, message) \
-    do { if (!cond) { throw AssertFailed(#cond, __FILE__, __LINE__, message); \
-    } } while (0)
 
 Exporter::Exporter(QObject *parent)
     : QObject(parent)
@@ -208,7 +186,7 @@ void Exporter::run()
         QProcess process;
         process.startDetached("open", QStringList() << QFileInfo(m_filename).dir().path() );
 
-    } catch (const AssertFailed& e) {
+    } catch (const WTS::AssertFailed& e) {
         qCritical() << e.cMessage();
 
         m_progress->cancel();

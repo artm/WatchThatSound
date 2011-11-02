@@ -1,10 +1,7 @@
 #include "VideoFile.h"
+#include "WatchThatCode.h"
 #include <QDebug>
 #include <QFileInfo>
-
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
 
 using namespace WTS;
 
@@ -14,16 +11,30 @@ struct LibAvLogger {
     bool operator<<(int av_err) {
         if (av_err) {
             char buff[1024];
+            QString msg;
+
             if (av_strerror(av_err, buff, 1024) == 0)
-                qDebug() << buff;
+                qDebug() << (msg = buff);
             else
-                qDebug() << "Unknown problem with ffmpeg libraries";
-            abort();
+                qDebug() << (msg = "Unknown problem with ffmpeg libraries");
+
+            TRY_ASSERT_X(!av_err,msg);
         }
         return true;
     }
 };
 
+VideoFile::VideoFile(QObject *parent)
+    : QObject(parent)
+    , m_formatContext(0)
+    , m_codecContext(0)
+    , m_codec(0)
+    , m_frame(0)
+    , m_frameRGB(0)
+    , m_convertContext(0)
+{
+
+}
 /*
  * open file, create format context, codec context, etc -
  * everything to be able to seek / decode
@@ -37,6 +48,11 @@ VideoFile::VideoFile(QString path, QObject *parent)
     , m_frameRGB(0)
     , m_convertContext(0)
 {
+    open(path);
+}
+
+void VideoFile::open(QString path)
+{
     if (!s_ffInited) {
         av_register_all();
         s_ffInited = true;
@@ -48,11 +64,6 @@ VideoFile::VideoFile(QString path, QObject *parent)
     LibAvLogger() << av_open_input_file( &m_formatContext,
         path.toLocal8Bit().data(),
         NULL, 0, NULL);
-
-    if (!m_formatContext) {
-      qDebug() << "asserts are compiled away, but opening input file failed. too bad.";
-      exit (1);
-    }
 
     // HACK this solves "max_analyze_duration reached" warning
     m_formatContext->max_analyze_duration *= 10;
@@ -67,7 +78,7 @@ VideoFile::VideoFile(QString path, QObject *parent)
             break;
         }
     }
-    Q_ASSERT ( m_streamIndex != -1 );
+    TRY_ASSERT ( m_streamIndex != -1 );
 
     m_codecContext = m_formatContext->streams[m_streamIndex]->codec;
     m_codec = avcodec_find_decoder(m_codecContext->codec_id);
@@ -79,7 +90,7 @@ VideoFile::VideoFile(QString path, QObject *parent)
     }
 
 
-    Q_ASSERT (m_codec);
+    TRY_ASSERT (m_codec);
     avcodec_open(m_codecContext, m_codec);
 
     /*
@@ -112,17 +123,22 @@ VideoFile::VideoFile(QString path, QObject *parent)
                                       w, h, PIX_FMT_RGB24,
                                       SWS_BICUBIC, 0, 0, 0);
 
-    Q_ASSERT(m_convertContext);
+    TRY_ASSERT(m_convertContext);
 
 }
 
 VideoFile::~VideoFile()
 {
-    sws_freeContext(m_convertContext);
-    av_free(m_frameRGB);
-    av_free(m_frame);
-    avcodec_close(m_codecContext);
-    av_close_input_file(m_formatContext);
+    if (m_convertContext)
+        sws_freeContext(m_convertContext);
+    if (m_frameRGB)
+        av_free(m_frameRGB);
+    if (m_frame)
+        av_free(m_frame);
+    if (m_codecContext)
+        avcodec_close(m_codecContext);
+    if (m_formatContext)
+        av_close_input_file(m_formatContext);
 }
 
 QImage VideoFile::frame()
@@ -187,28 +203,28 @@ void VideoFile::seek(qint64 ms)
 
 CodecID VideoFile::codecId() const
 {
-    Q_ASSERT(m_codec);
+    TRY_ASSERT(m_codec);
     return m_codec->id;
 }
 
 const AVCodecContext * VideoFile::codec() const
 {
-    Q_ASSERT(m_codecContext);
+    TRY_ASSERT(m_codecContext);
     return m_codecContext;
 }
 
 const AVStream * VideoFile::stream() const
 {
-    Q_ASSERT(m_formatContext);
-    Q_ASSERT(m_streamIndex >= 0
+    TRY_ASSERT(m_formatContext);
+    TRY_ASSERT(m_streamIndex >= 0
              && m_streamIndex < (int)m_formatContext->nb_streams);
     return m_formatContext->streams[m_streamIndex];
 }
 
 qint64 VideoFile::duration() const
 {
-    Q_ASSERT(m_formatContext);
-    Q_ASSERT(m_streamIndex >= 0
+    TRY_ASSERT(m_formatContext);
+    TRY_ASSERT(m_streamIndex >= 0
              && m_streamIndex < (int)m_formatContext->nb_streams);
 
     AVRational q_duration = {
