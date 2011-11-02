@@ -187,7 +187,7 @@ void Exporter::run()
         process.startDetached("open", QStringList() << QFileInfo(m_filename).dir().path() );
 
     } catch (const WTS::AssertFailed& e) {
-        qCritical() << e.cMessage();
+        qCritical() << e.pMessage();
 
         m_progress->cancel();
 
