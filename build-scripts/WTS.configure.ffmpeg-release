@@ -1,0 +1,23 @@
+#!/bin/sh
+
+../ffmpeg-0.8.5/configure \
+  --disable-doc \
+  --disable-ffmpeg \
+  --disable-ffplay \
+  --disable-ffserver \
+  --disable-avdevice \
+  --disable-postproc \
+  --disable-avfilter \
+  --disable-network \
+  --disable-swscale-alpha \
+  --disable-everything \
+  --enable-decoder=mjpeg \
+  --enable-decoder=mjpegb \
+  --enable-muxer=avi \
+  --enable-demuxer=avi \
+  --enable-encoder=mjpeg \
+  --enable-encoder=aac \
+  --enable-protocol=file \
+  \
+  --disable-debug \
+  --enable-small
