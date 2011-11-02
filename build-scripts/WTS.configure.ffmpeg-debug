@@ -1,5 +1,9 @@
 #!/bin/sh
 
+[ `uname` =~ darwin ] && MUX=mov || MUX=avi
+echo MUX: $MUX
+exit
+
 ../ffmpeg-0.8.5/configure \
   --disable-doc \
   --disable-ffmpeg \
