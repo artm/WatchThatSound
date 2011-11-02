@@ -1,8 +1,7 @@
 #!/bin/sh
 
-[ `uname` =~ darwin ] && MUX=mov || MUX=avi
+[ `uname` == Darwin ] && MUX=mov || MUX=avi
 echo MUX: $MUX
-exit
 
 ../ffmpeg-0.8.5/configure \
   --disable-doc \
@@ -17,8 +16,8 @@ exit
   --disable-everything \
   --enable-decoder=mjpeg \
   --enable-decoder=mjpegb \
-  --enable-muxer=avi \
-  --enable-demuxer=avi \
+  --enable-muxer=$MUX \
+  --enable-demuxer=$MUX \
   --enable-encoder=mjpeg \
   --enable-encoder=aac \
   --enable-protocol=file \

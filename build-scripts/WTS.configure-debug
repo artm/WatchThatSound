@@ -1,9 +1,21 @@
 #!/bin/sh
 
+case "`uname`" in
+  Darwin)
+    GEN=
+    QT_ROOT="/Users/artm/QtSDK/Desktop/Qt/473/gcc"
+    ;;
+  MINGW*)
+    GEN="-G 'MSYS Makefiles'"
+    QT_ROOT="C:/QtSDK/Desktop/Qt/4.8.0/mingw"
+    ;;
+esac
+
+
 cmake ../WatchThatSound \
       "$@" \
-      -G 'MSYS Makefiles' \
-      -DQT_QMAKE_EXECUTABLE=C:/QtSDK/Desktop/Qt/4.8.0/mingw/bin/qmake.exe \
+      $GEN \
+      -DQT_QMAKE_EXECUTABLE="$QT_ROOT"/bin/qmake \
       -DPortaudio_SRCDIR=../portaudio \
       -DFFmpeg_SRCDIR=../ffmpeg-0.8.5 \
       -DFFmpeg_BUILDDIR=../ffmpeg-0.8.5-debug \

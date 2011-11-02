@@ -22,9 +22,9 @@ protected:
 };
 
 #define TRY_ASSERT(cond) \
-    do { if (!cond) { throw AssertFailed(#cond, __FILE__, __LINE__); } } while (0)
+    do { if (!(cond)) { throw AssertFailed(#cond, __FILE__, __LINE__); } } while (0)
 #define TRY_ASSERT_X(cond, message) \
-    do { if (!cond) { throw AssertFailed(#cond, __FILE__, __LINE__, message); \
+    do { if (!(cond)) { throw AssertFailed(#cond, __FILE__, __LINE__, message); \
     } } while (0)
 
 }
