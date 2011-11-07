@@ -12,6 +12,7 @@
 #include <QLabel>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
+#include <QHostInfo>
 
 using namespace WTS;
 
@@ -450,11 +451,16 @@ void MainWindow::exportMovie()
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(500);
 
-    m_exporter->configure(m_dataDir.filePath(QString("export.%1").arg(VIDEO_FMT)),
-                              m_videoFile,
-                              m_sequence,
-                              &m_audio,
-                              &progress);
+    m_exporter->configure(
+            m_dataDir.filePath(
+                QString("%1-%2-export.%3")
+                .arg(m_movInfo.fileName())
+                .arg(QHostInfo::localHostName())
+                .arg(VIDEO_FMT)),
+            m_videoFile,
+            m_sequence,
+            &m_audio,
+            &progress);
     m_exporter->run();
 }
 
