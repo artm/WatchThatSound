@@ -14,6 +14,10 @@ int main(int argc, char *argv[])
     a.setApplicationName("Watch That Sound");
     a.setQuitOnLastWindowClosed(true);
 
+#ifdef Q_WS_WIN
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath()+"\\plugins" );
+#endif // Q_WS_WIN
+
     MainWindow w;
 
 #ifdef Q_WS_MAC
