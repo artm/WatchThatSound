@@ -184,7 +184,17 @@ void Exporter::run()
         m_progress->setValue(100);
 
         QProcess process;
-        process.startDetached("open", QStringList() << QFileInfo(m_filename).dir().path() );
+
+        QString command = "open";
+        QString folderPath = QFileInfo(m_filename).canonicalPath();
+#ifdef Q_WS_WIN
+        command = "explorer.exe";
+        // explorer doesn't understand forward slashes
+        folderPath.replace('/','\\');
+#endif
+        qDebug() << qPrintable(QString("Calling %1 on %2").arg(command).arg(folderPath));
+
+        process.startDetached( command, QStringList() << folderPath);
 
     } catch (const WTS::AssertFailed& e) {
         qCritical() << e.pMessage();
