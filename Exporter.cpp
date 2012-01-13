@@ -53,7 +53,7 @@ void Exporter::initExport()
              "%s",
              m_filename.constData());
 
-    initAudioStream(CODEC_ID_AAC);
+    initAudioStream(CODEC_ID_PCM_S16LE);
     initVideoStream();
 
 
