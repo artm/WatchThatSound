@@ -147,6 +147,7 @@ void WtsAudio::samplerMix(qint64 ms, QVector<float>& mix)
 
 }
 
+/* let the float version do all the work then convert the result */
 void WtsAudio::samplerMix(qint64 ms, QVector<int16_t>& mix)
 {
     QVector<float> fmix(mix.size());
