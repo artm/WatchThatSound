@@ -573,7 +573,8 @@ void MainWindow::buildMovieSelector()
 
     QSignalMapper * mapper = new QSignalMapper(this);
 
-    QFileInfoList movList = movDir().entryInfoList(QStringList() << QString("*.%1").arg(VIDEO_FMT));
+    QFileInfoList movList = movDir().entryInfoList(QStringList()
+            << QString("*.%1").arg(VIDEO_FMT));
 
     int count = movList.size();
 
@@ -715,6 +716,19 @@ QDir MainWindow::movDir()
                 message.exec();
             } else {
                 m_movDir.mkdir(m_movDir.path());
+                // see if we have sample films installed
+                QDir distVideos = QDir(nextToExe("/../video"));
+                if (distVideos.exists()) {
+                    foreach(QString path,
+                            distVideos.entryList(QStringList()
+                                << QString("*.%1").arg(VIDEO_FMT))) {
+                        // copy sample films to movDir
+                        qDebug() << "cp " << path << " to " << m_movDir.filePath(path);
+                        QFile(distVideos.filePath(path)).copy(m_movDir.filePath(path));
+                    }
+                } else {
+                    qWarning() << "No dist videos at " << distVideos.path();
+                }
             }
         }
     }
