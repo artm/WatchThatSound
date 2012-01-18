@@ -8,6 +8,16 @@ WaveformWidget::WaveformWidget(QWidget *parent) :
 {
 }
 
+void WaveformWidget::clearWaveform(SoundBuffer * buffer)
+{
+    if (!buffer || m_buffer == buffer) {
+        m_buffer = 0;
+        // clean
+        m_img.fill( QApplication::palette().color(QPalette::Dark) );
+        update();
+    }
+}
+
 void WaveformWidget::updateWaveform(WtsAudio::BufferAt * bufferAt, bool recording)
 {
     if (m_buffer != bufferAt->buffer()) {
@@ -62,7 +72,7 @@ void WaveformWidget::updateWaveform(WtsAudio::BufferAt * bufferAt, bool recordin
     update();
 }
 
-void WaveformWidget::paintEvent(QPaintEvent */*event*/)
+void WaveformWidget::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
     painter.drawPixmap(0,0,m_img);
@@ -78,9 +88,8 @@ void WaveformWidget::paintEvent(QPaintEvent */*event*/)
 void WaveformWidget::resizeEvent(QResizeEvent *event)
 {
     if (event->size() != event->oldSize()) {
-
         m_img = QPixmap(event->size());
-        m_img.fill(QColor(200,255,200));
+        clearWaveform();
     }
 }
 

@@ -26,6 +26,7 @@ signals:
 public slots:
     void updateWaveform(WtsAudio::BufferAt * bufferAt, bool recording = false);
     void setGain(int volX);
+    void clearWaveform(SoundBuffer * buffer = 0);
 
 protected:
     QPixmap m_img;

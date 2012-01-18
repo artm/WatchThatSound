@@ -674,6 +674,7 @@ void MainWindow::updateMarkerTension(int markerIndex, float tension)
 
 void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)
 {
+    ui->waveform->clearWaveform(bufferAt->buffer());
     m_sequence.removeAll(bufferAt);
     saveData();
 }
