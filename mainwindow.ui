@@ -351,6 +351,9 @@
    <property name="toolTip">
     <string>Voeg een scene bij</string>
    </property>
+   <property name="shortcut">
+    <string>S</string>
+   </property>
   </action>
   <action name="actionAddMarker">
    <property name="enabled">
@@ -365,6 +368,9 @@
    </property>
    <property name="toolTip">
     <string>Voeg een marker bij</string>
+   </property>
+   <property name="shortcut">
+    <string>M</string>
    </property>
   </action>
   <action name="actionFullscreen">
