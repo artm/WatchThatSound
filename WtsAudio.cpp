@@ -81,15 +81,14 @@ void WtsAudio::stop()
 qint64 WtsAudio::capture(SoundBuffer * buffer)
 {
     Q_ASSERT(m_stream);
-#if 0
+#if defined(__APPLE__)
     qint64 availSamples = Pa_GetStreamReadAvailable(m_stream);
 #else
     qint64 availSamples = 2048;
 #endif
     if (PortAudioLogger() << availSamples) {
         float * chunk = buffer->chunkToWrite(availSamples);
-        PortAudioLogger()
-                << Pa_ReadStream(m_stream, chunk, availSamples);
+        PortAudioLogger() << Pa_ReadStream(m_stream, chunk, availSamples);
     }
     return availSamples;
 }
