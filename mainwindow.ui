@@ -134,6 +134,9 @@
            <height>64</height>
           </size>
          </property>
+         <property name="shortcut">
+          <string>Return</string>
+         </property>
          <property name="checkable">
           <bool>true</bool>
          </property>
