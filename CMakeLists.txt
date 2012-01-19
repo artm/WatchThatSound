@@ -7,6 +7,7 @@ INCLUDE(ConfigUtils)
 CONFIGURE_FILE(wts_version.h.in wts_version.h)
 SET(CMAKE_INCLUDE_CURRENT_DIR true)
 
+SET(CMAKE_AUTOMOC 1)
 FIND_PACKAGE(Qt4 REQUIRED QtCore QtGui QtNetwork Phonon)
 INCLUDE(${QT_USE_FILE})
 
@@ -29,61 +30,12 @@ ENDIF(APPLE)
 FIND_PACKAGE(Portaudio REQUIRED)
 INCLUDE_DIRECTORIES(${Portaudio_INCLUDE_DIRS})
 
-SET(WatchThatSound_SOURCES
-    main.cpp
-    MainWindow.cpp
-    SoundBuffer.cpp
-    TimeLineWidget.cpp
-    SequencerTimeLine.cpp
-    Rainbow.cpp
-    WaveformWidget.cpp
-    WtsAudio.cpp
-    StoryBoard.cpp
-    VideoFile.cpp
-    Synced.cpp
-    Exporter.cpp
-    CurveEditor.cpp
-    ScoreEditor.cpp
-    ScoreSymbol.cpp
-    AutoUpdater.cpp
-    VuMeter.cpp
-    BufferItem.cpp
-    SharpLine.cpp
-    TimeLineItem.cpp
-    Preferences.cpp)
+INCLUDE(SrcScan)
+SCAN_GLOB(WatchThatSound_SOURCES "*.cpp" "C++ sources")
+SCAN_GLOB(WatchThatSound_UI "*.ui" "Qt Forms (*.ui)")
+SCAN_GLOB(WatchThatSound_RESOURCES "*.qrc" "Qt Resources (*.qrc)")
+SCAN_DONE()
 
-SET(WatchThatSound_QT_HEADERS
-    MainWindow.h
-    TimeLineWidget.h
-    SequencerTimeLine.h
-    WaveformWidget.h
-    WtsAudio.h
-    StoryBoard.h
-    VideoFile.h
-    Synced.h
-    Exporter.h
-    CurveEditor.h
-    ScoreEditor.h
-    VuMeter.h
-    Preferences.h)
-
-LIST(APPEND WatchThatSound_HEADERS
-            Common.h
-            AutoUpdater.h
-            Rainbow.h
-            SoundBuffer.h
-            ScoreSymbol.h
-            BufferItem.h
-            SharpLine.h
-            TimeLineItem.h)
-
-SET(WatchThatSound_UI
-    mainwindow.ui
-    Preferences.ui)
-
-SET(WatchThatSound_RESOURCES WTS3Resources.qrc)
-
-QT4_WRAP_CPP(WatchThatSound_HEADERS_MOC ${WatchThatSound_QT_HEADERS})
 QT4_WRAP_UI(WatchThatSound_HEADERS_UI ${WatchThatSound_UI})
 QT4_ADD_RESOURCES(WatchThatSound_RCC ${WatchThatSound_RESOURCES})
 
