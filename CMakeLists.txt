@@ -21,10 +21,6 @@ IF(APPLE)
   FIND_LIBRARY_VERBOSE(Sparkle Sparkle)
   FIND_LIBRARY_VERBOSE(AppKit AppKit)
   SET(Sparkle_LIBRARIES ${Sparkle_LIBRARY} ${AppKit_LIBRARY})
-
-  SET(WatchThatSound_OBJC_SOURCES
-    SparkleAutoUpdater.mm
-    CocoaInitializer.mm)
 ENDIF(APPLE)
 
 FIND_PACKAGE(Portaudio REQUIRED)
@@ -34,6 +30,9 @@ INCLUDE(SrcScan)
 SCAN_GLOB(WatchThatSound_SOURCES "*.cpp" "C++ sources")
 SCAN_GLOB(WatchThatSound_UI "*.ui" "Qt Forms (*.ui)")
 SCAN_GLOB(WatchThatSound_RESOURCES "*.qrc" "Qt Resources (*.qrc)")
+IF(APPLE)
+  SCAN_GLOB(WatchThatSound_OBJC_SOURCES "*.mm" "Objective-C sources (*.mm)")
+ENDIF(APPLE)
 SCAN_DONE()
 
 QT4_WRAP_UI(WatchThatSound_HEADERS_UI ${WatchThatSound_UI})
