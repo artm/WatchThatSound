@@ -7,6 +7,7 @@
 #include <QStateMachine>
 #include <QActionGroup>
 
+#include "Project.h"
 #include "WtsAudio.h"
 #include "SoundBuffer.h"
 #include "VideoFile.h"
@@ -113,6 +114,8 @@ signals:
 protected:
     QString makeSampleName();
     void constructStateMachine();
+
+    Project * m_project;
 
     QDir m_movDir;
     bool m_movDirFound;

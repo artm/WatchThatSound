@@ -19,6 +19,7 @@ using namespace WTS;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , m_project(0)
     , m_movDirFound(false)
     , m_lastSampleNameNum(0)
     , m_videoFile(0)
