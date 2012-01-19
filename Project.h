@@ -1,7 +1,4 @@
 #pragma once
-
-#include <QObject>
-
 #include "Synced.h"
 
 namespace WTS {
@@ -41,8 +38,21 @@ public:
         void setTension(float value) { m_tension = value; }
     };
 
-
     Project(QObject * parent = 0);
+    void saveStoryboard(QXmlStreamWriter&);
+    bool loadStoryboard(QXmlStreamReader&);
+
+    double finalTension() const { return m_finalTension; }
+    void setFinalTension(double value) { m_finalTension = value; }
+    void setMarkerTension(int markerIndex, float tension);
+    void addMarker(MarkerType type, qint64 when, float tension);
+    void removeMarkerAt(quint64 at);
+    void setMarkerSnapshot( quint64 when, const QPixmap& pixmap );
+    QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
+    QPainterPath tensionCurve(float width, quint64 duration);
+protected:
+    double m_finalTension;
+    QMap<qint64, Project::Marker *> m_markers;
 };
 
 }

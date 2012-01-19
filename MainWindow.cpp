@@ -25,7 +25,6 @@ MainWindow::MainWindow(QWidget *parent)
     , m_videoFile(0)
     , m_loading(false)
     , m_exporter(new Exporter(this))
-    , m_finalTension(0.5)
     , m_muteOnRecord(true)
     , m_settings("WatchThatSound","WTS-Workshop-Tool")
 {
@@ -150,11 +149,12 @@ void MainWindow::loadMovie(const QString& path)
 
 void MainWindow::resetData()
 {
+    m_project = new Project(this);
+
     m_dataDir.setPath("");;
     m_scratch.setAt(0);
     m_sequence.clear();;
     m_sequenceCursor = m_sequence.begin();
-    m_markers.clear();
     m_lastSampleNameNum = 0;
     if (m_videoFile) delete m_videoFile;
     m_videoFile = 0;
@@ -180,18 +180,7 @@ void MainWindow::saveData()
     xml.writeAttribute("version", WTS_VERSION);
     xml.writeAttribute("movie", m_movInfo.fileName());
 
-    xml.writeStartElement("storyboard");
-    xml.writeAttribute("final_tension", QString("%1").arg(m_finalTension));
-    foreach(Project::Marker * m, m_markers) {
-        xml.writeStartElement("marker");
-        QString ms;
-        ms.setNum(m->at());
-        xml.writeAttribute("ms",ms);
-        xml.writeAttribute("type", m->type() == Project::SCENE ? "scene" : "event");
-        xml.writeAttribute("tension", QString("%1").arg(m->tension()));
-        xml.writeEndElement();
-    }
-    xml.writeEndElement();
+    m_project->saveStoryboard(xml);
 
     xml.writeStartElement("score");
     ui->score->saveData(xml);
@@ -236,26 +225,7 @@ void MainWindow::loadData()
     xml.readNextStartElement();
     if (xml.name() == "soundtrack") {
         while (xml.readNextStartElement()) {
-            if (xml.name() == "storyboard") {
-                m_finalTension = xml.attributes().hasAttribute("final_tension")
-                        ? xml.attributes().value("final_tension").toString().toFloat()
-                        : 0.5;
-                while(xml.readNextStartElement()) {
-
-                    float tension = xml.attributes().hasAttribute("tension")
-                            ? xml.attributes().value("tension").toString().toFloat()
-                            : 0.5;
-
-                    addMarker(xml.attributes().value("type") == "scene"
-                            ? Project::SCENE
-                            : Project::EVENT,
-                              xml.attributes().value("ms").toString().toLongLong(),
-                              tension);
-
-
-                    // this is one way to read a flat list of <foo/> not recursing
-                    xml.readElementText();
-                }
+            if (m_project->loadStoryboard(xml)) {
                 refreshTension();
             } else if (xml.name() == "score") {
                 ui->score->loadData(xml);
@@ -413,11 +383,12 @@ void MainWindow::addMarker(Project::MarkerType type, qint64 when, float tension)
 {
     if (when < 0)
         when = mediaObject()->currentTime();
-    m_markers[when] = new Project::Marker(type, when, this);
-    m_markers[when]->setTension( tension );
+
+    m_project->addMarker(type, when, tension);
+
     // load frameshot...
     m_videoFile->seek(when);
-    m_markers[when]->setSnapshot( QPixmap::fromImage(m_videoFile->frame()) );
+    m_project->setMarkerSnapshot( when, QPixmap::fromImage(m_videoFile->frame()) );
 
     refreshTension();
     emit storyBoardChanged();
@@ -426,25 +397,10 @@ void MainWindow::addMarker(Project::MarkerType type, qint64 when, float tension)
 
 void MainWindow::removeMark(Project::Marker * m)
 {
-    m_markers.remove( m->at() );
+    m_project->removeMarkerAt(m->at());
     refreshTension();
     emit storyBoardChanged();
     saveData();
-}
-
-QList<Project::Marker *> MainWindow::getMarkers(Project::MarkerType type, bool forward) const
-{
-    QList<Project::Marker *> scenes;
-    foreach(Project::Marker * m, m_markers) {
-        if (type == Project::ANY || m->type() == type) {
-            if (forward)
-                scenes.append(m);
-            else
-                scenes.prepend(m);
-        }
-    }
-
-    return scenes;
 }
 
 void MainWindow::exportMovie()
@@ -635,25 +591,10 @@ void MainWindow::buildMovieSelector()
 
 void MainWindow::refreshTension()
 {
-    QMapIterator<qint64, Project::Marker *> iter(m_markers);
-    QPainterPath curve;
-    bool init = true;
-    while(iter.hasNext()){
-        iter.next();
-        Project::Marker * m = iter.value();
-
-        float x = (float)ui->tension->sceneRect().width()
-            * m->at() / m_videoFile->duration();
-
-        if (init) {
-            curve.moveTo(QPointF(x, m->tension()));
-            init = false;
-        } else
-            curve.lineTo( QPointF(x, m->tension()) );
-    }
-
-    curve.lineTo( QPointF(ui->tension->sceneRect().width(), m_finalTension));
-    ui->tension->setCurve(curve);
+    ui->tension->setCurve(
+            m_project->tensionCurve(
+                ui->tension->sceneRect().width(),
+                m_videoFile->duration()) );
 }
 
 QPainterPath MainWindow::tensionCurve() const
@@ -668,11 +609,7 @@ void MainWindow::onMovieFinished()
 
 void MainWindow::updateMarkerTension(int markerIndex, float tension)
 {
-    if (markerIndex < m_markers.size() )
-        m_markers[ m_markers.keys()[markerIndex] ]->setTension(tension);
-    else if (markerIndex  == m_markers.size()) {
-        m_finalTension = tension;
-    }
+    m_project->setMarkerTension(markerIndex, tension);
 }
 
 void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)

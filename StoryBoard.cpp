@@ -90,7 +90,8 @@ void StoryBoard::updateSnapshots()
 
     int n = 0;
 
-    foreach(Project::Marker * m, m_mainWindow->getMarkers(Project::ANY, false)) {
+    foreach(Project::Marker * m,
+            m_mainWindow->project()->getMarkers(Project::ANY, false)) {
         float x = (float)m->at() / tt - 0.5 * m_thumbWidth;
 
         int gapCount = s_levelCount - 1;

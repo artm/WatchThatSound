@@ -30,8 +30,6 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    QList<Project::Marker *> getMarkers(Project::MarkerType type = Project::ANY,
-            bool forward = true) const;
     void addMarker(Project::MarkerType type, qint64 when = -1, float tension = 0.5);
     Phonon::MediaObject * mediaObject();
     QState * addPage(const QString& name, QList<QWidget*> widgets, QList<QAction*> actions = QList<QAction*>());
@@ -44,6 +42,7 @@ public:
 
     qint64 duration() { return m_videoFile->duration(); }
     QDir movDir();
+    Project * project() { return m_project; }
 
 public slots:
     void setFullscreen(bool fs);
@@ -99,7 +98,6 @@ protected:
 
     QList<WtsAudio::BufferAt *> m_sequence;
     QList<WtsAudio::BufferAt *>::iterator m_sequenceCursor;
-    QMap<qint64, Project::Marker *> m_markers;
     int m_lastSampleNameNum;
     VideoFile * m_videoFile;
     bool m_loading;
@@ -108,7 +106,6 @@ protected:
     QState * m_workshop;
     QActionGroup * m_tabActions;
 
-    double m_finalTension;
     bool m_muteOnRecord;
 
     Preferences * m_preferences;
