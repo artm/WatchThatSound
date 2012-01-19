@@ -2,11 +2,11 @@
 
 case "`uname`" in
   Darwin)
-    GEN=
     QT_ROOT="/Users/artm/QtSDK/Desktop/Qt/473/gcc"
     ;;
   MINGW*)
     GEN="-G 'MSYS Makefiles'"
+    PORTAUDIO="-DPortaudio_SRCDIR=../portaudio"
     QT_ROOT="C:/QtSDK/Desktop/Qt/4.8.0/mingw"
     ;;
 esac
@@ -16,7 +16,7 @@ cmake ../WatchThatSound \
       "$@" \
       $GEN \
       -DQT_QMAKE_EXECUTABLE="$QT_ROOT"/bin/qmake \
-      -DPortaudio_SRCDIR=../portaudio \
+      $PORTAUDIO \
       -DFFmpeg_SRCDIR=../ffmpeg-0.8.5 \
       -DFFmpeg_BUILDDIR=../ffmpeg-0.8.5-debug \
       -DCMAKE_BUILD_TYPE=Debug
