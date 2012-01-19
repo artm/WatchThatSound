@@ -1,4 +1,6 @@
 #include "StoryBoard.h"
+#include "Project.h"
+
 #include <cmath>
 #include <TimeLineItem.h>
 #include <QHBoxLayout>
@@ -88,7 +90,7 @@ void StoryBoard::updateSnapshots()
 
     int n = 0;
 
-    foreach(MainWindow::Marker * m, m_mainWindow->getMarkers(MainWindow::ANY, false)) {
+    foreach(Project::Marker * m, m_mainWindow->getMarkers(Project::ANY, false)) {
         float x = (float)m->at() / tt - 0.5 * m_thumbWidth;
 
         int gapCount = s_levelCount - 1;
@@ -164,7 +166,7 @@ void StoryBoard::setCurrentTime(qint64 time)
 
 void StoryBoard::deleteSynced(QGraphicsItem *, WTS::Synced *synced)
 {
-    MainWindow::Marker * m = dynamic_cast<MainWindow::Marker *>(synced);
+    Project::Marker * m = dynamic_cast<Project::Marker *>(synced);
     Q_ASSERT(m);
     m_mainWindow->removeMark(m);
 }

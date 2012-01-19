@@ -11,7 +11,6 @@
 #include "WtsAudio.h"
 #include "SoundBuffer.h"
 #include "VideoFile.h"
-#include "Synced.h"
 #include "Preferences.h"
 
 namespace Ui
@@ -28,48 +27,19 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    enum MarkerType {
-        NONE,
-        EVENT,
-        SCENE,
-        ANY,
-    };
-
-    class Marker : public WTS::Synced
-    {
-    protected:
-        MarkerType m_type;
-        QPixmap m_snapshot;
-
-        float m_tension;
-
-    public:
-        Marker(MarkerType type, qint64 ms, QObject * parent)
-            : WTS::Synced(ms, parent)
-            , m_type(type)
-            , m_tension(0.5)
-        {}
-
-        MarkerType type() const { return m_type; }
-        const QPixmap& snapshot() const { return m_snapshot; }
-        void setSnapshot(const QPixmap& snapshot) { m_snapshot = snapshot; }
-
-        float tension() const { return m_tension; }
-        void setTension(float value) { m_tension = value; }
-    };
-
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
-    void addMarker(MarkerType type, qint64 when = -1, float tension = 0.5);
+    QList<Project::Marker *> getMarkers(Project::MarkerType type = Project::ANY,
+            bool forward = true) const;
+    void addMarker(Project::MarkerType type, qint64 when = -1, float tension = 0.5);
     Phonon::MediaObject * mediaObject();
     QState * addPage(const QString& name, QList<QWidget*> widgets, QList<QAction*> actions = QList<QAction*>());
 
     void buildMovieSelector();
 
     QPainterPath tensionCurve() const;
-    void removeMark(Marker * m);
+    void removeMark(Project::Marker * m);
     void removeBuffer(WtsAudio::BufferAt * bufferAt);
 
     qint64 duration() { return m_videoFile->duration(); }
@@ -84,8 +54,8 @@ public slots:
 
     void onMovieFinished();
 
-    void addSceneMark(){ addMarker(SCENE); }
-    void addEventMark(){ addMarker(EVENT); }
+    void addSceneMark(){ addMarker(Project::SCENE); }
+    void addEventMark(){ addMarker(Project::EVENT); }
 
     void loadMovie(const QString& path);
 
@@ -129,7 +99,7 @@ protected:
 
     QList<WtsAudio::BufferAt *> m_sequence;
     QList<WtsAudio::BufferAt *>::iterator m_sequenceCursor;
-    QMap<qint64, Marker *> m_markers;
+    QMap<qint64, Project::Marker *> m_markers;
     int m_lastSampleNameNum;
     VideoFile * m_videoFile;
     bool m_loading;

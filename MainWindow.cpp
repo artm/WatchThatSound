@@ -182,12 +182,12 @@ void MainWindow::saveData()
 
     xml.writeStartElement("storyboard");
     xml.writeAttribute("final_tension", QString("%1").arg(m_finalTension));
-    foreach(Marker * m, m_markers) {
+    foreach(Project::Marker * m, m_markers) {
         xml.writeStartElement("marker");
         QString ms;
         ms.setNum(m->at());
         xml.writeAttribute("ms",ms);
-        xml.writeAttribute("type", m->type() == SCENE ? "scene" : "event");
+        xml.writeAttribute("type", m->type() == Project::SCENE ? "scene" : "event");
         xml.writeAttribute("tension", QString("%1").arg(m->tension()));
         xml.writeEndElement();
     }
@@ -227,7 +227,7 @@ void MainWindow::loadData()
     m_loading = true;
 
     // always have a scene starting at 0
-    addMarker(SCENE, 0);
+    addMarker(Project::SCENE, 0);
 
     QFile dataFile( m_dataDir.filePath("metadata.xml") );
     dataFile.open(QFile::ReadOnly | QFile::Text);
@@ -246,7 +246,9 @@ void MainWindow::loadData()
                             ? xml.attributes().value("tension").toString().toFloat()
                             : 0.5;
 
-                    addMarker(xml.attributes().value("type") == "scene" ? SCENE : EVENT,
+                    addMarker(xml.attributes().value("type") == "scene"
+                            ? Project::SCENE
+                            : Project::EVENT,
                               xml.attributes().value("ms").toString().toLongLong(),
                               tension);
 
@@ -407,11 +409,11 @@ void MainWindow::tick(qint64 ms)
 
 }
 
-void MainWindow::addMarker(MarkerType type, qint64 when, float tension)
+void MainWindow::addMarker(Project::MarkerType type, qint64 when, float tension)
 {
     if (when < 0)
         when = mediaObject()->currentTime();
-    m_markers[when] = new Marker(type, when, this);
+    m_markers[when] = new Project::Marker(type, when, this);
     m_markers[when]->setTension( tension );
     // load frameshot...
     m_videoFile->seek(when);
@@ -422,7 +424,7 @@ void MainWindow::addMarker(MarkerType type, qint64 when, float tension)
     saveData();
 }
 
-void MainWindow::removeMark(Marker * m)
+void MainWindow::removeMark(Project::Marker * m)
 {
     m_markers.remove( m->at() );
     refreshTension();
@@ -430,11 +432,11 @@ void MainWindow::removeMark(Marker * m)
     saveData();
 }
 
-QList<MainWindow::Marker *> MainWindow::getMarkers(MarkerType type, bool forward) const
+QList<Project::Marker *> MainWindow::getMarkers(Project::MarkerType type, bool forward) const
 {
-    QList<Marker *> scenes;
-    foreach(Marker * m, m_markers) {
-        if (type == ANY || m->type() == type) {
+    QList<Project::Marker *> scenes;
+    foreach(Project::Marker * m, m_markers) {
+        if (type == Project::ANY || m->type() == type) {
             if (forward)
                 scenes.append(m);
             else
@@ -633,12 +635,12 @@ void MainWindow::buildMovieSelector()
 
 void MainWindow::refreshTension()
 {
-    QMapIterator<qint64, Marker *> iter(m_markers);
+    QMapIterator<qint64, Project::Marker *> iter(m_markers);
     QPainterPath curve;
     bool init = true;
     while(iter.hasNext()){
         iter.next();
-        Marker * m = iter.value();
+        Project::Marker * m = iter.value();
 
         float x = (float)ui->tension->sceneRect().width()
             * m->at() / m_videoFile->duration();

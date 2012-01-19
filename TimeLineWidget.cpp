@@ -1,10 +1,11 @@
 #include "TimeLineWidget.h"
-#include "ui_MainWindow.h"
-#include <QMouseEvent>
-
+#include "Project.h"
 #include "SharpLine.h"
 #include "BufferItem.h"
 #include "Synced.h"
+
+#include "ui_MainWindow.h"
+#include <QMouseEvent>
 
 using namespace WTS;
 
@@ -84,7 +85,7 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     };
     int currentColor = 0;
 
-    foreach(MainWindow::Marker * marker, m_mainWindow->getMarkers(MainWindow::SCENE)) {
+    foreach(Project::Marker * marker, m_mainWindow->getMarkers(Project::SCENE)) {
         qreal relX2 = (qreal)marker->at() / total;
         // draw a rectangle which as tall as a widget and runs from relX1 to relX2
         paintRange(painter, relX1, relX2-relX1, colors[currentColor]);
@@ -95,7 +96,7 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     paintRange(painter, relX1, 1.0f - relX1, colors[currentColor]);
 
     painter->setPen(QColor(0,0,0,200));
-    foreach(MainWindow::Marker * marker, m_mainWindow->getMarkers(MainWindow::EVENT)) {
+    foreach(Project::Marker * marker, m_mainWindow->getMarkers(Project::EVENT)) {
         qreal relX2 = (qreal)marker->at() / total;
         painter->drawLine(QPointF(relX2,0.), QPointF(relX2,1.));
     }
