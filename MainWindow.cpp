@@ -132,7 +132,6 @@ void MainWindow::loadMovie(const QString& path)
 
     // now setup dataPath and try to load files from there
     QDir movieDir = QFileInfo(path).dir();
-    m_movInfo = QFileInfo(path);
     m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName() + ".data") );
 
     if (! m_dataDir.exists() ) { movieDir.mkdir( m_dataDir.dirName() ); }
@@ -176,7 +175,7 @@ void MainWindow::saveData()
     xml.writeDTD("<!DOCTYPE soundtrack>");
     xml.writeStartElement("soundtrack");
     xml.writeAttribute("version", WTS_VERSION);
-    xml.writeAttribute("movie", m_movInfo.fileName());
+    xml.writeAttribute("movie", m_project->movieFilename());
 
     m_project->saveStoryboard(xml);
 
@@ -407,7 +406,7 @@ void MainWindow::exportMovie()
     m_exporter->configure(
             m_dataDir.filePath(
                 QString("%1-%2-export.%3")
-                .arg(m_movInfo.fileName())
+                .arg(m_project->movieFilename())
                 .arg(QHostInfo::localHostName())
                 .arg(VIDEO_FMT)),
             m_project->videoFile(),

@@ -120,7 +120,7 @@ void VideoFile::open(QString path)
                                       SWS_BICUBIC, 0, 0, 0);
 
     TRY_ASSERT(m_convertContext);
-
+    m_path = path;
 }
 
 VideoFile::~VideoFile()

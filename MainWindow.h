@@ -82,10 +82,8 @@ protected:
 
     Project * m_project;
 
-
     WtsAudio m_audio;
     Ui::MainWindow *ui;
-    QFileInfo m_movInfo;
     QDir m_dataDir;
 
     WtsAudio::BufferAt m_scratch;

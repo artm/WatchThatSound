@@ -32,6 +32,7 @@ public:
     const AVStream * stream() const;
 
     qint64 duration() const;
+    QString path() const { return m_path; }
 signals:
 
 public slots:
@@ -46,6 +47,7 @@ protected:
     QByteArray m_frameBytes;
     int m_streamIndex;
     SwsContext * m_convertContext;
+    QString m_path;
 
     static bool s_ffInited;
 };
