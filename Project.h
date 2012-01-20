@@ -1,5 +1,6 @@
 #pragma once
 #include "Synced.h"
+#include "VideoFile.h"
 
 namespace WTS {
 
@@ -38,7 +39,7 @@ public:
         void setTension(float value) { m_tension = value; }
     };
 
-    Project(QObject * parent = 0);
+    Project(const QString& path, QObject * parent = 0);
     void saveStoryboard(QXmlStreamWriter&);
     bool loadStoryboard(QXmlStreamReader&);
 
@@ -47,12 +48,16 @@ public:
     void setMarkerTension(int markerIndex, float tension);
     void addMarker(MarkerType type, qint64 when, float tension);
     void removeMarkerAt(quint64 at);
-    void setMarkerSnapshot( quint64 when, const QPixmap& pixmap );
     QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
-    QPainterPath tensionCurve(float width, quint64 duration);
+    QPainterPath tensionCurve(float width);
+    qint64 duration() const { return m_videoFile->duration(); }
+    int videoWidth() const { return m_videoFile->width(); }
+    int videoHeight() const { return m_videoFile->height(); }
+    VideoFile * videoFile() { return m_videoFile; }
 protected:
     double m_finalTension;
     QMap<qint64, Project::Marker *> m_markers;
+    VideoFile * m_videoFile;
 };
 
 }

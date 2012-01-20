@@ -46,7 +46,7 @@ void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
 
     int maxLines = width() / 5;
 
-    float totalMin = (float)m_mainWindow->duration() / 60000.0f;
+    float totalMin = (float)project()->duration() / 60000.0f;
     float N[] = { 60, 30, 15, 12, 6, 5, 4, 3, 2 };
     int Ncount = sizeof(N)/sizeof(N[0]);
 
@@ -79,7 +79,7 @@ void StoryBoard::drawBackground ( QPainter * painter, const QRectF & rect )
 
 void StoryBoard::updateSnapshots()
 {
-    float tt = m_mainWindow->duration();
+    float tt = project()->duration();
 
     foreach(QGraphicsItem * item, m_msToItem) {
         scene()->removeItem(item);
@@ -91,7 +91,7 @@ void StoryBoard::updateSnapshots()
     int n = 0;
 
     foreach(Project::Marker * m,
-            m_mainWindow->project()->getMarkers(Project::ANY, false)) {
+            project()->getMarkers(Project::ANY, false)) {
         float x = (float)m->at() / tt - 0.5 * m_thumbWidth;
 
         int gapCount = s_levelCount - 1;

@@ -10,7 +10,6 @@
 #include "Project.h"
 #include "WtsAudio.h"
 #include "SoundBuffer.h"
-#include "VideoFile.h"
 #include "Preferences.h"
 
 namespace Ui
@@ -40,7 +39,6 @@ public:
     void removeMark(Project::Marker * m);
     void removeBuffer(WtsAudio::BufferAt * bufferAt);
 
-    qint64 duration() { return m_videoFile->duration(); }
     QDir movDir();
     Project * project() { return m_project; }
 
@@ -99,7 +97,6 @@ protected:
     QList<WtsAudio::BufferAt *> m_sequence;
     QList<WtsAudio::BufferAt *>::iterator m_sequenceCursor;
     int m_lastSampleNameNum;
-    VideoFile * m_videoFile;
     bool m_loading;
     Exporter * m_exporter;
     QStateMachine m_machine;

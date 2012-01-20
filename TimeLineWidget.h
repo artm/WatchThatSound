@@ -9,6 +9,7 @@
 namespace WTS {
 
 class Synced;
+class Project;
 
 class TimeLineWidget : public QGraphicsView
 {
@@ -30,6 +31,8 @@ public:
     // returns the item which has the synced associated
     static QGraphicsItem * findSynced(QGraphicsItem * item, WTS::Synced ** synced);
     virtual void deleteSynced(QGraphicsItem *, WTS::Synced *) {}
+
+    Project * project() { return m_mainWindow ? m_mainWindow->project() : 0; }
 
 signals:
     void dataChanged();

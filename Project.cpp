@@ -2,9 +2,10 @@
 
 using namespace WTS;
 
-    Project::Project(QObject * parent)
+    Project::Project(const QString& path, QObject * parent)
     : QObject(parent)
       , m_finalTension(0.5)
+      , m_videoFile(new VideoFile(path, this))
 {}
 
 void Project::saveStoryboard(QXmlStreamWriter& xml)
@@ -51,12 +52,8 @@ void Project::addMarker(Project::MarkerType type, qint64 when, float tension)
 {
     m_markers[when] = new Marker(type, when, this);
     m_markers[when]->setTension( tension );
-}
-
-void Project::setMarkerSnapshot( quint64 when, const QPixmap& pixmap )
-{
-    if (m_markers.contains(when))
-        m_markers[when]->setSnapshot( pixmap );
+    m_videoFile->seek(when);
+    m_markers[when]->setSnapshot( QPixmap::fromImage(m_videoFile->frame() ) );
 }
 
 QList<Project::Marker *> Project::getMarkers(MarkerType type, bool forward) const
@@ -79,7 +76,7 @@ void Project::removeMarkerAt(quint64 at)
     m_markers.remove(at);
 }
 
-QPainterPath Project::tensionCurve(float width, quint64 duration)
+QPainterPath Project::tensionCurve(float width)
 {
     QPainterPath curve;
     QMapIterator<qint64, Project::Marker *> iter(m_markers);
@@ -88,7 +85,7 @@ QPainterPath Project::tensionCurve(float width, quint64 duration)
         iter.next();
         Project::Marker * m = iter.value();
 
-        float x = width * m->at() / duration;
+        float x = width * m->at() / duration();
 
         if (init) {
             curve.moveTo(QPointF(x, m->tension()));

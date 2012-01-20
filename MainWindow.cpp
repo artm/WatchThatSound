@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
     , m_project(0)
     , m_movDirFound(false)
     , m_lastSampleNameNum(0)
-    , m_videoFile(0)
     , m_loading(false)
     , m_exporter(new Exporter(this))
     , m_muteOnRecord(true)
@@ -125,12 +124,11 @@ void MainWindow::loadMovie(const QString& path)
     // scratch should be big enough to fit a movie-long sound
     // this should happen before loadData so we know video size and have
     // access to thumbnails
-    if (m_videoFile) delete m_videoFile;
-    m_videoFile = new VideoFile(path, this);
+    m_project = new Project(path, this);
 
     m_scratch.setBuffer(
                 new SoundBuffer(
-                    WtsAudio::msToSampleCount(m_videoFile->duration())));
+                    WtsAudio::msToSampleCount(m_project->duration())));
     m_scratch.buffer()->setColor( Qt::red );
 
     // now setup dataPath and try to load files from there
@@ -140,7 +138,7 @@ void MainWindow::loadMovie(const QString& path)
 
     if (! m_dataDir.exists() ) { movieDir.mkdir( m_dataDir.dirName() ); }
 
-    ui->storyboard->setVideoSize(m_videoFile->width(), m_videoFile->height());
+    ui->storyboard->setVideoSize(m_project->videoWidth(), m_project->videoHeight());
 
     loadData();
 
@@ -149,15 +147,16 @@ void MainWindow::loadMovie(const QString& path)
 
 void MainWindow::resetData()
 {
-    m_project = new Project(this);
+    if (m_project) {
+        delete m_project;
+        m_project = 0;
+    }
 
     m_dataDir.setPath("");;
     m_scratch.setAt(0);
     m_sequence.clear();;
     m_sequenceCursor = m_sequence.begin();
     m_lastSampleNameNum = 0;
-    if (m_videoFile) delete m_videoFile;
-    m_videoFile = 0;
     m_loading = false;
 }
 
@@ -301,7 +300,7 @@ void MainWindow::onPlay(bool play)
         m_sequenceCursor = m_sequence.begin();
 
         // if at the very end of the film - start from the beginning
-        if (duration() - mediaObject()->currentTime() < 40) {
+        if (m_project->duration() - mediaObject()->currentTime() < 40) {
             ui->videoPlayer->seek(0);
         }
 
@@ -386,10 +385,6 @@ void MainWindow::addMarker(Project::MarkerType type, qint64 when, float tension)
 
     m_project->addMarker(type, when, tension);
 
-    // load frameshot...
-    m_videoFile->seek(when);
-    m_project->setMarkerSnapshot( when, QPixmap::fromImage(m_videoFile->frame()) );
-
     refreshTension();
     emit storyBoardChanged();
     saveData();
@@ -416,7 +411,7 @@ void MainWindow::exportMovie()
                 .arg(m_movInfo.fileName())
                 .arg(QHostInfo::localHostName())
                 .arg(VIDEO_FMT)),
-            m_videoFile,
+            m_project->videoFile(),
             m_sequence,
             &m_audio,
             &progress);
@@ -592,9 +587,7 @@ void MainWindow::buildMovieSelector()
 void MainWindow::refreshTension()
 {
     ui->tension->setCurve(
-            m_project->tensionCurve(
-                ui->tension->sceneRect().width(),
-                m_videoFile->duration()) );
+            m_project->tensionCurve(ui->tension->sceneRect().width()));
 }
 
 QPainterPath MainWindow::tensionCurve() const
