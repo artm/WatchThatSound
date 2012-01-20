@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QDir>
 #include <Phonon>
 #include <QStateMachine>
 #include <QActionGroup>
@@ -39,7 +38,6 @@ public:
     void removeMark(Project::Marker * m);
     void removeBuffer(WtsAudio::BufferAt * bufferAt);
 
-    QDir movDir();
     Project * project() { return m_project; }
 
 public slots:
@@ -84,8 +82,6 @@ protected:
 
     Project * m_project;
 
-    QDir m_movDir;
-    bool m_movDirFound;
 
     WtsAudio m_audio;
     Ui::MainWindow *ui;

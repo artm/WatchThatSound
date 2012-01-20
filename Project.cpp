@@ -1,4 +1,5 @@
 #include "Project.h"
+#include "Common.h"
 
 using namespace WTS;
 
@@ -105,4 +106,64 @@ void Project::setMarkerTension(int markerIndex, float tension)
         m_markers[ m_markers.keys()[markerIndex] ]->setTension(tension);
     else if (markerIndex  == m_markers.size())
         setFinalTension(tension);
+}
+
+#if defined(__APPLE__)
+#define nextToExe(p) QCoreApplication::applicationDirPath () + "/../../.." + p
+#else
+#define nextToExe(p) QCoreApplication::applicationDirPath () + p
+#endif
+
+QDir Project::s_movDir;
+bool Project::s_movDirFound = false;
+
+QDir Project::movDir()
+{
+    if (!s_movDirFound) {
+
+        QString stdMoviesPath = QDesktopServices::storageLocation(
+                QDesktopServices::MoviesLocation );
+
+        s_movDir = QDir(stdMoviesPath).filePath("Watch That Sound Movies");
+
+        if (!s_movDir.exists()) {
+            // first try pre 3.0.3 convention
+
+            QDir tryDir;
+            tryDir = QDir(nextToExe("/WTSmovie"));
+            if (!tryDir.exists())
+                // then try 3-beta convention
+                tryDir = QDir(nextToExe("/movie"));
+
+            // upgrade from beta to actual version
+            if (tryDir.exists()) {
+                QDir().rename(tryDir.path(),s_movDir.path());
+
+                QString info =
+                    QString("Oude movie map %1 verplaatst naar de nieuwe locatie: %2")
+                    .arg(tryDir.path()).arg(s_movDir.path());
+
+                QMessageBox message(QMessageBox::Information, "Upgrade info",
+                        info, QMessageBox::Ok);
+                message.exec();
+            } else {
+                s_movDir.mkdir(s_movDir.path());
+                // see if we have sample films installed
+                QDir distVideos = QDir(nextToExe("/../video"));
+                if (distVideos.exists()) {
+                    foreach(QString path,
+                            distVideos.entryList(QStringList()
+                                << QString("*.%1").arg(VIDEO_FMT))) {
+                        // copy sample films to movDir
+                        qDebug() << "cp " << path << " to " << s_movDir.filePath(path);
+                        QFile(distVideos.filePath(path)).copy(s_movDir.filePath(path));
+                    }
+                } else {
+                    qWarning() << "No dist videos at " << distVideos.path();
+                }
+            }
+        }
+    }
+
+    return s_movDir;
 }

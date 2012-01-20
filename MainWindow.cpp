@@ -20,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , m_project(0)
-    , m_movDirFound(false)
     , m_lastSampleNameNum(0)
     , m_loading(false)
     , m_exporter(new Exporter(this))
@@ -527,7 +526,7 @@ void MainWindow::buildMovieSelector()
 
     QSignalMapper * mapper = new QSignalMapper(this);
 
-    QFileInfoList movList = movDir().entryInfoList(QStringList()
+    QFileInfoList movList = Project::movDir().entryInfoList(QStringList()
             << QString("*.%1").arg(VIDEO_FMT));
 
     int count = movList.size();
@@ -578,7 +577,7 @@ void MainWindow::buildMovieSelector()
         QLabel * oops = new QLabel(
                 QString("De map '%1' bevat geen filmpjes (formaat '%2').\n"
                     "Plaats een aantal van zulke bestanden in de map en start de tool opnieuw.")
-                .arg(movDir().path()).arg(VIDEO_FormatTitle));
+                .arg(Project::movDir().path()).arg(VIDEO_FormatTitle));
         layout->addWidget(oops,0,0);
         layout->setAlignment(oops, Qt::AlignHCenter);
     }
@@ -613,59 +612,3 @@ void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)
 }
 
 
-#if defined(__APPLE__)
-#define nextToExe(p) QCoreApplication::applicationDirPath () + "/../../.." + p
-#else
-#define nextToExe(p) QCoreApplication::applicationDirPath () + p
-#endif
-
-QDir MainWindow::movDir()
-{
-    if (!m_movDirFound) {
-
-        QString stdMoviesPath = QDesktopServices::storageLocation(
-                QDesktopServices::MoviesLocation );
-
-        m_movDir = QDir(stdMoviesPath).filePath("Watch That Sound Movies");
-
-        if (!m_movDir.exists()) {
-            // first try pre 3.0.3 convention
-
-            QDir tryDir;
-            tryDir = QDir(nextToExe("/WTSmovie"));
-            if (!tryDir.exists())
-                // then try 3-beta convention
-                tryDir = QDir(nextToExe("/movie"));
-
-            // upgrade from beta to actual version
-            if (tryDir.exists()) {
-                QDir().rename(tryDir.path(),m_movDir.path());
-
-                QString info =
-                    QString("Oude movie map %1 verplaatst naar de nieuwe locatie: %2")
-                    .arg(tryDir.path()).arg(m_movDir.path());
-
-                QMessageBox message(QMessageBox::Information, "Upgrade info",
-                        info, QMessageBox::Ok);
-                message.exec();
-            } else {
-                m_movDir.mkdir(m_movDir.path());
-                // see if we have sample films installed
-                QDir distVideos = QDir(nextToExe("/../video"));
-                if (distVideos.exists()) {
-                    foreach(QString path,
-                            distVideos.entryList(QStringList()
-                                << QString("*.%1").arg(VIDEO_FMT))) {
-                        // copy sample films to movDir
-                        qDebug() << "cp " << path << " to " << m_movDir.filePath(path);
-                        QFile(distVideos.filePath(path)).copy(m_movDir.filePath(path));
-                    }
-                } else {
-                    qWarning() << "No dist videos at " << distVideos.path();
-                }
-            }
-        }
-    }
-
-    return m_movDir;
-}

@@ -54,10 +54,14 @@ public:
     int videoWidth() const { return m_videoFile->width(); }
     int videoHeight() const { return m_videoFile->height(); }
     VideoFile * videoFile() { return m_videoFile; }
+    static QDir movDir();
 protected:
     double m_finalTension;
     QMap<qint64, Project::Marker *> m_markers;
     VideoFile * m_videoFile;
+
+    static QDir s_movDir;
+    static bool s_movDirFound;
 };
 
 }
