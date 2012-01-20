@@ -23,6 +23,7 @@ public slots:
     void showScratch(WtsAudio::BufferAt * scratchAt, bool on);
     void updateBuffer(SoundBuffer * buffer);
     virtual void updateSelection();
+    virtual void setProject(Project * project);
 
 protected:
     QPen m_pen;

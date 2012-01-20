@@ -32,7 +32,7 @@ public:
     static QGraphicsItem * findSynced(QGraphicsItem * item, WTS::Synced ** synced);
     virtual void deleteSynced(QGraphicsItem *, WTS::Synced *) {}
 
-    Project * project() { return m_mainWindow ? m_mainWindow->project() : 0; }
+    Project * project() { return m_project; }
 
 signals:
     void dataChanged();
@@ -47,9 +47,12 @@ public slots:
                     sceneRect(),
                     QGraphicsScene::BackgroundLayer);
     }
+    virtual void setProject(Project * project);
 
 protected:
+    // FIXME this one should be eventually phased out
     MainWindow * m_mainWindow;
+    QPointer<Project> m_project;
     bool m_seekOnDrag;
     qint64 m_currentTime;
 

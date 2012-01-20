@@ -24,6 +24,8 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
         qCritical("TimeLineWidget should be descendant of MainWindow in view hierarchy");
     m_mainWindow = qobject_cast<MainWindow *>(iter);
 
+    connect(m_mainWindow,SIGNAL(projectChanged(Project*)),SLOT(setProject(Project*)));
+
     connect(m_mainWindow,SIGNAL(storyBoardChanged()),SLOT(invalidateBackground()));
     connect(m_mainWindow,SIGNAL(samplerClock(qint64)),SLOT(setCurrentTime(qint64)));
 
@@ -46,6 +48,11 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
     setLineWidth(0);
     setMidLineWidth(0);
     setCacheMode(QGraphicsView::CacheBackground);
+}
+
+void TimeLineWidget::setProject(Project * project)
+{
+    m_project = project;
 }
 
 void TimeLineWidget::resizeEvent ( QResizeEvent * /*event*/ )

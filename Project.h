@@ -1,6 +1,7 @@
 #pragma once
 #include "Synced.h"
 #include "VideoFile.h"
+#include "WtsAudio.h"
 
 namespace WTS {
 
@@ -42,6 +43,8 @@ public:
     Project(const QString& path, QObject * parent = 0);
     void saveStoryboard(QXmlStreamWriter&);
     bool loadStoryboard(QXmlStreamReader&);
+    void saveSequence(QXmlStreamWriter&);
+    bool loadSequence(QXmlStreamReader&);
 
     double finalTension() const { return m_finalTension; }
     void setFinalTension(double value) { m_finalTension = value; }
@@ -56,15 +59,39 @@ public:
     VideoFile * videoFile() { return m_videoFile; }
     const VideoFile * videoFile() const { return m_videoFile; }
     static QDir movDir();
+    QDir dataDir() const { return m_dataDir; }
     QString moviePath() const { return videoFile()->path(); }
     QString movieFilename() const { return QFileInfo(moviePath()).fileName(); }
+    void addBufferAt(WtsAudio::BufferAt * newBuff);
+    void copyScratch(WtsAudio::BufferAt * newBuff);
+    void removeBufferAt(WtsAudio::BufferAt * newBuff);
+
+    // TODO split this off into a controller
+    void seek(qint64 ms);
+    void start();
+    void advanceSequenceCursor(qint64 ms);
+    QList<WtsAudio::BufferAt *>::iterator beginCursor();
+    QList<WtsAudio::BufferAt *>::iterator endCursor() { return m_sequence.end(); }
+
+signals:
+    void samplerSchedule(WtsAudio::BufferAt * buffer);
+    void newBufferAt(WtsAudio::BufferAt * bufferAt);
+
 protected:
     double m_finalTension;
     QMap<qint64, Project::Marker *> m_markers;
     VideoFile * m_videoFile;
+    QDir m_dataDir;
+    QList<WtsAudio::BufferAt *> m_sequence;
+    int m_lastSampleNameNum;
+    // TODO the cursor should be a part of controller (playback / export) not
+    // model
+    QList<WtsAudio::BufferAt *>::iterator m_sequenceCursor;
 
     static QDir s_movDir;
     static bool s_movDirFound;
+
+    QString makeSampleName();
 };
 
 }

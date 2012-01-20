@@ -15,8 +15,6 @@ SequencerTimeLine::SequencerTimeLine(QWidget *parent)
     , m_levelH(0.15)
     , m_sampleH(0.17)
 {
-    connect(m_mainWindow,SIGNAL(newBufferAt(WtsAudio::BufferAt*)),
-            SLOT(insertBufferAt(WtsAudio::BufferAt*)));
     connect(m_mainWindow,SIGNAL(scratchUpdated(WtsAudio::BufferAt*,bool)),
             SLOT(showScratch(WtsAudio::BufferAt*,bool)));
 
@@ -27,6 +25,13 @@ SequencerTimeLine::SequencerTimeLine(QWidget *parent)
     m_scratchRect->setZValue(1.0);
 
     setSeekOnDrag(true);
+}
+
+void SequencerTimeLine::setProject(Project * project)
+{
+    TimeLineWidget::setProject(project);
+    connect(m_project,SIGNAL(newBufferAt(WtsAudio::BufferAt*)),
+            SLOT(insertBufferAt(WtsAudio::BufferAt*)));
 }
 
 void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * bufferAt)

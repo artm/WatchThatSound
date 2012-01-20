@@ -13,6 +13,7 @@ using namespace WTS;
 Exporter::Exporter(QObject *parent)
     : QObject(parent)
     , m_originalVideoFile(0)
+    , m_project(0)
     , m_audio(0)
     , m_container(0)
     , m_videoStream(0)
@@ -22,13 +23,13 @@ Exporter::Exporter(QObject *parent)
 
 void Exporter::configure(const QString& fname,
                              VideoFile * vfile,
-                             const QList<WtsAudio::BufferAt *>& sequence,
+                             Project * project,
                              WtsAudio * audio,
                              QProgressDialog * progress)
 {
     m_filename = fname.toLocal8Bit();
     m_originalVideoFile = vfile;
-    m_sequence = sequence;
+    m_project = project;
     m_audio = audio;
     m_progress = progress;
 }
@@ -107,8 +108,6 @@ void Exporter::performExport()
 
     m_originalVideoFile->seek(0);
     m_audio->samplerClear();
-    qSort(m_sequence.begin(), m_sequence.end(), WtsAudio::startsBefore);
-    QList<WtsAudio::BufferAt *>::iterator sequenceCursor = m_sequence.begin();
 
     double duration = (double)m_videoStream->duration
             * m_videoStream->time_base.num
@@ -139,7 +138,8 @@ void Exporter::performExport()
 
             qint64 ms = (qint64)(audio_pts * 1000.0);
 
-            while( sequenceCursor != m_sequence.end()
+            QList<WtsAudio::BufferAt *>::iterator sequenceCursor = m_project->beginCursor();
+            while( sequenceCursor != m_project->endCursor()
                   && ((*sequenceCursor)->at()
                       + WtsAudio::sampleCountToMs((*sequenceCursor)->buffer()->rangeStart())) <= ms ) {
                 m_audio->samplerSchedule(*sequenceCursor);

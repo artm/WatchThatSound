@@ -3,7 +3,6 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
-#include "Rainbow.h"
 #include "Exporter.h"
 
 #include "WatchThatCode.h"
@@ -20,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , m_project(0)
-    , m_lastSampleNameNum(0)
     , m_loading(false)
     , m_exporter(new Exporter(this))
     , m_muteOnRecord(true)
@@ -31,8 +29,6 @@ MainWindow::MainWindow(QWidget *parent)
     // connect to the sampler
     connect(this, SIGNAL(samplerClear()), &m_audio, SLOT(samplerClear()));
     connect(this, SIGNAL(samplerClock(qint64)), &m_audio, SLOT(samplerClock(qint64)));
-    connect(this, SIGNAL(samplerSchedule(WtsAudio::BufferAt*)),
-            &m_audio, SLOT(samplerSchedule(WtsAudio::BufferAt*)));
 
     // change signals to save data...
     connect(ui->tension, SIGNAL(updateLevel(int,float)), SLOT(updateMarkerTension(int,float)));
@@ -86,17 +82,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-QString MainWindow::makeSampleName()
-{
-    return QString("sample_%1.raw").arg(++m_lastSampleNameNum);
-}
-
 void MainWindow::seek(qint64 ms)
 {
     mediaObject()->seek(ms);
     emit samplerClear();
     if (ui->actionPlay->isChecked()) {
-        m_sequenceCursor = m_sequence.begin();
+        project()->seek(ms);
         emit samplerClock(ms);
     }
 }
@@ -124,17 +115,14 @@ void MainWindow::loadMovie(const QString& path)
     // this should happen before loadData so we know video size and have
     // access to thumbnails
     m_project = new Project(path, this);
+    emit projectChanged(m_project);
+    connect(m_project, SIGNAL(samplerSchedule(WtsAudio::BufferAt*)),
+            &m_audio, SLOT(samplerSchedule(WtsAudio::BufferAt*)));
 
     m_scratch.setBuffer(
                 new SoundBuffer(
                     WtsAudio::msToSampleCount(m_project->duration())));
     m_scratch.buffer()->setColor( Qt::red );
-
-    // now setup dataPath and try to load files from there
-    QDir movieDir = QFileInfo(path).dir();
-    m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName() + ".data") );
-
-    if (! m_dataDir.exists() ) { movieDir.mkdir( m_dataDir.dirName() ); }
 
     ui->storyboard->setVideoSize(m_project->videoWidth(), m_project->videoHeight());
 
@@ -150,11 +138,7 @@ void MainWindow::resetData()
         m_project = 0;
     }
 
-    m_dataDir.setPath("");;
     m_scratch.setAt(0);
-    m_sequence.clear();;
-    m_sequenceCursor = m_sequence.begin();
-    m_lastSampleNameNum = 0;
     m_loading = false;
 }
 
@@ -164,7 +148,7 @@ void MainWindow::saveData()
     if (m_loading)
         return;
 
-    QFile dataFile( m_dataDir.filePath("metadata.xml.tmp") );
+    QFile dataFile( m_project->dataDir().filePath("metadata.xml.tmp") );
     dataFile.open(QFile::WriteOnly | QFile::Text);
 
     QXmlStreamWriter xml( &dataFile );
@@ -183,29 +167,12 @@ void MainWindow::saveData()
     ui->score->saveData(xml);
     xml.writeEndElement();
 
-    xml.writeStartElement("sequence");
-    xml.writeAttribute("counter",QString("%1").arg(m_lastSampleNameNum));
-    foreach(WtsAudio::BufferAt * buffer, m_sequence) {
-        xml.writeStartElement("sample");
-        qint64 at_int = buffer->at();
-        QString at_s = QString("%1").arg(at_int);
-        xml.writeAttribute("ms",at_s);
-        xml.writeAttribute("id",buffer->buffer()->name());
-        // FIXME: this shouldn't be here, but in a separate samples chunk
-        xml.writeAttribute("range_start", QString("%1").arg(buffer->buffer()->rangeStart()));
-        xml.writeAttribute("range_end", QString("%1").arg(buffer->buffer()->rangeEnd()));
-        xml.writeAttribute("gain", QString("%1").arg( buffer->buffer()->gain() ));
-        xml.writeEndElement();
-
-        QFile wav( m_dataDir.filePath( buffer->buffer()->name() ));
-        buffer->buffer()->save(wav);
-    }
-
+    m_project->saveSequence(xml);
     xml.writeEndElement();
     xml.writeEndDocument();
     dataFile.close();
-    QFile::remove( m_dataDir.filePath("metadata.xml") );
-    dataFile.rename(  m_dataDir.filePath("metadata.xml") );
+    QFile::remove( m_project->dataDir().filePath("metadata.xml") );
+    dataFile.rename(  m_project->dataDir().filePath("metadata.xml") );
 }
 
 void MainWindow::loadData()
@@ -215,9 +182,8 @@ void MainWindow::loadData()
     // always have a scene starting at 0
     addMarker(Project::SCENE, 0);
 
-    QFile dataFile( m_dataDir.filePath("metadata.xml") );
+    QFile dataFile( m_project->dataDir().filePath("metadata.xml") );
     dataFile.open(QFile::ReadOnly | QFile::Text);
-    QRegExp idRe = QRegExp("sample_(\\d+)");
     QXmlStreamReader xml( &dataFile );
     xml.readNextStartElement();
     if (xml.name() == "soundtrack") {
@@ -226,42 +192,8 @@ void MainWindow::loadData()
                 refreshTension();
             } else if (xml.name() == "score") {
                 ui->score->loadData(xml);
-            } else if (xml.name() == "sequence") {
-                m_lastSampleNameNum =
-                        xml.attributes().value("counter").toString().toInt();
-                while(xml.readNextStartElement()) {
-                    QString id = xml.attributes().value("id").toString();
-                    QFile wav( m_dataDir.filePath( id ));
-
-                    SoundBuffer * sb = new SoundBuffer();
-                    sb->load(wav);
-                    sb->setRange(xml.attributes().value("range_start").toString().toLongLong(),
-                                 xml.attributes().value("range_end").toString().toLongLong());
-
-                    QString at_s =  xml.attributes().value("ms").toString();
-                    qint64 at_int = at_s.toLongLong();
-                    WtsAudio::BufferAt * buffer =
-                            new WtsAudio::BufferAt(sb,
-                                                   at_int,
-                                                   this);
-                    m_sequence.append( buffer );
-
-                    // find out original number / color
-                    if (idRe.indexIn(id) > -1) {
-                        int color_index = idRe.cap(1).toInt();
-                        buffer->buffer()->setColor( Rainbow::getColor( color_index ) );
-                    } else {
-                        qDebug() << "Color index didn't parse...";
-                    }
-
-                    buffer->buffer()->initGains();
-                    if (xml.attributes().hasAttribute("gain"))
-                        buffer->buffer()->setGain( xml.attributes().value("gain").toString().toFloat() );
-
-                    emit newBufferAt(buffer);
-                    // finish off the element...
-                    xml.readElementText();
-                }
+            } else if (m_project->loadSequence(xml)) {
+                // ????
             }
         }
     } else {
@@ -294,8 +226,7 @@ void MainWindow::onPlay(bool play)
     if (play) {
         emit samplerClear();
         m_audio.start();
-        qSort(m_sequence.begin(), m_sequence.end(), WtsAudio::startsBefore);
-        m_sequenceCursor = m_sequence.begin();
+        m_project->start();
 
         // if at the very end of the film - start from the beginning
         if (m_project->duration() - mediaObject()->currentTime() < 40) {
@@ -325,18 +256,8 @@ void MainWindow::onRecord(bool record)
         // done with recording - make a new sample buffer
 
         if (m_scratch.buffer()->sampleCount() > 0) {
-            WtsAudio::BufferAt * newBuff =
-                    new WtsAudio::BufferAt(
-                        new SoundBuffer(makeSampleName(),
-                                        *m_scratch.buffer(),
-                                        m_scratch.buffer()->m_writePos),
-                        m_scratch.at(),
-                        this);
-            newBuff->buffer()->setColor( Rainbow::getColor(m_lastSampleNameNum) );
-            newBuff->buffer()->initGains();
-            m_sequence.append(newBuff);
-            emit scratchUpdated(newBuff, false);
-            emit newBufferAt(newBuff);
+            m_project->copyScratch(&m_scratch);
+            emit scratchUpdated(&m_scratch, false);
             ui->videoPlayer->seek(m_scratch.at());
             saveData();
         }
@@ -366,14 +287,8 @@ void MainWindow::tick(qint64 ms)
 
     // find out which samples to trigger
     if (ui->actionPlay->isChecked()) {
-        while( m_sequenceCursor != m_sequence.end()
-              && ((*m_sequenceCursor)->at()
-              + WtsAudio::sampleCountToMs((*m_sequenceCursor)->buffer()->rangeStart())) <= ms ) {
-            emit samplerSchedule( *m_sequenceCursor );
-            m_sequenceCursor++;
-        }
+        m_project->advanceSequenceCursor(ms);
     }
-
 }
 
 void MainWindow::addMarker(Project::MarkerType type, qint64 when, float tension)
@@ -404,13 +319,13 @@ void MainWindow::exportMovie()
     progress.setMinimumDuration(500);
 
     m_exporter->configure(
-            m_dataDir.filePath(
+            m_project->dataDir().filePath(
                 QString("%1-%2-export.%3")
                 .arg(m_project->movieFilename())
                 .arg(QHostInfo::localHostName())
                 .arg(VIDEO_FMT)),
             m_project->videoFile(),
-            m_sequence,
+            m_project,
             &m_audio,
             &progress);
     m_exporter->run();
@@ -606,7 +521,7 @@ void MainWindow::updateMarkerTension(int markerIndex, float tension)
 void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)
 {
     ui->waveform->clearWaveform(bufferAt->buffer());
-    m_sequence.removeAll(bufferAt);
+    m_project->removeBufferAt(bufferAt);
     saveData();
 }
 

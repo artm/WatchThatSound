@@ -66,31 +66,26 @@ public slots:
 
 signals:
     void storyBoardChanged();
-    void newBufferAt(WtsAudio::BufferAt * bufferAt);
     void scratchUpdated(WtsAudio::BufferAt * bufferAt, bool recording);
 
     void samplerClock(qint64 ms);
-    void samplerSchedule(WtsAudio::BufferAt * buffer);
     void samplerClear();
 
     void loaded();
     void stopped();
 
+    void projectChanged(Project *);
+
 protected:
-    QString makeSampleName();
     void constructStateMachine();
 
     Project * m_project;
 
     WtsAudio m_audio;
     Ui::MainWindow *ui;
-    QDir m_dataDir;
 
     WtsAudio::BufferAt m_scratch;
 
-    QList<WtsAudio::BufferAt *> m_sequence;
-    QList<WtsAudio::BufferAt *>::iterator m_sequenceCursor;
-    int m_lastSampleNameNum;
     bool m_loading;
     Exporter * m_exporter;
     QStateMachine m_machine;

@@ -2,6 +2,7 @@
 #define EXPORTTHREAD_H
 
 #include "WtsAudio.h"
+#include "Project.h"
 
 #include <QByteArray>
 #include <QVector>
@@ -24,7 +25,7 @@ public:
     void run();
     void configure(const QString& fname,
                    VideoFile * vfile,
-                   const QList<WtsAudio::BufferAt *>& sequence,
+                   Project * project,
                    WtsAudio * audio,
                    QProgressDialog * progress);
 
@@ -41,7 +42,7 @@ protected:
 
     QByteArray m_filename;
     VideoFile * m_originalVideoFile;
-    QList<WtsAudio::BufferAt *> m_sequence;
+    Project * m_project;
     WtsAudio * m_audio;
     QProgressDialog * m_progress;
 

@@ -1,13 +1,21 @@
 #include "Project.h"
 #include "Common.h"
+#include "SoundBuffer.h"
+#include "Rainbow.h"
 
 using namespace WTS;
 
     Project::Project(const QString& path, QObject * parent)
     : QObject(parent)
-      , m_finalTension(0.5)
-      , m_videoFile(new VideoFile(path, this))
-{}
+    , m_finalTension(0.5)
+    , m_videoFile(new VideoFile(path, this))
+    , m_lastSampleNameNum(0)
+{
+    QDir movieDir = QFileInfo(path).dir();
+    m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName() + ".data") );
+    if (! m_dataDir.exists() )
+        movieDir.mkdir( m_dataDir.dirName() );
+}
 
 void Project::saveStoryboard(QXmlStreamWriter& xml)
 {
@@ -44,6 +52,71 @@ bool Project::loadStoryboard(QXmlStreamReader& xml)
                 tension);
 
         // this is one way to read a flat list of <foo/> not recursing
+        xml.readElementText();
+    }
+    return true;
+}
+
+void Project::saveSequence(QXmlStreamWriter& xml)
+{
+    xml.writeStartElement("sequence");
+    xml.writeAttribute("counter",QString("%1").arg(m_lastSampleNameNum));
+    foreach(WtsAudio::BufferAt * buffer, m_sequence) {
+        xml.writeStartElement("sample");
+        qint64 at_int = buffer->at();
+        QString at_s = QString("%1").arg(at_int);
+        xml.writeAttribute("ms",at_s);
+        xml.writeAttribute("id",buffer->buffer()->name());
+        // FIXME: this shouldn't be here, but in a separate samples chunk
+        xml.writeAttribute("range_start", QString("%1").arg(buffer->buffer()->rangeStart()));
+        xml.writeAttribute("range_end", QString("%1").arg(buffer->buffer()->rangeEnd()));
+        xml.writeAttribute("gain", QString("%1").arg( buffer->buffer()->gain() ));
+        xml.writeEndElement();
+
+        QFile wav( m_dataDir.filePath( buffer->buffer()->name() ));
+        buffer->buffer()->save(wav);
+    }
+}
+
+bool Project::loadSequence(QXmlStreamReader& xml)
+{
+    if (xml.name() != "sequence")
+        return false;
+
+    QRegExp idRe = QRegExp("sample_(\\d+)");
+    m_lastSampleNameNum =
+        xml.attributes().value("counter").toString().toInt();
+    while(xml.readNextStartElement()) {
+        QString id = xml.attributes().value("id").toString();
+        QFile wav( m_dataDir.filePath( id ));
+
+        SoundBuffer * sb = new SoundBuffer();
+        sb->load(wav);
+        sb->setRange(xml.attributes().value("range_start").toString().toLongLong(),
+                xml.attributes().value("range_end").toString().toLongLong());
+
+        QString at_s =  xml.attributes().value("ms").toString();
+        qint64 at_int = at_s.toLongLong();
+        WtsAudio::BufferAt * buffer =
+            new WtsAudio::BufferAt(sb,
+                    at_int,
+                    this);
+        m_sequence.append( buffer );
+
+        // find out original number / color
+        if (idRe.indexIn(id) > -1) {
+            int color_index = idRe.cap(1).toInt();
+            buffer->buffer()->setColor( Rainbow::getColor( color_index ) );
+        } else {
+            qDebug() << "Color index didn't parse...";
+        }
+
+        buffer->buffer()->initGains();
+        if (xml.attributes().hasAttribute("gain"))
+            buffer->buffer()->setGain( xml.attributes().value("gain").toString().toFloat() );
+
+        emit newBufferAt(buffer);
+        // finish off the element...
         xml.readElementText();
     }
     return true;
@@ -167,3 +240,61 @@ QDir Project::movDir()
 
     return s_movDir;
 }
+
+void Project::seek(qint64 ms)
+{
+    m_sequenceCursor = m_sequence.begin();
+}
+
+void Project::start()
+{
+    m_sequenceCursor = beginCursor();
+}
+
+void Project::addBufferAt(WtsAudio::BufferAt * newBuff)
+{
+    m_sequence.append(newBuff);
+    emit newBufferAt(newBuff);
+}
+
+void Project::copyScratch(WtsAudio::BufferAt * scratch)
+{
+    WtsAudio::BufferAt * newBuff =
+        new WtsAudio::BufferAt(
+                new SoundBuffer(makeSampleName(),
+                    *scratch->buffer(),
+                    scratch->buffer()->m_writePos),
+                scratch->at(),
+                this);
+    newBuff->buffer()->setColor( Rainbow::getColor(m_lastSampleNameNum) );
+    newBuff->buffer()->initGains();
+    addBufferAt(newBuff);
+}
+
+void Project::advanceSequenceCursor(qint64 ms)
+{
+    while( m_sequenceCursor != m_sequence.end()
+            && ((*m_sequenceCursor)->at()
+                + WtsAudio::sampleCountToMs((*m_sequenceCursor)->buffer()
+                    ->rangeStart())) <= ms ) {
+        emit samplerSchedule( *m_sequenceCursor );
+        m_sequenceCursor++;
+    }
+}
+
+QList<WtsAudio::BufferAt *>::iterator Project::beginCursor()
+{
+    qSort(m_sequence.begin(), m_sequence.end(), WtsAudio::startsBefore);
+    return m_sequence.begin();
+}
+
+void Project::removeBufferAt(WtsAudio::BufferAt * bufferAt)
+{
+    m_sequence.removeAll(bufferAt);
+}
+
+QString Project::makeSampleName()
+{
+    return QString("sample_%1.raw").arg(++m_lastSampleNameNum);
+}
+
