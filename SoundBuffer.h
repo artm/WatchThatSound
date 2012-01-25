@@ -1,6 +1,8 @@
 #ifndef SOUNDBUFFER_H
 #define SOUNDBUFFER_H
 
+#include "Exception.h"
+
 #include <QVector>
 #include <QFile>
 #include <QIODevice>
@@ -15,6 +17,21 @@ public:
     SoundBuffer(qint64 sampleCount);
     SoundBuffer(const QString& name, const SoundBuffer& other, qint64 sampleCount = 0);
     SoundBuffer& operator= (const SoundBuffer& other);
+
+    class FileNotFoundError : public Exception {
+    public:
+        FileNotFoundError(const QString& path)
+            : Exception( QString("File not found: %0").arg(path) ) {}
+
+        static void test(const QString& path) {
+            if (!QFile(path).exists())
+                throw FileNotFoundError(path);
+        }
+        static void test(const QFile& file) {
+            if (!file.exists())
+                throw FileNotFoundError(file.fileName());
+        }
+    };
 
     // in ms
     qint64 duration() const;

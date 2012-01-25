@@ -4,6 +4,8 @@
 #include <cmath>
 #include <QFileInfo>
 
+#include <sndfile.hh>
+
 using namespace WTS;
 
 SoundBuffer::SoundBuffer()
@@ -59,29 +61,50 @@ SoundBuffer& SoundBuffer::operator= (const SoundBuffer& other)
 
 void SoundBuffer::save(const QString& path)
 {
-    QFile file(path);
     if (m_saved)
         return;
-    file.open(QFile::WriteOnly);
-    file.write( reinterpret_cast<const char *>(m_data.constData()),
-               m_data.size()*sizeof(float) );
+
+    qDebug() << "Save sample to" << path;
+    // save only wavs
+    SndfileHandle snd(qPrintable(path),SFM_WRITE,
+            SF_FORMAT_WAV | SF_FORMAT_FLOAT,
+            1, // channel
+            WtsAudio::samplingRate());
+
+    snd.writef(m_data.data(),m_data.size());
     m_saved = true;
-    file.close();
 }
 
 void SoundBuffer::load(const QString& path)
 {
-    QFile file(path);
-    file.open(QFile::ReadOnly);
-    int64_t sampleCount = file.size() / sizeof(float);
-    m_data.resize(sampleCount);
-    file.read(reinterpret_cast<char *>(m_data.data()),
-              sampleCount*sizeof(float));
+    // load either wav or raw
+    if (path.contains(QRegExp("\\.wav$")) && QFile(path).exists()) {
+        // load wav
+        SndfileHandle snd(qPrintable(path));
+        m_data.resize(snd.frames());
+        snd.readf(m_data.data(),m_data.size());
+        // only samples read from wav files are considered saved
+        m_saved = true;
+    } else {
+        // load raw
+        QString rawpath(path);
+        rawpath.replace(QRegExp("[^\\.]+$"),"raw");
+        qDebug() << "Upgrading sample from " << rawpath;
+        QFile file(rawpath);
+
+        FileNotFoundError::test(file);
+
+        file.open(QFile::ReadOnly);
+        int64_t sampleCount = file.size() / sizeof(float);
+        m_data.resize(sampleCount);
+        file.read(reinterpret_cast<char *>(m_data.data()),
+                sampleCount*sizeof(float));
+        file.close();
+    }
+
     m_readPos = 0;
     m_writePos = 0;
-    m_name = QFileInfo(file.fileName()).fileName();
-    m_saved = true;
-    file.close();
+    m_name = QFileInfo(path).fileName();
 }
 
 

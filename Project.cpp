@@ -89,31 +89,35 @@ bool Project::loadSequence(QXmlStreamReader& xml)
         QString id = xml.attributes().value("id").toString();
 
         SoundBuffer * sb = new SoundBuffer();
-        sb->load( m_dataDir.filePath( id ) );
-        sb->setRange(xml.attributes().value("range_start").toString().toLongLong(),
-                xml.attributes().value("range_end").toString().toLongLong());
+        try {
+            sb->load( m_dataDir.filePath( id ) );
+            sb->setRange(xml.attributes().value("range_start").toString().toLongLong(),
+                    xml.attributes().value("range_end").toString().toLongLong());
 
-        QString at_s =  xml.attributes().value("ms").toString();
-        qint64 at_int = at_s.toLongLong();
-        WtsAudio::BufferAt * buffer =
-            new WtsAudio::BufferAt(sb,
-                    at_int,
-                    this);
-        m_sequence.append( buffer );
+            QString at_s =  xml.attributes().value("ms").toString();
+            qint64 at_int = at_s.toLongLong();
+            WtsAudio::BufferAt * buffer =
+                new WtsAudio::BufferAt(sb,
+                        at_int,
+                        this);
+            m_sequence.append( buffer );
 
-        // find out original number / color
-        if (idRe.indexIn(id) > -1) {
-            int color_index = idRe.cap(1).toInt();
-            buffer->buffer()->setColor( Rainbow::getColor( color_index ) );
-        } else {
-            qDebug() << "Color index didn't parse...";
+            // find out original number / color
+            if (idRe.indexIn(id) > -1) {
+                int color_index = idRe.cap(1).toInt();
+                buffer->buffer()->setColor( Rainbow::getColor( color_index ) );
+            } else {
+                qDebug() << "Color index didn't parse...";
+            }
+
+            buffer->buffer()->initGains();
+            if (xml.attributes().hasAttribute("gain"))
+                buffer->buffer()->setGain( xml.attributes().value("gain").toString().toFloat() );
+
+            emit newBufferAt(buffer);
+        } catch (SoundBuffer::FileNotFoundError& e) {
+            delete sb;
         }
-
-        buffer->buffer()->initGains();
-        if (xml.attributes().hasAttribute("gain"))
-            buffer->buffer()->setGain( xml.attributes().value("gain").toString().toFloat() );
-
-        emit newBufferAt(buffer);
         // finish off the element...
         xml.readElementText();
     }
@@ -293,6 +297,6 @@ void Project::removeBufferAt(WtsAudio::BufferAt * bufferAt)
 
 QString Project::makeSampleName()
 {
-    return QString("sample_%1.raw").arg(++m_lastSampleNameNum);
+    return QString("sample_%1.wav").arg(++m_lastSampleNameNum);
 }
 
