@@ -27,6 +27,8 @@ ENDIF(APPLE)
 FIND_PACKAGE(Portaudio REQUIRED)
 INCLUDE_DIRECTORIES(${Portaudio_INCLUDE_DIRS})
 
+FIND_LIBRARY_VERBOSE(SndFile sndfile)
+
 INCLUDE(SrcScan)
 SCAN_GLOB(WatchThatSound_SOURCES "*.cpp" "C++ sources")
 SCAN_GLOB(WatchThatSound_UI "*.ui" "Qt Forms (*.ui)")
@@ -68,7 +70,8 @@ SET(WatchThatSound_LIBRARIES
   ${QT_LIBRARIES}
   ${FFmpeg_LIBRARIES}
   ${Portaudio_LIBRARIES}
-  ${Sparkle_LIBRARIES})
+  ${Sparkle_LIBRARIES}
+  ${SndFile_LIBRARY})
 
 TARGET_LINK_LIBRARIES(${APPLICATION_NAME} ${WatchThatSound_LIBRARIES})
 
