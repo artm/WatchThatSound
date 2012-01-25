@@ -1,7 +1,8 @@
 PROJECT(WatchThatSound)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-SET(CMAKE_MODULE_PATH "${WatchThatSound_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+SET(CMAKE_MODULE_PATH
+  "${WatchThatSound_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 INCLUDE(WTS-Package)
 INCLUDE(ConfigUtils)
 CONFIGURE_FILE(wts_version.h.in wts_version.h)
