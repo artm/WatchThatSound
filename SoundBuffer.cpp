@@ -57,8 +57,9 @@ SoundBuffer& SoundBuffer::operator= (const SoundBuffer& other)
     return *this;
 }
 
-void SoundBuffer::save(QFile& file)
+void SoundBuffer::save(const QString& path)
 {
+    QFile file(path);
     if (m_saved)
         return;
     file.open(QFile::WriteOnly);
@@ -68,8 +69,9 @@ void SoundBuffer::save(QFile& file)
     file.close();
 }
 
-void SoundBuffer::load(QFile& file)
+void SoundBuffer::load(const QString& path)
 {
+    QFile file(path);
     file.open(QFile::ReadOnly);
     int64_t sampleCount = file.size() / sizeof(float);
     m_data.resize(sampleCount);

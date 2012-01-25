@@ -33,8 +33,8 @@ public:
     void paste(const SoundBuffer * other);
     QString name() const { return m_name; }
 
-    void save(QFile& file);
-    void load(QFile& file);
+    void save(const QString& path);
+    void load(const QString& path);
 
     QColor color() const { return m_color; }
     void setColor(QColor color) { m_color = color; }

@@ -73,8 +73,7 @@ void Project::saveSequence(QXmlStreamWriter& xml)
         xml.writeAttribute("gain", QString("%1").arg( buffer->buffer()->gain() ));
         xml.writeEndElement();
 
-        QFile wav( m_dataDir.filePath( buffer->buffer()->name() ));
-        buffer->buffer()->save(wav);
+        buffer->buffer()->save( m_dataDir.filePath( buffer->buffer()->name() ) );
     }
 }
 
@@ -88,10 +87,9 @@ bool Project::loadSequence(QXmlStreamReader& xml)
         xml.attributes().value("counter").toString().toInt();
     while(xml.readNextStartElement()) {
         QString id = xml.attributes().value("id").toString();
-        QFile wav( m_dataDir.filePath( id ));
 
         SoundBuffer * sb = new SoundBuffer();
-        sb->load(wav);
+        sb->load( m_dataDir.filePath( id ) );
         sb->setRange(xml.attributes().value("range_start").toString().toLongLong(),
                 xml.attributes().value("range_end").toString().toLongLong());
 
