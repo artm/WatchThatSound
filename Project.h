@@ -73,6 +73,10 @@ public:
     QList<WtsAudio::BufferAt *>::iterator beginCursor();
     QList<WtsAudio::BufferAt *>::iterator endCursor() { return m_sequence.end(); }
 
+public slots:
+    // see if samples changed on disk and reload if so
+    void ReScanSamples();
+
 signals:
     void samplerSchedule(WtsAudio::BufferAt * buffer);
     void newBufferAt(WtsAudio::BufferAt * bufferAt);

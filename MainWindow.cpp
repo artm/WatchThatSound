@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent)
     , m_settings("WatchThatSound","WTS-Workshop-Tool")
 {
     ui->setupUi(this);
+    if (qApp)
+        qApp->installEventFilter(this);
 
     // connect to the sampler
     connect(this, SIGNAL(samplerClear()), &m_audio, SLOT(samplerClear()));
@@ -525,4 +527,18 @@ void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)
     saveData();
 }
 
+bool MainWindow::eventFilter( QObject * watched, QEvent * event )
+{
+    if ( watched != qApp )
+        goto finished;
 
+    if ( event->type() != QEvent::ApplicationActivate )
+        goto finished;
+
+    if (m_project)
+        m_project->ReScanSamples();
+
+finished:
+    return QMainWindow::eventFilter( watched, event );
+
+}

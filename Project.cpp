@@ -300,3 +300,11 @@ QString Project::makeSampleName()
     return QString("sample_%1.wav").arg(++m_lastSampleNameNum);
 }
 
+void Project::ReScanSamples()
+{
+    foreach(WtsAudio::BufferAt * bufat, m_sequence) {
+        SoundBuffer * buffer = bufat->buffer();
+        // see if corresponding buffer changed on disk...
+        qDebug() << "TODO compare timestamps of " << buffer->name();
+    }
+}

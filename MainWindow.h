@@ -78,6 +78,7 @@ signals:
 
 protected:
     void constructStateMachine();
+    bool eventFilter( QObject * watched, QEvent * event );
 
     Project * m_project;
 
