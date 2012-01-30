@@ -114,7 +114,17 @@ bool SoundBuffer::maybeReload(const QString& path)
 {
     if (QFileInfo(path).lastModified() > m_timestamp) {
         qDebug() << "Sample " << m_name << " has changed on disk";
+
+        qint64 old_length = m_data.size();
+
         load(path);
+        /*
+         * if length has changed - select all
+         */
+        if (m_data.size() != old_length) {
+            m_range[0] = 0;
+            m_range[1] = m_data.size()-1;
+        }
         return true;
     } else
         return false;

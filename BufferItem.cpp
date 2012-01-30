@@ -55,3 +55,9 @@ void BufferItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsRectItem::mouseReleaseEvent(event);
 }
 
+void BufferItem::update()
+{
+    QRectF r = rect();
+    r.setWidth( (float)m_buffer->buffer()->duration() / m_duration );
+    setRect(r);
+}

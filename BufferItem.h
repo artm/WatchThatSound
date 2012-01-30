@@ -12,6 +12,8 @@ class BufferItem : public QGraphicsRectItem
 public:
     BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float height);
     WtsAudio::BufferAt * buffer() { return m_buffer; }
+    void update();
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
