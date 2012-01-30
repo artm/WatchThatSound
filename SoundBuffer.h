@@ -52,7 +52,8 @@ public:
 
     void save(const QString& path);
     void load(const QString& path);
-    void maybeReload(const QString& path);
+    // return true if sample has changed
+    bool maybeReload(const QString& path);
 
     QColor color() const { return m_color; }
     void setColor(QColor color) { m_color = color; }

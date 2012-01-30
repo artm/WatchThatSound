@@ -32,6 +32,8 @@ void SequencerTimeLine::setProject(Project * project)
     TimeLineWidget::setProject(project);
     connect(m_project,SIGNAL(newBufferAt(WtsAudio::BufferAt*)),
             SLOT(insertBufferAt(WtsAudio::BufferAt*)));
+    connect(m_project,SIGNAL(sampleChanged(SoundBuffer*)),
+            SLOT(updateBuffer(SoundBuffer*)));
 }
 
 void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * bufferAt)
@@ -40,7 +42,6 @@ void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * bufferAt)
 
     BufferItem * item = new BufferItem(bufferAt, m_mainWindow->project()->duration(), m_sampleH);
     scene()->addItem(item);
-
 
     showRange(item, buffer);
 

@@ -303,8 +303,9 @@ QString Project::makeSampleName()
 void Project::ReScanSamples()
 {
     foreach(WtsAudio::BufferAt * bufat, m_sequence) {
-        SoundBuffer * buffer = bufat->buffer();
-        // see if corresponding buffer changed on disk...
-        buffer->maybeReload( m_dataDir.filePath( buffer->name() ) );
+        SoundBuffer * sample = bufat->buffer();
+        // see if corresponding sample changed on disk...
+        if ( sample->maybeReload( m_dataDir.filePath( sample->name() ) ) )
+            emit sampleChanged(sample);
     }
 }

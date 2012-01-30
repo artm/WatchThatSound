@@ -80,6 +80,7 @@ public slots:
 signals:
     void samplerSchedule(WtsAudio::BufferAt * buffer);
     void newBufferAt(WtsAudio::BufferAt * bufferAt);
+    void sampleChanged(SoundBuffer * sample);
 
 protected:
     double m_finalTension;

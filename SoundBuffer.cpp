@@ -110,13 +110,14 @@ void SoundBuffer::load(const QString& path)
     m_timestamp = QFileInfo(path).lastModified();
 }
 
-void SoundBuffer::maybeReload(const QString& path)
+bool SoundBuffer::maybeReload(const QString& path)
 {
     if (QFileInfo(path).lastModified() > m_timestamp) {
         qDebug() << "Sample " << m_name << " has changed on disk";
-        qDebug() << "TODO: reload and update the views";
-        // load(path);
-    }
+        load(path);
+        return true;
+    } else
+        return false;
 }
 
 
