@@ -52,6 +52,7 @@ public:
 
     void save(const QString& path);
     void load(const QString& path);
+    void maybeReload(const QString& path);
 
     QColor color() const { return m_color; }
     void setColor(QColor color) { m_color = color; }
@@ -77,6 +78,8 @@ protected:
     QColor m_color;
 
     qint64 m_range[2];
+
+    QDateTime m_timestamp;
 
 public:
     // fixme

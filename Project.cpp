@@ -305,6 +305,6 @@ void Project::ReScanSamples()
     foreach(WtsAudio::BufferAt * bufat, m_sequence) {
         SoundBuffer * buffer = bufat->buffer();
         // see if corresponding buffer changed on disk...
-        qDebug() << "TODO compare timestamps of " << buffer->name();
+        buffer->maybeReload( m_dataDir.filePath( buffer->name() ) );
     }
 }

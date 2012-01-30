@@ -65,13 +65,15 @@ void SoundBuffer::save(const QString& path)
         return;
 
     qDebug() << "Save sample to" << path;
-    // save only wavs
-    SndfileHandle snd(qPrintable(path),SFM_WRITE,
-            SF_FORMAT_WAV | SF_FORMAT_FLOAT,
-            1, // channel
-            WtsAudio::samplingRate());
+    { // block to ensure file is closed by the moment we ask its modification time
+        SndfileHandle snd(qPrintable(path),SFM_WRITE,
+                SF_FORMAT_WAV | SF_FORMAT_FLOAT,
+                1, // channel
+                WtsAudio::samplingRate());
 
-    snd.writef(m_data.data(),m_data.size());
+        snd.writef(m_data.data(),m_data.size());
+    }
+    m_timestamp = QFileInfo(path).lastModified();
     m_saved = true;
 }
 
@@ -105,6 +107,16 @@ void SoundBuffer::load(const QString& path)
     m_readPos = 0;
     m_writePos = 0;
     m_name = QFileInfo(path).fileName();
+    m_timestamp = QFileInfo(path).lastModified();
+}
+
+void SoundBuffer::maybeReload(const QString& path)
+{
+    if (QFileInfo(path).lastModified() > m_timestamp) {
+        qDebug() << "Sample " << m_name << " has changed on disk";
+        qDebug() << "TODO: reload and update the views";
+        // load(path);
+    }
 }
 
 
