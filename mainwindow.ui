@@ -156,19 +156,72 @@
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="gainSlider">
-         <property name="toolTip">
-          <string>volume (hoe hard het geluid klinkt)</string>
+        <widget class="QFrame" name="waveformControls">
+         <property name="enabled">
+          <bool>false</bool>
          </property>
-         <property name="maximum">
-          <number>100</number>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
          </property>
-         <property name="value">
-          <number>100</number>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
          </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="soloButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Solo</string>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="sampleEditButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>FX</string>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" rowspan="3">
+           <widget class="QSlider" name="gainSlider">
+            <property name="toolTip">
+             <string>volume (hoe hard het geluid klinkt)</string>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -440,6 +493,11 @@
    <extends>QWidget</extends>
    <header>WaveformWidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>enableWaveformControls(bool)</signal>
+    <signal>openInExternalApp(SoundBuffer*)</signal>
+    <slot>openInExternalApp()</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>WTS::StoryBoard</class>
@@ -608,6 +666,38 @@
     <hint type="destinationlabel">
      <x>319</x>
      <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>waveform</sender>
+   <signal>enableWaveformControls(bool)</signal>
+   <receiver>waveformControls</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>349</x>
+     <y>143</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>625</x>
+     <y>143</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sampleEditButton</sender>
+   <signal>clicked()</signal>
+   <receiver>waveform</receiver>
+   <slot>openInExternalApp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>626</x>
+     <y>166</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>350</x>
+     <y>143</y>
     </hint>
    </hints>
   </connection>

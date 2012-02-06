@@ -73,7 +73,7 @@ void Project::saveSequence(QXmlStreamWriter& xml)
         xml.writeAttribute("gain", QString("%1").arg( buffer->buffer()->gain() ));
         xml.writeEndElement();
 
-        buffer->buffer()->save( m_dataDir.filePath( buffer->buffer()->name() ) );
+        buffer->buffer()->save( samplePath( buffer->buffer() ) );
     }
 }
 
@@ -90,7 +90,7 @@ bool Project::loadSequence(QXmlStreamReader& xml)
 
         SoundBuffer * sb = new SoundBuffer();
         try {
-            sb->load( m_dataDir.filePath( id ) );
+            sb->load( samplePath( id ) );
             sb->setRange(xml.attributes().value("range_start").toString().toLongLong(),
                     xml.attributes().value("range_end").toString().toLongLong());
 
@@ -305,7 +305,26 @@ void Project::ReScanSamples()
     foreach(WtsAudio::BufferAt * bufat, m_sequence) {
         SoundBuffer * sample = bufat->buffer();
         // see if corresponding sample changed on disk...
-        if ( sample->maybeReload( m_dataDir.filePath( sample->name() ) ) )
+        if ( sample->maybeReload( samplePath(sample) ) )
             emit sampleChanged(sample);
     }
+}
+
+void Project::openInExternalApp(SoundBuffer * buffer)
+{
+    QString path = samplePath(buffer);
+    if (QFile(path).exists() &&
+            QRegExp("\\.wav$").indexIn(path) > -1) {
+        QDesktopServices::openUrl( QUrl( QString("file:///%0").arg(path)));
+    }
+}
+
+QString Project::samplePath(SoundBuffer * sample)
+{
+    return  samplePath( sample->name() );
+}
+
+QString Project::samplePath(const QString& sampleName)
+{
+    return  m_dataDir.filePath( sampleName );
 }

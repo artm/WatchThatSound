@@ -49,6 +49,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->gainSlider, SIGNAL(valueChanged(int)), ui->waveform, SLOT(setGain(int)));
     connect(ui->waveform, SIGNAL(adjustGainSlider(int)), ui->gainSlider, SLOT(setValue(int)));
 
+    connect(this, SIGNAL(projectChanged(Project*)), ui->waveform, SLOT(setProject(Project*)));
+
     connect(mediaObject(), SIGNAL(finished()), SLOT(onMovieFinished()));
 
     buildMovieSelector();

@@ -65,6 +65,8 @@ public:
     void addBufferAt(WtsAudio::BufferAt * newBuff);
     void copyScratch(WtsAudio::BufferAt * newBuff);
     void removeBufferAt(WtsAudio::BufferAt * newBuff);
+    QString samplePath(const QString& sampleName);
+    QString samplePath(SoundBuffer *);
 
     // TODO split this off into a controller
     void seek(qint64 ms);
@@ -76,6 +78,7 @@ public:
 public slots:
     // see if samples changed on disk and reload if so
     void ReScanSamples();
+    void openInExternalApp(SoundBuffer*);
 
 signals:
     void samplerSchedule(WtsAudio::BufferAt * buffer);

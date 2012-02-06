@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "MainWindow.h"
+#include "Project.h"
 
 namespace WTS {
 
@@ -22,11 +23,15 @@ public:
 signals:
     void rangeChanged(SoundBuffer * buffer = 0);
     void adjustGainSlider(int volX);
+    void enableWaveformControls(bool enable);
+    void openInExternalApp(SoundBuffer *);
 
 public slots:
     void updateWaveform(WtsAudio::BufferAt * bufferAt, bool recording = false);
     void setGain(int volX);
     void clearWaveform(SoundBuffer * buffer = 0);
+    void openInExternalApp();
+    void setProject(Project * project);
 
 protected:
     QPixmap m_img;
@@ -36,6 +41,7 @@ protected:
 
     SoundBuffer * m_buffer;
     qint64 m_selStart;
+    Project * m_project;
 };
 
 }

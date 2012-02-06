@@ -20,6 +20,8 @@ void WaveformWidget::clearWaveform(SoundBuffer * buffer)
 
 void WaveformWidget::updateWaveform(WtsAudio::BufferAt * bufferAt, bool recording)
 {
+    emit enableWaveformControls(bufferAt != NULL);
+
     if (m_buffer != bufferAt->buffer()) {
         m_buffer = bufferAt->buffer();
 
@@ -131,4 +133,17 @@ void WaveformWidget::setGain(int volX)
         gain *= gain;
         m_buffer->setGain( gain );
     }
+}
+
+void WTS::WaveformWidget::openInExternalApp()
+{
+    if (m_buffer)
+        emit openInExternalApp(m_buffer);
+
+}
+
+void WTS::WaveformWidget::setProject(WTS::Project *project)
+{
+    m_project = project;
+    connect(this, SIGNAL(openInExternalApp(SoundBuffer*)), m_project, SLOT(openInExternalApp(SoundBuffer*)));
 }
