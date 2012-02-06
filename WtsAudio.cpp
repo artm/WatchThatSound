@@ -130,10 +130,11 @@ void WtsAudio::samplerMix(qint64 ms, QVector<float>& mix)
         }
         buffer->setPlayOffset(startRead + count);
 
-        if (buffer->playOffset() >= rangeEnd)
+        if (buffer->playOffset() >= rangeEnd) {
             // deactivate buffer...
             nextBufferIt = m_activeBuffers.erase(nextBufferIt);
-        else
+            emit endOfSample( buffer );
+        } else
             ++nextBufferIt;
     }
 
@@ -161,8 +162,10 @@ void WtsAudio::samplerSchedule(WtsAudio::BufferAt * buffer)
     qint64 t = currentSampleOffset();
 
     // ignore if end time before current time
-    if (msToSampleCount(buffer->at()) + buffer->buffer()->rangeEnd() < t)
+    if (msToSampleCount(buffer->at()) + buffer->buffer()->rangeEnd() < t) {
+        qDebug() << "Ignoring retarded buffer";
         return;
+    }
 
     // position buffer's playback offset
     buffer->setPlayOffset(t - msToSampleCount(buffer->at()));

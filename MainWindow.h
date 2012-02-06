@@ -63,6 +63,9 @@ public slots:
     void refreshTension();
     void updateMarkerTension(int markerIndex, float tension);
     void setMuteOnRecord(bool on) { m_muteOnRecord = on; }
+    void startSolo( WtsAudio::BufferAt * );
+
+    void onEndOfSample( WtsAudio::BufferAt * );
 
 signals:
     void storyBoardChanged();
@@ -97,6 +100,8 @@ protected:
 
     Preferences * m_preferences;
     QSettings m_settings;
+
+    WtsAudio::BufferAt * m_soloBuffer;
 };
 
 }

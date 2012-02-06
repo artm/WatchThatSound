@@ -14,9 +14,11 @@ class SequencerTimeLine : public TimeLineWidget
 public:
     explicit SequencerTimeLine(QWidget *parent = 0);
     virtual void deleteSynced(QGraphicsItem *, WTS::Synced *);
+    WtsAudio::BufferAt * selectedBufferAt();
 
 signals:
     void bufferSelected(WtsAudio::BufferAt * buffer);
+    void startSolo( WtsAudio::BufferAt * );
 
 public slots:
     void insertBufferAt(WtsAudio::BufferAt * buffer);
@@ -24,6 +26,7 @@ public slots:
     void updateBuffer(SoundBuffer * buffer);
     virtual void updateSelection();
     virtual void setProject(Project * project);
+    void startSolo();
 
 protected:
     QPen m_pen;

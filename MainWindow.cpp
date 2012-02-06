@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_exporter(new Exporter(this))
     , m_muteOnRecord(true)
     , m_settings("WatchThatSound","WTS-Workshop-Tool")
+    , m_soloBuffer(0)
 {
     ui->setupUi(this);
     if (qApp)
@@ -31,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     // connect to the sampler
     connect(this, SIGNAL(samplerClear()), &m_audio, SLOT(samplerClear()));
     connect(this, SIGNAL(samplerClock(qint64)), &m_audio, SLOT(samplerClock(qint64)));
+    connect(&m_audio, SIGNAL(endOfSample(WtsAudio::BufferAt*)), SLOT(onEndOfSample(WtsAudio::BufferAt*)) , Qt::QueuedConnection);
 
     // change signals to save data...
     connect(ui->tension, SIGNAL(updateLevel(int,float)), SLOT(updateMarkerTension(int,float)));
@@ -50,6 +52,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->waveform, SIGNAL(adjustGainSlider(int)), ui->gainSlider, SLOT(setValue(int)));
 
     connect(this, SIGNAL(projectChanged(Project*)), ui->waveform, SLOT(setProject(Project*)));
+
+    connect(ui->soloButton, SIGNAL(clicked()), ui->timeLine, SLOT(startSolo()));
+    connect(ui->timeLine, SIGNAL(startSolo(WtsAudio::BufferAt*)), this, SLOT(startSolo(WtsAudio::BufferAt*)));
 
     connect(mediaObject(), SIGNAL(finished()), SLOT(onMovieFinished()));
 
@@ -229,8 +234,14 @@ void MainWindow::onPlay(bool play)
 {
     if (play) {
         emit samplerClear();
+
         m_audio.start();
         m_project->start();
+
+        if (m_soloBuffer) {
+            emit samplerClock( m_soloBuffer->rangeStartAt() );
+            m_audio.samplerSchedule(m_soloBuffer);
+        }
 
         // if at the very end of the film - start from the beginning
         if (m_project->duration() - mediaObject()->currentTime() < 40) {
@@ -242,6 +253,7 @@ void MainWindow::onPlay(bool play)
         m_audio.stop();
         emit samplerClear();
         emit stopped();
+        m_soloBuffer = 0;
         ui->videoPlayer->pause();
         ui->actionRecord->setChecked(false);
     }
@@ -290,7 +302,7 @@ void MainWindow::tick(qint64 ms)
     ui->vuRight->setValue( volume );
 
     // find out which samples to trigger
-    if (ui->actionPlay->isChecked()) {
+    if (!m_soloBuffer && ui->actionPlay->isChecked()) {
         m_project->advanceSequenceCursor(ms);
     }
 }
@@ -543,4 +555,18 @@ bool MainWindow::eventFilter( QObject * watched, QEvent * event )
 finished:
     return QMainWindow::eventFilter( watched, event );
 
+}
+
+void MainWindow::startSolo(WtsAudio::BufferAt * bufferAt)
+{
+    ui->actionPlay->setChecked(false);
+    seek( bufferAt->rangeStartAt() );
+    m_soloBuffer = bufferAt;
+    ui->actionPlay->setChecked(true);
+}
+
+void WTS::MainWindow::onEndOfSample(WtsAudio::BufferAt * seqBuffer)
+{
+    if (seqBuffer == m_soloBuffer)
+        ui->actionPlay->setChecked(false);
 }

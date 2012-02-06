@@ -145,13 +145,9 @@ void SequencerTimeLine::updateSelection()
 {
     TimeLineWidget::updateSelection();
 
-    QList<QGraphicsItem *> sel = scene()->selectedItems();
-    if (sel.length() > 0) {
-        BufferItem * bi = dynamic_cast<BufferItem*>(sel[0]);
-        if (bi)
-            emit bufferSelected( bi->buffer() );
-    } else {
-    }
+    WtsAudio::BufferAt * selected = selectedBufferAt();
+    if (selected)
+        emit bufferSelected( selected );
 }
 
 void SequencerTimeLine::deleteSynced(QGraphicsItem * item, WTS::Synced * synced)
@@ -164,4 +160,22 @@ void SequencerTimeLine::deleteSynced(QGraphicsItem * item, WTS::Synced * synced)
     m_bufferItems.removeAll(bi);
     m_mainWindow->removeBuffer( bufferAt );
     restackItems();
+}
+
+void SequencerTimeLine::startSolo()
+{
+    WtsAudio::BufferAt * selected = selectedBufferAt();
+    if (selected)
+        emit startSolo(selected);
+}
+
+WtsAudio::BufferAt * WTS::SequencerTimeLine::selectedBufferAt()
+{
+    QList<QGraphicsItem *> sel = scene()->selectedItems();
+    if (sel.length() > 0) {
+        BufferItem * bi = dynamic_cast<BufferItem*>(sel[0]);
+        if (bi)
+            return bi->buffer();
+    }
+    return 0;
 }

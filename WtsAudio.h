@@ -58,6 +58,7 @@ public:
     float getVolume() const { return m_volume; }
 
 signals:
+    void endOfSample(WtsAudio::BufferAt *);
 
 public slots:
     void start();
