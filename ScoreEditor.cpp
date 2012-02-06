@@ -80,7 +80,11 @@ void ScoreEditor::mouseReleaseEvent(QMouseEvent * event)
 
 void ScoreEditor::mousePressEvent(QMouseEvent * event)
 {
+    bool rememberSeekOnDrag = seekOnDrag(), reallySeek = true;
+    setSeekOnDrag(false);
     TimeLineWidget::mousePressEvent(event);
+    setSeekOnDrag(rememberSeekOnDrag);
+
     if (editMode()) {
 
         if (scene()->selectedItems().size() > 0) {
@@ -97,11 +101,15 @@ void ScoreEditor::mousePressEvent(QMouseEvent * event)
                 if (vpindex.isValid() && !vpindex.isNull()) {
                     // yes, a petal, use its color
                     selectPetal(hitItem);
+                    reallySeek = false;
                 }
             } else
                 m_newSymbol->start(mapToScene(event->pos()));
         }
     }
+
+    if (reallySeek)
+        doSeekOnDrag(event);
 }
 
 void ScoreEditor::mouseMoveEvent(QMouseEvent * event)
