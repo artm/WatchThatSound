@@ -71,6 +71,9 @@ public:
     float normGain() const { return m_normGain; }
     void initGains();
 
+    static const float s_minScaleMax = 0.1;
+    float draw(QPixmap& surface, bool recording = false, float scaleMax = s_minScaleMax);
+
 protected:
     QString m_name;
     bool m_saved;

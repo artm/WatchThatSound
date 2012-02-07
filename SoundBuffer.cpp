@@ -172,3 +172,42 @@ void SoundBuffer::initGains()
     m_gain = peak;
     // What?
 }
+
+float WTS::SoundBuffer::draw(QPixmap& surface, bool recording, float scaleMax)
+{
+    QPainter painter(&surface);
+    painter.setPen(QColor(0,0,0,100));
+    painter.fillRect(0,0,surface.width(),surface.height(), color() );
+    int midY = surface.height()/2;
+
+    qint64 stride = 1;
+    const float * val = floatAt(0);
+    qint64 lineCount =
+            std::min((qint64)surface.width(),
+                     recording ? m_writePos : sampleCount());
+    QVector<float> Y(lineCount, 0.0);
+
+    if (recording) {
+        val = floatAt(m_writePos - lineCount);
+    } else {
+        // show the whole thing
+        stride = sampleCount() / lineCount;
+    }
+
+    for(int x = 0; x<lineCount; ++x) {
+        Y[x] = val[x*stride];
+        for(int i=1; i<stride; ++i) {
+            Y[x] = std::max(Y[x], (float)fabs(val[x*stride+i]));
+        }
+        scaleMax = std::max(Y[x],scaleMax);
+    }
+
+    for(int x = 0; x<lineCount; ++x) {
+        int y1 = midY + (0.45 * (Y[x]/scaleMax) * (float)surface.height());
+        int y2 = midY - (0.45 * (Y[x]/scaleMax) * (float)surface.height());
+        painter.drawLine(x, y1, x, y2);
+    }
+
+    painter.drawLine(lineCount, midY, surface.width(), midY);
+    return scaleMax;
+}

@@ -4,7 +4,7 @@
 using namespace WTS;
 
 WaveformWidget::WaveformWidget(QWidget *parent) :
-    QWidget(parent), m_scaleMax(m_minScaleMax), m_curTime(-1), m_wasRecording(false), m_buffer(0)
+    QWidget(parent), m_curTime(-1), m_wasRecording(false), m_buffer(0)
 {
 }
 
@@ -33,45 +33,14 @@ void WaveformWidget::updateWaveform(WtsAudio::BufferAt * bufferAt, bool recordin
         emit adjustGainSlider((int)gain);
     }
 
-    QPainter painter(&m_img);
-    painter.setPen(QColor(0,0,0,100));
-    painter.fillRect(0,0,m_img.width(),m_img.height(), buffer->color() );
-    int midY = m_img.height()/2;
-
-    qint64 stride = 1;
-    const float * val = buffer->floatAt(0);
-    qint64 lineCount =
-            std::min((qint64)m_img.width(),
-                     recording ? buffer->m_writePos : buffer->sampleCount());
-    QVector<float> Y(lineCount, 0.0);
-
     if (recording != m_wasRecording || !recording) {
-        m_scaleMax = m_minScaleMax;
+        m_scaleMax = SoundBuffer::s_minScaleMax;
         m_wasRecording = recording;
     }
-
-    if (recording) {
-        val = buffer->floatAt(buffer->m_writePos - lineCount);
-    } else {
-        // show the whole thing
-        stride = buffer->sampleCount() / lineCount;
-    }
-
-    for(int x = 0; x<lineCount; ++x) {
-        Y[x] = val[x*stride];
-        for(int i=1; i<stride; ++i) {
-            Y[x] = std::max(Y[x], (float)fabs(val[x*stride+i]));
-        }
-        m_scaleMax = std::max(Y[x],m_scaleMax);
-    }
-
-    for(int x = 0; x<lineCount; ++x) {
-        int y1 = midY + (0.45 * (Y[x]/m_scaleMax) * (float)m_img.height());
-        int y2 = midY - (0.45 * (Y[x]/m_scaleMax) * (float)m_img.height());
-        painter.drawLine(x, y1, x, y2);
-    }
-
-    painter.drawLine(lineCount, midY, m_img.width(), midY);
+    if (recording)
+        m_scaleMax = buffer->draw(m_img, true, m_scaleMax);
+    else
+        buffer->draw(m_img);
 
     update();
 }
@@ -87,8 +56,7 @@ void WaveformWidget::paintEvent(QPaintEvent * /*event*/)
         painter.setPen(QColor(0,0,0,255));
 
         qint64 cursor = m_curTime - m_buffer->at();
-
-        if (cursor > 0 && cursor < buffer->duration()) {
+        if (!m_wasRecording && cursor > 0 && cursor < buffer->duration()) {
             int x = cursor * width() / buffer->duration();
             painter.fillRect( x, 0, 1, height(), Qt::blue);
         }

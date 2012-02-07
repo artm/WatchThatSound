@@ -39,7 +39,6 @@ protected:
     QPixmap m_img;
     float m_scaleMax;
     qint64 m_curTime;
-    static const float m_minScaleMax = 0.1;
     bool m_wasRecording;
 
     WtsAudio::BufferAt * m_buffer;
