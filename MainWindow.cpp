@@ -295,6 +295,7 @@ void MainWindow::tick(qint64 ms)
         }
     }
 
+    ui->waveform->tick(ms);
     emit samplerClock(ms);
 
     float volume = m_audio.getVolume();
@@ -536,7 +537,7 @@ void MainWindow::updateMarkerTension(int markerIndex, float tension)
 
 void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)
 {
-    ui->waveform->clearWaveform(bufferAt->buffer());
+    ui->waveform->clearWaveform(bufferAt);
     m_project->removeBufferAt(bufferAt);
     saveData();
 }

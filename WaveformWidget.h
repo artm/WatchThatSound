@@ -29,17 +29,20 @@ signals:
 public slots:
     void updateWaveform(WtsAudio::BufferAt * bufferAt, bool recording = false);
     void setGain(int volX);
-    void clearWaveform(SoundBuffer * buffer = 0);
+    void clearWaveform(WtsAudio::BufferAt * buffer = 0);
     void openInExternalApp();
     void setProject(Project * project);
+
+    void tick(qint64 ms);
 
 protected:
     QPixmap m_img;
     float m_scaleMax;
+    qint64 m_curTime;
     static const float m_minScaleMax = 0.1;
     bool m_wasRecording;
 
-    SoundBuffer * m_buffer;
+    WtsAudio::BufferAt * m_buffer;
     qint64 m_selStart;
     Project * m_project;
 };
