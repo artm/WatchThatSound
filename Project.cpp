@@ -368,7 +368,7 @@ QString Project::makeSampleName()
     return QString("sample_%1.wav").arg(++m_lastSampleNameNum);
 }
 
-void Project::ReScanSamples()
+void Project::reScanSamples()
 {
     foreach(WtsAudio::BufferAt * bufat, m_sequence) {
         SoundBuffer * sample = bufat->buffer();

@@ -71,18 +71,15 @@ public:
 
 public slots:
     // see if samples changed on disk and reload if so
-    void ReScanSamples();
+    void reScanSamples();
     void openInExternalApp(SoundBuffer*);
     void setFinalTension(double value) { m_finalTension = value; }
     void setMarkerTension(int markerIndex, float tension);
 
     void save();
-    void saveStoryboard(QXmlStreamWriter&);
-    void saveSequence(QXmlStreamWriter&);
-
     void load();
-    bool loadStoryboard(QXmlStreamReader&);
-    bool loadSequence(QXmlStreamReader&);
+
+
 
 signals:
     void samplerSchedule(WtsAudio::BufferAt * buffer);
@@ -95,7 +92,15 @@ signals:
     void sampleChanged(SoundBuffer * sample);
     void tensionChanged();
 
+protected slots:
+    void saveStoryboard(QXmlStreamWriter&);
+    void saveSequence(QXmlStreamWriter&);
+    bool loadStoryboard(QXmlStreamReader&);
+    bool loadSequence(QXmlStreamReader&);
+
 protected:
+    QString makeSampleName();
+
     bool m_loading;
     double m_finalTension;
     QMap<qint64, Project::Marker *> m_markers;
@@ -109,8 +114,6 @@ protected:
 
     static QDir s_movDir;
     static bool s_movDirFound;
-
-    QString makeSampleName();
 };
 
 }

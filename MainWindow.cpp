@@ -282,7 +282,6 @@ void MainWindow::constructStateMachine()
     QState * firstPlay = new QState();
     m_workshop = new QState();
 
-
     selector->assignProperty(menuBar(), "visible", false);
 
     selector->addTransition(this,SIGNAL(loaded()), firstPlay);
@@ -474,7 +473,7 @@ bool MainWindow::eventFilter( QObject * watched, QEvent * event )
         goto finished;
 
     if (m_project)
-        m_project->ReScanSamples();
+        m_project->reScanSamples();
 
 finished:
     return QMainWindow::eventFilter( watched, event );

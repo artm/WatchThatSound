@@ -71,7 +71,7 @@ signals:
     void samplerClock(qint64 ms);
     void samplerClear();
 
-    void loaded();
+    void loaded(); // this signal is used to transit the gui from selector to firstPlay mode
     void stopped();
 
     void projectChanged(Project *);
