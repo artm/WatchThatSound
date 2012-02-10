@@ -78,7 +78,7 @@ void CurveEditor::mouseMoveEvent(QMouseEvent *event)
                                       m_dragItem->pos().x(),
                                       m_dragItem->pos().y());
             m_curve->setPath(path);
-            emit updateLevel( nodeIndex, level );
+            m_project->setMarkerTension( nodeIndex, level );
         }
     }
     TimeLineWidget::mouseMoveEvent(event);

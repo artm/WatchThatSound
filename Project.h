@@ -47,8 +47,6 @@ public:
     bool loadSequence(QXmlStreamReader&);
 
     double finalTension() const { return m_finalTension; }
-    void setFinalTension(double value) { m_finalTension = value; }
-    void setMarkerTension(int markerIndex, float tension);
     void addMarker(MarkerType type, qint64 when, float tension);
     void removeMarkerAt(quint64 at);
     QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
@@ -79,11 +77,16 @@ public slots:
     // see if samples changed on disk and reload if so
     void ReScanSamples();
     void openInExternalApp(SoundBuffer*);
+    void setFinalTension(double value) { m_finalTension = value; }
+    void setMarkerTension(int markerIndex, float tension);
 
 signals:
     void samplerSchedule(WtsAudio::BufferAt * buffer);
     void newBufferAt(WtsAudio::BufferAt * bufferAt);
+
+    // changes
     void sampleChanged(SoundBuffer * sample);
+    void tensionChanged();
 
 protected:
     double m_finalTension;

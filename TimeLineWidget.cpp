@@ -53,6 +53,8 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
 void TimeLineWidget::setProject(Project * project)
 {
     m_project = project;
+    // connect common notifications...
+    connect(project, SIGNAL(tensionChanged()), SLOT(invalidateBackground()));
 }
 
 void TimeLineWidget::resizeEvent ( QResizeEvent * /*event*/ )

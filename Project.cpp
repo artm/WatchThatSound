@@ -181,6 +181,7 @@ void Project::setMarkerTension(int markerIndex, float tension)
         m_markers[ m_markers.keys()[markerIndex] ]->setTension(tension);
     else if (markerIndex  == m_markers.size())
         setFinalTension(tension);
+    emit tensionChanged();
 }
 
 #if defined(__APPLE__)

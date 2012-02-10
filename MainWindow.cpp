@@ -35,11 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&m_audio, SIGNAL(endOfSample(WtsAudio::BufferAt*)), SLOT(onEndOfSample(WtsAudio::BufferAt*)) , Qt::QueuedConnection);
 
     // change signals to save data...
-    connect(ui->tension, SIGNAL(updateLevel(int,float)), SLOT(updateMarkerTension(int,float)));
     connect(ui->tension, SIGNAL(dataChanged()), SLOT(saveData()));
-    connect(ui->tension, SIGNAL(dataChanged()), ui->storyboard, SLOT(update()));
-    connect(ui->tension, SIGNAL(dataChanged()), ui->timeLine, SLOT(update()));
-    connect(ui->tension, SIGNAL(dataChanged()), ui->score, SLOT(update()));
     connect(ui->score, SIGNAL(dataChanged()), SLOT(saveData()));
     connect(ui->waveform, SIGNAL(rangeChanged()), SLOT(saveData()));
 
@@ -528,11 +524,6 @@ QPainterPath MainWindow::tensionCurve() const
 void MainWindow::onMovieFinished()
 {
     ui->actionPlay->setChecked(false);
-}
-
-void MainWindow::updateMarkerTension(int markerIndex, float tension)
-{
-    m_project->setMarkerTension(markerIndex, tension);
 }
 
 void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)

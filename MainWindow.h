@@ -61,7 +61,6 @@ public slots:
     void exportMovie();
 
     void refreshTension();
-    void updateMarkerTension(int markerIndex, float tension);
     void setMuteOnRecord(bool on) { m_muteOnRecord = on; }
     void startSolo( WtsAudio::BufferAt * );
 
