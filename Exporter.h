@@ -3,6 +3,7 @@
 
 #include "WtsAudio.h"
 #include "Project.h"
+#include "TimeLineController.hpp"
 
 #include <QByteArray>
 #include <QVector>
@@ -17,7 +18,7 @@ namespace WTS {
 
 class VideoFile;
 
-class Exporter : public QObject
+class Exporter : public TimeLineController
 {
     Q_OBJECT
 public:
@@ -42,7 +43,6 @@ protected:
 
     QByteArray m_filename;
     VideoFile * m_originalVideoFile;
-    Project * m_project;
     WtsAudio * m_audio;
     QProgressDialog * m_progress;
 

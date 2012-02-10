@@ -311,16 +311,6 @@ QDir Project::movDir()
     return s_movDir;
 }
 
-void Project::seek(qint64 ms)
-{
-    m_sequenceCursor = m_sequence.begin();
-}
-
-void Project::start()
-{
-    m_sequenceCursor = beginCursor();
-}
-
 void Project::addBufferAt(WtsAudio::BufferAt * newBuff)
 {
     m_sequence.append(newBuff);
@@ -339,23 +329,6 @@ void Project::copyScratch(WtsAudio::BufferAt * scratch)
     newBuff->buffer()->setColor( Rainbow::getColor(m_lastSampleNameNum) );
     newBuff->buffer()->initGains();
     addBufferAt(newBuff);
-}
-
-void Project::advanceSequenceCursor(qint64 ms)
-{
-    while( m_sequenceCursor != m_sequence.end()
-            && ((*m_sequenceCursor)->at()
-                + WtsAudio::sampleCountToMs((*m_sequenceCursor)->buffer()
-                    ->rangeStart())) <= ms ) {
-        emit samplerSchedule( *m_sequenceCursor );
-        m_sequenceCursor++;
-    }
-}
-
-QList<WtsAudio::BufferAt *>::iterator Project::beginCursor()
-{
-    qSort(m_sequence.begin(), m_sequence.end(), WtsAudio::startsBefore);
-    return m_sequence.begin();
 }
 
 void Project::removeBufferAt(WtsAudio::BufferAt * bufferAt)

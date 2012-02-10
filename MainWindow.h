@@ -19,6 +19,7 @@ namespace Ui
 namespace WTS {
 
 class Exporter;
+class TimeLineController;
 
 class MainWindow : public QMainWindow
 {
@@ -39,6 +40,7 @@ public:
     void removeBuffer(WtsAudio::BufferAt * bufferAt);
 
     Project * project() { return m_project; }
+    TimeLineController * editController() { return m_editController; }
 
 public slots:
     void setFullscreen(bool fs);
@@ -98,6 +100,7 @@ protected:
     QSettings m_settings;
 
     WtsAudio::BufferAt * m_soloBuffer;
+    TimeLineController * m_editController;
 };
 
 }

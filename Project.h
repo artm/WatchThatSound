@@ -41,7 +41,6 @@ public:
     };
 
     Project(const QString& path, QObject * parent = 0);
-
     double finalTension() const { return m_finalTension; }
     void addMarker(MarkerType type, qint64 when, float tension);
     void removeMarkerAt(quint64 at);
@@ -62,12 +61,7 @@ public:
     QString samplePath(const QString& sampleName);
     QString samplePath(SoundBuffer *);
 
-    // TODO split this off into a controller
-    void seek(qint64 ms);
-    void start();
-    void advanceSequenceCursor(qint64 ms);
-    QList<WtsAudio::BufferAt *>::iterator beginCursor();
-    QList<WtsAudio::BufferAt *>::iterator endCursor() { return m_sequence.end(); }
+    QList<WtsAudio::BufferAt *> getSequence() const { return m_sequence; }
 
 public slots:
     // see if samples changed on disk and reload if so
@@ -79,10 +73,7 @@ public slots:
     void save();
     void load();
 
-
-
 signals:
-    void samplerSchedule(WtsAudio::BufferAt * buffer);
     void newBufferAt(WtsAudio::BufferAt * bufferAt);
 
     void saveSection(QXmlStreamWriter& writer);
@@ -108,10 +99,6 @@ protected:
     QDir m_dataDir;
     QList<WtsAudio::BufferAt *> m_sequence;
     int m_lastSampleNameNum;
-    // TODO the cursor should be a part of controller (playback / export) not
-    // model
-    QList<WtsAudio::BufferAt *>::iterator m_sequenceCursor;
-
     static QDir s_movDir;
     static bool s_movDirFound;
 };

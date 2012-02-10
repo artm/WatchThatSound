@@ -1,4 +1,5 @@
 #include "TimeLineWidget.h"
+#include "TimeLineController.hpp"
 #include "Project.h"
 #include "SharpLine.h"
 #include "BufferItem.h"
@@ -23,6 +24,8 @@ TimeLineWidget::TimeLineWidget(QWidget *parent)
     if (!iter)
         qCritical("TimeLineWidget should be descendant of MainWindow in view hierarchy");
     m_mainWindow = qobject_cast<MainWindow *>(iter);
+    qWarning("TODO remove m_mainWindow from views!");
+    m_controller = m_mainWindow->editController();
 
     connect(m_mainWindow,SIGNAL(projectChanged(Project*)),SLOT(setProject(Project*)));
 

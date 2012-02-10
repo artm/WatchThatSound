@@ -4,7 +4,7 @@
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
 #include "Exporter.h"
-
+#include "TimeLineController.hpp"
 #include "WatchThatCode.h"
 #include "Common.h"
 
@@ -23,10 +23,14 @@ MainWindow::MainWindow(QWidget *parent)
     , m_muteOnRecord(true)
     , m_settings("WatchThatSound","WTS-Workshop-Tool")
     , m_soloBuffer(0)
+    , m_editController( new TimeLineController(this) )
 {
     ui->setupUi(this);
     if (qApp)
         qApp->installEventFilter(this);
+
+    // set up controller
+    connect(this, SIGNAL(projectChanged(Project*)), m_editController, SLOT(setProject(Project*)));
 
     // connect to the sampler
     connect(this, SIGNAL(samplerClear()), &m_audio, SLOT(samplerClear()));
@@ -87,7 +91,7 @@ void MainWindow::seek(qint64 ms)
     mediaObject()->seek(ms);
     emit samplerClear();
     if (ui->actionPlay->isChecked()) {
-        project()->seek(ms);
+        m_editController->seek(ms);
         emit samplerClock(ms);
     }
 }
@@ -116,7 +120,7 @@ void MainWindow::loadMovie(const QString& path)
     // access to thumbnails
     m_project = new Project(path, this);
     emit projectChanged(m_project);
-    connect(m_project, SIGNAL(samplerSchedule(WtsAudio::BufferAt*)),
+    connect(m_editController, SIGNAL(samplerSchedule(WtsAudio::BufferAt*)),
             &m_audio, SLOT(samplerSchedule(WtsAudio::BufferAt*)));
 
     m_scratch.setBuffer(
@@ -164,7 +168,7 @@ void MainWindow::onPlay(bool play)
         emit samplerClear();
 
         m_audio.start();
-        m_project->start();
+        m_editController->start();
 
         if (m_soloBuffer) {
             emit samplerClock( m_soloBuffer->rangeStartAt() );
@@ -232,7 +236,7 @@ void MainWindow::tick(qint64 ms)
 
     // find out which samples to trigger
     if (!m_soloBuffer && ui->actionPlay->isChecked()) {
-        m_project->advanceSequenceCursor(ms);
+        m_editController->advanceSequenceCursor(ms);
     }
 }
 
