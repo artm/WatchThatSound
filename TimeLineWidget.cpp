@@ -55,6 +55,7 @@ void TimeLineWidget::setProject(Project * project)
     m_project = project;
     // connect common notifications...
     connect(project, SIGNAL(tensionChanged()), SLOT(invalidateBackground()));
+    connect(this, SIGNAL(dataChanged()), project, SLOT(save()));
 }
 
 void TimeLineWidget::resizeEvent ( QResizeEvent * /*event*/ )
@@ -95,7 +96,7 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
     int currentColor = 0;
 
     foreach(Project::Marker * marker,
-            m_mainWindow->project()->getMarkers(Project::SCENE)) {
+            project()->getMarkers(Project::SCENE)) {
         qreal relX2 = (qreal)marker->at() / total;
         // draw a rectangle which as tall as a widget and runs from relX1 to relX2
         paintRange(painter, relX1, relX2-relX1, colors[currentColor]);
@@ -107,7 +108,7 @@ void TimeLineWidget::drawBackground ( QPainter * painter, const QRectF & /*rect*
 
     painter->setPen(QColor(0,0,0,200));
     foreach(Project::Marker * marker,
-            m_mainWindow->project()->getMarkers(Project::EVENT)) {
+            project()->getMarkers(Project::EVENT)) {
         qreal relX2 = (qreal)marker->at() / total;
         painter->drawLine(QPointF(relX2,0.), QPointF(relX2,1.));
     }
@@ -225,7 +226,7 @@ void TimeLineWidget::keyPressEvent(QKeyEvent *event)
             i->setSelected(false);
             delete i;
 
-            m_mainWindow->saveData();
+            project()->save();
         }
     }
 }

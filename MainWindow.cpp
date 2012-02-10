@@ -19,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , m_project(0)
-    , m_loading(false)
     , m_exporter(new Exporter(this))
     , m_muteOnRecord(true)
     , m_settings("WatchThatSound","WTS-Workshop-Tool")
@@ -34,11 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(samplerClock(qint64)), &m_audio, SLOT(samplerClock(qint64)));
     connect(&m_audio, SIGNAL(endOfSample(WtsAudio::BufferAt*)), SLOT(onEndOfSample(WtsAudio::BufferAt*)) , Qt::QueuedConnection);
 
-    // change signals to save data...
-    connect(ui->tension, SIGNAL(dataChanged()), SLOT(saveData()));
-    connect(ui->score, SIGNAL(dataChanged()), SLOT(saveData()));
-    connect(ui->waveform, SIGNAL(rangeChanged()), SLOT(saveData()));
-
+    // FIXME these two should be aware of each other
     connect(ui->timeLine, SIGNAL(bufferSelected(WtsAudio::BufferAt*)),
             ui->waveform, SLOT(updateWaveform(WtsAudio::BufferAt*)));
     connect(ui->waveform, SIGNAL(rangeChanged(SoundBuffer*)),
@@ -131,7 +126,7 @@ void MainWindow::loadMovie(const QString& path)
 
     ui->storyboard->setVideoSize(m_project->videoWidth(), m_project->videoHeight());
 
-    loadData();
+    m_project->load();
 
     emit loaded();
 }
@@ -144,69 +139,6 @@ void MainWindow::resetData()
     }
 
     m_scratch.setAt(0);
-    m_loading = false;
-}
-
-void MainWindow::saveData()
-{
-    // make sure we don't overwrite while loading...
-    if (m_loading)
-        return;
-
-    QFile dataFile( m_project->dataDir().filePath("metadata.xml.tmp") );
-    dataFile.open(QFile::WriteOnly | QFile::Text);
-
-    QXmlStreamWriter xml( &dataFile );
-
-    xml.setAutoFormatting(true);
-
-    xml.writeStartDocument();
-    xml.writeDTD("<!DOCTYPE soundtrack>");
-    xml.writeStartElement("soundtrack");
-    xml.writeAttribute("version", WTS_VERSION);
-    xml.writeAttribute("movie", m_project->movieFilename());
-
-    m_project->saveStoryboard(xml);
-
-    xml.writeStartElement("score");
-    ui->score->saveData(xml);
-    xml.writeEndElement();
-
-    m_project->saveSequence(xml);
-    xml.writeEndElement();
-    xml.writeEndDocument();
-    dataFile.close();
-    QFile::remove( m_project->dataDir().filePath("metadata.xml") );
-    dataFile.rename(  m_project->dataDir().filePath("metadata.xml") );
-}
-
-void MainWindow::loadData()
-{
-    m_loading = true;
-
-    // always have a scene starting at 0
-    addMarker(Project::SCENE, 0);
-
-    QFile dataFile( m_project->dataDir().filePath("metadata.xml") );
-    dataFile.open(QFile::ReadOnly | QFile::Text);
-    QXmlStreamReader xml( &dataFile );
-    xml.readNextStartElement();
-    if (xml.name() == "soundtrack") {
-        while (xml.readNextStartElement()) {
-            if (m_project->loadStoryboard(xml)) {
-                refreshTension();
-            } else if (xml.name() == "score") {
-                ui->score->loadData(xml);
-            } else if (m_project->loadSequence(xml)) {
-                // ????
-            }
-        }
-    } else {
-        qDebug() << dataFile.fileName() << " is not a soundtrack file";
-    }
-
-    m_loading = false;
-
 }
 
 Phonon::MediaObject * MainWindow::mediaObject()
@@ -271,7 +203,7 @@ void MainWindow::onRecord(bool record)
             m_project->copyScratch(&m_scratch);
             emit scratchUpdated(&m_scratch, false);
             ui->videoPlayer->seek(m_scratch.at());
-            saveData();
+            m_project->save();
         }
     }
 }
@@ -313,7 +245,7 @@ void MainWindow::addMarker(Project::MarkerType type, qint64 when, float tension)
 
     refreshTension();
     emit storyBoardChanged();
-    saveData();
+    m_project->save();
 }
 
 void MainWindow::removeMark(Project::Marker * m)
@@ -321,7 +253,7 @@ void MainWindow::removeMark(Project::Marker * m)
     m_project->removeMarkerAt(m->at());
     refreshTension();
     emit storyBoardChanged();
-    saveData();
+    m_project->save();
 }
 
 void MainWindow::exportMovie()
@@ -530,7 +462,7 @@ void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)
 {
     ui->waveform->clearWaveform(bufferAt);
     m_project->removeBufferAt(bufferAt);
-    saveData();
+    m_project->save();
 }
 
 bool MainWindow::eventFilter( QObject * watched, QEvent * event )

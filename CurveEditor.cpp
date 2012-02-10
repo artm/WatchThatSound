@@ -1,4 +1,5 @@
 #include "CurveEditor.h"
+#include "Let.hpp"
 #include <QMouseEvent>
 
 using namespace WTS;
@@ -8,6 +9,7 @@ CurveEditor::CurveEditor(QWidget *parent)
     , m_nodePixelSize(8)
     , m_curve(0)
     , m_dragItem(0)
+    , m_ignoreReload(false)
 {
     m_curve = scene()->addPath(QPainterPath(), QPen(Qt::red));
 }
@@ -78,10 +80,24 @@ void CurveEditor::mouseMoveEvent(QMouseEvent *event)
                                       m_dragItem->pos().x(),
                                       m_dragItem->pos().y());
             m_curve->setPath(path);
-            m_project->setMarkerTension( nodeIndex, level );
+
+            Let<bool> sentinel(m_ignoreReload, true);
+            m_project->setMarkerTension( nodeIndex, level );            
         }
     }
     TimeLineWidget::mouseMoveEvent(event);
+}
+
+void CurveEditor::setProject(Project *project)
+{
+    TimeLineWidget::setProject(project);
+    connect(project,SIGNAL(tensionChanged()),SLOT(reloadFromProject()));
+}
+
+void CurveEditor::reloadFromProject()
+{
+    if (!m_ignoreReload)
+        setCurve(project()->tensionCurve( sceneRect().width() ));
 }
 
 void CurveEditor::scaleNodes()

@@ -173,22 +173,36 @@ void ScoreEditor::initNewSymbol()
     connect(m_newSymbol->inkTimer(), SIGNAL(timeout()), SLOT(passInk()));
 }
 
-void ScoreEditor::saveData(QXmlStreamWriter &xml)
+void ScoreEditor::saveSection(QXmlStreamWriter &xml)
 {
+    xml.writeStartElement("score");
     foreach(QGraphicsItem * item, scene()->items()) {
         ScoreSymbol * symbol = dynamic_cast<ScoreSymbol *>(item);
         if (!symbol || symbol == m_newSymbol) continue;
         symbol->saveData(xml);
     }
+    xml.writeEndElement();
 }
 
-void ScoreEditor::loadData(QXmlStreamReader &xml)
+bool ScoreEditor::loadSection(QXmlStreamReader &xml)
 {
+    if (xml.name() != "score")
+        return false;
+
     while(xml.readNextStartElement()) {
         ScoreSymbol * symbol = new ScoreSymbol();
         symbol->configure(scene(), width(), height());
         symbol->loadData(xml);
         xml.readElementText();
     }
+
+    return true;
+}
+
+void ScoreEditor::setProject(Project *project)
+{
+    TimeLineWidget::setProject(project);
+    connect(project, SIGNAL(loadSection(QXmlStreamReader&)), SLOT(loadSection(QXmlStreamReader&)));
+    connect(project, SIGNAL(saveSection(QXmlStreamWriter&)), SLOT(saveSection(QXmlStreamWriter&)));
 }
 

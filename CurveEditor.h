@@ -19,6 +19,8 @@ public:
 signals:
 
 public slots:
+    virtual void setProject(Project *project);
+    void reloadFromProject();
 
 protected:
     virtual void resizeEvent ( QResizeEvent * event );
@@ -31,6 +33,8 @@ protected:
 
     QGraphicsRectItem * m_dragItem;
     QPointF m_dragLastP;
+
+    bool m_ignoreReload;
 };
 
 }

@@ -41,10 +41,6 @@ public:
     };
 
     Project(const QString& path, QObject * parent = 0);
-    void saveStoryboard(QXmlStreamWriter&);
-    bool loadStoryboard(QXmlStreamReader&);
-    void saveSequence(QXmlStreamWriter&);
-    bool loadSequence(QXmlStreamReader&);
 
     double finalTension() const { return m_finalTension; }
     void addMarker(MarkerType type, qint64 when, float tension);
@@ -80,15 +76,27 @@ public slots:
     void setFinalTension(double value) { m_finalTension = value; }
     void setMarkerTension(int markerIndex, float tension);
 
+    void save();
+    void saveStoryboard(QXmlStreamWriter&);
+    void saveSequence(QXmlStreamWriter&);
+
+    void load();
+    bool loadStoryboard(QXmlStreamReader&);
+    bool loadSequence(QXmlStreamReader&);
+
 signals:
     void samplerSchedule(WtsAudio::BufferAt * buffer);
     void newBufferAt(WtsAudio::BufferAt * bufferAt);
+
+    void saveSection(QXmlStreamWriter& writer);
+    void loadSection(QXmlStreamReader& reader);
 
     // changes
     void sampleChanged(SoundBuffer * sample);
     void tensionChanged();
 
 protected:
+    bool m_loading;
     double m_finalTension;
     QMap<qint64, Project::Marker *> m_markers;
     VideoFile * m_videoFile;

@@ -55,8 +55,6 @@ public slots:
     void loadMovie(const QString& path);
 
     void resetData();
-    void saveData();
-    void loadData();
 
     void exportMovie();
 
@@ -89,7 +87,6 @@ protected:
 
     WtsAudio::BufferAt m_scratch;
 
-    bool m_loading;
     Exporter * m_exporter;
     QStateMachine m_machine;
     QState * m_workshop;

@@ -40,7 +40,7 @@ void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * bufferAt)
 {
     SoundBuffer * buffer = bufferAt->buffer();
 
-    BufferItem * item = new BufferItem(bufferAt, m_mainWindow->project()->duration(), m_sampleH);
+    BufferItem * item = new BufferItem(bufferAt, project()->duration(), m_sampleH);
     scene()->addItem(item);
 
     showRange(item, buffer);
@@ -82,7 +82,7 @@ void SequencerTimeLine::showScratch(WtsAudio::BufferAt * scratchAt, bool on)
         qint64 at = scratchAt->at();
         qint64 duration = WtsAudio::sampleCountToMs(scratchAt->buffer()->m_writePos);
 
-        float tt = (float)m_mainWindow->project()->duration();
+        float tt = (float)project()->duration();
         float relX = (float)at / tt;
         float relW = (float)duration / tt;
         m_scratchRect->setRect(relX, .1, relW, .8 );
@@ -96,12 +96,12 @@ void SequencerTimeLine::mouseReleaseEvent ( QMouseEvent * event )
 {
     TimeLineWidget::mouseReleaseEvent(event);
     restackItems();
-    m_mainWindow->saveData();
+    project()->save();
 }
 
 void SequencerTimeLine::showRange(QGraphicsItem * root, SoundBuffer *buffer)
 {
-    float tt = (float)m_mainWindow->project()->duration();
+    float tt = (float)project()->duration();
     float relW = (float)buffer->duration() / tt;
     float selX1 = (float)WtsAudio::sampleCountToMs(buffer->rangeStart()) / tt;
     float selX2 = (float)WtsAudio::sampleCountToMs(buffer->rangeEnd()) / tt;

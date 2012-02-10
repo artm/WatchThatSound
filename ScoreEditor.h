@@ -18,13 +18,14 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
     void resizeEvent(QResizeEvent *event);
 
-    void saveData(QXmlStreamWriter& xml);
-    void loadData(QXmlStreamReader& xml);
-
 signals:
 
 public slots:
     void passInk() { m_newSymbol->ink(); }
+    virtual void setProject(Project *project);
+    void saveSection(QXmlStreamWriter& xml);
+    bool loadSection(QXmlStreamReader& xml);
+
 
 protected:
     void selectPetal(QGraphicsItem * petal);

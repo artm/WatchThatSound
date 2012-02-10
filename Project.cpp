@@ -1,3 +1,5 @@
+#include "wts_version.h"
+
 #include "Project.h"
 #include "Common.h"
 #include "SoundBuffer.h"
@@ -7,6 +9,7 @@ using namespace WTS;
 
     Project::Project(const QString& path, QObject * parent)
     : QObject(parent)
+    , m_loading(false)
     , m_finalTension(0.5)
     , m_videoFile(new VideoFile(path, this))
     , m_lastSampleNameNum(0)
@@ -15,6 +18,12 @@ using namespace WTS;
     m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName() + ".data") );
     if (! m_dataDir.exists() )
         movieDir.mkdir( m_dataDir.dirName() );
+
+    // connect to itself...
+    connect(this,SIGNAL(saveSection(QXmlStreamWriter&)), SLOT(saveSequence(QXmlStreamWriter&)));
+    connect(this,SIGNAL(saveSection(QXmlStreamWriter&)), SLOT(saveStoryboard(QXmlStreamWriter&)));
+    connect(this,SIGNAL(loadSection(QXmlStreamReader&)), SLOT(loadSequence(QXmlStreamReader&)));
+    connect(this,SIGNAL(loadSection(QXmlStreamReader&)), SLOT(loadStoryboard(QXmlStreamReader&)));
 }
 
 void Project::saveStoryboard(QXmlStreamWriter& xml)
@@ -54,6 +63,8 @@ bool Project::loadStoryboard(QXmlStreamReader& xml)
         // this is one way to read a flat list of <foo/> not recursing
         xml.readElementText();
     }
+
+    emit tensionChanged();
     return true;
 }
 
@@ -75,6 +86,7 @@ void Project::saveSequence(QXmlStreamWriter& xml)
 
         buffer->buffer()->save( samplePath( buffer->buffer() ) );
     }
+    xml.writeEndElement();
 }
 
 bool Project::loadSequence(QXmlStreamReader& xml)
@@ -182,6 +194,61 @@ void Project::setMarkerTension(int markerIndex, float tension)
     else if (markerIndex  == m_markers.size())
         setFinalTension(tension);
     emit tensionChanged();
+}
+
+void Project::save()
+{
+    // make sure we don't overwrite while loading...
+    if (m_loading)
+        return;
+
+    QFile dataFile( dataDir().filePath("metadata.xml.tmp") );
+    dataFile.open(QFile::WriteOnly | QFile::Text);
+
+    QXmlStreamWriter xml( &dataFile );
+
+    xml.setAutoFormatting(true);
+
+    xml.writeStartDocument();
+    xml.writeDTD("<!DOCTYPE soundtrack>");
+    xml.writeStartElement("soundtrack");
+    xml.writeAttribute("version", WTS_VERSION);
+    xml.writeAttribute("movie", movieFilename());
+
+    // FIXME temporary solution for contaminated views
+    emit saveSection(xml);
+
+
+    xml.writeEndElement();
+    xml.writeEndDocument();
+    dataFile.close();
+    QFile::remove( dataDir().filePath("metadata.xml") );
+    dataFile.rename(  dataDir().filePath("metadata.xml") );
+}
+
+void Project::load()
+{
+    m_loading = true;
+
+    // always have a scene starting at 0
+    addMarker(Project::SCENE, 0, 0.5);
+
+    QFile dataFile( dataDir().filePath("metadata.xml") );
+    dataFile.open(QFile::ReadOnly | QFile::Text);
+    QXmlStreamReader xml( &dataFile );
+    xml.readNextStartElement();
+    if (xml.name() == "soundtrack") {
+        while (xml.readNextStartElement()) {
+            // try every section (a bit stupid, but simple to implement)
+            // the following calls ATTEMPT to load, or do nothing if it's not their sections
+            emit loadSection(xml);
+        }
+
+    } else {
+        qDebug() << dataFile.fileName() << " is not a soundtrack file";
+    }
+
+    m_loading = false;
 }
 
 #if defined(__APPLE__)
