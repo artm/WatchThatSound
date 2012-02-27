@@ -166,7 +166,12 @@ QList<Project::Marker *> Project::getMarkers(MarkerType type, bool forward) cons
 
 void Project::removeMarkerAt(quint64 at)
 {
-    m_markers.remove(at);
+    if (at > 0) {
+        m_markers.remove(at);
+        emit storyBoardChanged();
+        emit tensionChanged();
+        save();
+    }
 }
 
 QPainterPath Project::tensionCurve(float width)
@@ -339,6 +344,7 @@ void Project::copyScratch(WtsAudio::BufferAt * scratch)
 void Project::removeBufferAt(WtsAudio::BufferAt * bufferAt)
 {
     m_sequence.removeAll(bufferAt);
+    emit syncedItemRemoved(bufferAt);
 }
 
 QString Project::makeSampleName()
@@ -374,3 +380,4 @@ QString Project::samplePath(const QString& sampleName)
 {
     return  m_dataDir.filePath( sampleName );
 }
+

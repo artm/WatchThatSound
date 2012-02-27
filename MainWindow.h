@@ -35,7 +35,6 @@ public:
     void buildMovieSelector();
 
     QPainterPath tensionCurve() const;
-    void removeMark(Project::Marker * m);
     void removeBuffer(WtsAudio::BufferAt * bufferAt);
 
     Project * project() { return m_project; }

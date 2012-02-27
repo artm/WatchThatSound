@@ -242,14 +242,6 @@ void MainWindow::tick(qint64 ms)
     }
 }
 
-void MainWindow::removeMark(Project::Marker * m)
-{
-    m_project->removeMarkerAt(m->at());
-    refreshTension();
-    emit storyBoardChanged();
-    m_project->save();
-}
-
 void MainWindow::exportMovie()
 {
     // setting the parent to this makes it a "sheet" dialog on OSX

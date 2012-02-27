@@ -124,6 +124,16 @@ void SequencerTimeLine::showRange(QGraphicsItem * root, SoundBuffer *buffer)
 
 }
 
+void SequencerTimeLine::onRemoved(Synced * , QGraphicsItem * item)
+{
+    // remove the item from m_bufferItems first...
+    BufferItem * bitem = dynamic_cast<BufferItem *>(item);
+    if (bitem) {
+        m_bufferItems.removeAll(bitem);
+        restackItems();
+    }
+}
+
 void SequencerTimeLine::updateBuffer(SoundBuffer *buffer)
 {
     foreach(BufferItem * bi, m_bufferItems) {
@@ -153,13 +163,7 @@ void SequencerTimeLine::updateSelection()
 void SequencerTimeLine::deleteSynced(QGraphicsItem * item, WTS::Synced * synced)
 {
     WtsAudio::BufferAt * bufferAt = dynamic_cast<WtsAudio::BufferAt *>(synced);
-    BufferItem * bi = dynamic_cast<BufferItem*>(item);
-    Q_ASSERT( bufferAt );
-    Q_ASSERT( bi );
-
-    m_bufferItems.removeAll(bi);
     m_mainWindow->removeBuffer( bufferAt );
-    restackItems();
 }
 
 void SequencerTimeLine::startSolo()

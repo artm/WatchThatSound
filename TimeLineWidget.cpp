@@ -58,7 +58,22 @@ void TimeLineWidget::setProject(Project * project)
     m_project = project;
     // connect common notifications...
     connect(project, SIGNAL(tensionChanged()), SLOT(invalidateBackground()));
+    connect(project, SIGNAL(syncedItemRemoved(WTS::Synced*)), SLOT(syncedItemRemoved(WTS::Synced*)));
     connect(this, SIGNAL(dataChanged()), project, SLOT(save()));
+}
+
+void TimeLineWidget::syncedItemRemoved(Synced *synced)
+{
+    QList<QGraphicsItem *> items_list = items();
+    foreach(QGraphicsItem * item, items_list) {
+        WTS::Synced * item_synced = item->data(SYNCED).value<WTS::Synced*>();
+        if (synced == item_synced) {
+            scene()->removeItem(item);
+            item->setSelected(false);
+            onRemoved(synced, item);
+            delete item;
+        }
+    }
 }
 
 void TimeLineWidget::resizeEvent ( QResizeEvent * /*event*/ )
@@ -217,8 +232,6 @@ void TimeLineWidget::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Delete:
         QList<QGraphicsItem *> selection = scene()->selectedItems();
         foreach(QGraphicsItem * i, selection) {
-            scene()->removeItem(i);
-
             WTS::Synced * synced = 0;
             QGraphicsItem * syncedItem = findSynced(i,&synced);
 
@@ -226,10 +239,6 @@ void TimeLineWidget::keyPressEvent(QKeyEvent *event)
                 deleteSynced(syncedItem, synced);
             }
 
-            i->setSelected(false);
-            delete i;
-
-            project()->save();
         }
     }
 }

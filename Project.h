@@ -74,13 +74,14 @@ public slots:
     void load();
 
 signals:
-    void newBufferAt(WtsAudio::BufferAt * bufferAt);
 
     void saveSection(QXmlStreamWriter& writer);
     void loadSection(QXmlStreamReader& reader);
 
     // changes
     void sampleChanged(SoundBuffer * sample);
+    void newBufferAt(WtsAudio::BufferAt * bufferAt);
+    void syncedItemRemoved(WTS::Synced * synced);
     void tensionChanged();
     void storyBoardChanged();
 

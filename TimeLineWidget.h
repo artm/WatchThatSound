@@ -51,6 +51,9 @@ public slots:
     }
     virtual void setProject(Project * project);
 
+    // project actually removed an item
+    void syncedItemRemoved(WTS::Synced * synced);
+
 protected:
     // FIXME this one should be eventually phased out
     MainWindow * m_mainWindow;
@@ -70,6 +73,8 @@ protected:
     virtual void mousePressEvent ( QMouseEvent * event );
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void keyPressEvent(QKeyEvent *event);
+
+    virtual void onRemoved(WTS::Synced *, QGraphicsItem *) {}
 
     void doSeekOnDrag( QMouseEvent * event );
 

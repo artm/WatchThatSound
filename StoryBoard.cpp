@@ -169,7 +169,7 @@ void StoryBoard::deleteSynced(QGraphicsItem *, WTS::Synced *synced)
 {
     Project::Marker * m = dynamic_cast<Project::Marker *>(synced);
     Q_ASSERT(m);
-    m_mainWindow->removeMark(m);
+    m_project->removeMarkerAt( m->at() );
 }
 
 void StoryBoard::setProject(Project *project)

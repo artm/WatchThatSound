@@ -42,6 +42,7 @@ protected:
 
     void restackItems();
     void showRange(QGraphicsItem * root, SoundBuffer * buffer);
+    virtual void onRemoved(WTS::Synced * synced, QGraphicsItem * item);
 
     virtual void mouseReleaseEvent ( QMouseEvent * event );
 };
