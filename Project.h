@@ -43,7 +43,6 @@ public:
     Project(const QString& path, QObject * parent = 0);
     double finalTension() const { return m_finalTension; }
     void addMarker(MarkerType type, qint64 when, float tension);
-    void removeMarkerAt(quint64 at);
     QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
     QPainterPath tensionCurve(float width);
     qint64 duration() const { return m_videoFile->duration(); }
@@ -56,8 +55,7 @@ public:
     QString moviePath() const { return videoFile()->path(); }
     QString movieFilename() const { return QFileInfo(moviePath()).fileName(); }
     void addBufferAt(WtsAudio::BufferAt * newBuff);
-    void copyScratch(WtsAudio::BufferAt * newBuff);
-    void removeBufferAt(WtsAudio::BufferAt * newBuff);
+    WtsAudio::BufferAt *copyScratch(WtsAudio::BufferAt * newBuff);
     QString samplePath(const QString& sampleName);
     QString samplePath(SoundBuffer *);
 
@@ -69,6 +67,7 @@ public slots:
     void openInExternalApp(SoundBuffer*);
     void setFinalTension(double value) { m_finalTension = value; }
     void setMarkerTension(int markerIndex, float tension);
+    void removalRequested(WTS::Synced* synced);
 
     void save();
     void load();
@@ -93,6 +92,8 @@ protected slots:
 
 protected:
     QString makeSampleName();
+    void removeMarkerAt(quint64 at);
+    void removeBufferAt(WtsAudio::BufferAt * newBuff);
 
     bool m_loading;
     double m_finalTension;

@@ -234,11 +234,8 @@ void TimeLineWidget::keyPressEvent(QKeyEvent *event)
         foreach(QGraphicsItem * i, selection) {
             WTS::Synced * synced = 0;
             QGraphicsItem * syncedItem = findSynced(i,&synced);
-
-            if (syncedItem) {
-                deleteSynced(syncedItem, synced);
-            }
-
+            if (syncedItem)
+                m_project->removalRequested( synced );
         }
     }
 }

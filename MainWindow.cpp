@@ -206,9 +206,10 @@ void MainWindow::onRecord(bool record)
         // done with recording - make a new sample buffer
 
         if (m_scratch.buffer()->sampleCount() > 0) {
-            m_project->copyScratch(&m_scratch);
+            WtsAudio::BufferAt * newBuff = m_project->copyScratch(&m_scratch);
+            ui->videoPlayer->seek(newBuff->at());
             emit scratchUpdated(&m_scratch, false);
-            ui->videoPlayer->seek(m_scratch.at());
+            ui->waveform->updateWaveform( newBuff, false );
             m_project->save();
         }
     }
@@ -441,13 +442,6 @@ QPainterPath MainWindow::tensionCurve() const
 void MainWindow::onMovieFinished()
 {
     ui->actionPlay->setChecked(false);
-}
-
-void MainWindow::removeBuffer(WtsAudio::BufferAt *bufferAt)
-{
-    ui->waveform->clearWaveform(bufferAt);
-    m_project->removeBufferAt(bufferAt);
-    m_project->save();
 }
 
 bool MainWindow::eventFilter( QObject * watched, QEvent * event )

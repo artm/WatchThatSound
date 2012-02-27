@@ -206,6 +206,27 @@ void Project::setMarkerTension(int markerIndex, float tension)
     emit tensionChanged();
 }
 
+void Project::removalRequested(Synced *synced)
+{
+    {
+        Marker * marker = dynamic_cast<Marker*>(synced);
+        if (marker) {
+            removeMarkerAt(marker->at());
+            return;
+        }
+    }
+
+    {
+        WtsAudio::BufferAt * buffer = dynamic_cast<WtsAudio::BufferAt *>(synced);
+        if (buffer) {
+            removeBufferAt(buffer);
+            return;
+        }
+    }
+
+    qWarning("Requested removal of unknown synced type");
+}
+
 void Project::save()
 {
     // make sure we don't overwrite while loading...
@@ -327,7 +348,7 @@ void Project::addBufferAt(WtsAudio::BufferAt * newBuff)
     emit newBufferAt(newBuff);
 }
 
-void Project::copyScratch(WtsAudio::BufferAt * scratch)
+WtsAudio::BufferAt *  Project::copyScratch(WtsAudio::BufferAt * scratch)
 {
     WtsAudio::BufferAt * newBuff =
         new WtsAudio::BufferAt(
@@ -339,12 +360,14 @@ void Project::copyScratch(WtsAudio::BufferAt * scratch)
     newBuff->buffer()->setColor( Rainbow::getColor(m_lastSampleNameNum) );
     newBuff->buffer()->initGains();
     addBufferAt(newBuff);
+    return newBuff;
 }
 
 void Project::removeBufferAt(WtsAudio::BufferAt * bufferAt)
 {
     m_sequence.removeAll(bufferAt);
     emit syncedItemRemoved(bufferAt);
+    save();
 }
 
 QString Project::makeSampleName()

@@ -74,6 +74,7 @@ void SequencerTimeLine::restackItems()
             }
         }
     }
+    updateSelection();
 }
 
 void SequencerTimeLine::showScratch(WtsAudio::BufferAt * scratchAt, bool on)
@@ -156,14 +157,7 @@ void SequencerTimeLine::updateSelection()
     TimeLineWidget::updateSelection();
 
     WtsAudio::BufferAt * selected = selectedBufferAt();
-    if (selected)
-        emit bufferSelected( selected );
-}
-
-void SequencerTimeLine::deleteSynced(QGraphicsItem * item, WTS::Synced * synced)
-{
-    WtsAudio::BufferAt * bufferAt = dynamic_cast<WtsAudio::BufferAt *>(synced);
-    m_mainWindow->removeBuffer( bufferAt );
+    emit bufferSelected( selected );
 }
 
 void SequencerTimeLine::startSolo()

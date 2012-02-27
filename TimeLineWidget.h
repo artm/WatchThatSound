@@ -32,7 +32,6 @@ public:
     // find synced associated with given item or its ancestor
     // returns the item which has the synced associated
     static QGraphicsItem * findSynced(QGraphicsItem * item, WTS::Synced ** synced);
-    virtual void deleteSynced(QGraphicsItem *, WTS::Synced *) {}
 
     Project * project() { return m_project; }
 
@@ -74,6 +73,7 @@ protected:
     virtual void mouseMoveEvent ( QMouseEvent * event );
     virtual void keyPressEvent(QKeyEvent *event);
 
+    // view specific removal processing
     virtual void onRemoved(WTS::Synced *, QGraphicsItem *) {}
 
     void doSeekOnDrag( QMouseEvent * event );

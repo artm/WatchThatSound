@@ -20,29 +20,34 @@ void WaveformWidget::clearWaveform(WtsAudio::BufferAt * buffer)
 
 void WaveformWidget::updateWaveform(WtsAudio::BufferAt * bufferAt, bool recording)
 {
-    emit enableWaveformControls(bufferAt != NULL);
+    if (m_buffer != bufferAt || recording || recording != m_wasRecording) {
+        // really changing
+        if ((m_buffer = bufferAt) != NULL) {
+            // to something...
+            SoundBuffer * buffer = m_buffer->buffer();
 
-    SoundBuffer * buffer = bufferAt->buffer();
+            float gain = buffer->gain();
+            gain = sqrtf(sqrtf(gain)) * 100;
+            emit adjustGainSlider((int)gain);
 
-    if (m_buffer != bufferAt) {
-        m_buffer = bufferAt;
+            if (recording != m_wasRecording || !recording)
+                m_scaleMax = SoundBuffer::s_minScaleMax;
 
-        float gain = buffer->gain();
-        gain = sqrtf(sqrtf(gain)) * 100;
-
-        emit adjustGainSlider((int)gain);
+            if (recording)
+                m_scaleMax = buffer->draw(m_img, true, m_scaleMax);
+            else
+                buffer->draw(m_img);
+        } else {
+            // became none
+            clearWaveform();
+        }
     }
 
-    if (recording != m_wasRecording || !recording) {
-        m_scaleMax = SoundBuffer::s_minScaleMax;
-        m_wasRecording = recording;
-    }
-    if (recording)
-        m_scaleMax = buffer->draw(m_img, true, m_scaleMax);
-    else
-        buffer->draw(m_img);
+    emit enableWaveformControls(m_buffer != NULL);
 
     update();
+
+    m_wasRecording = recording;
 }
 
 void WaveformWidget::paintEvent(QPaintEvent * /*event*/)
