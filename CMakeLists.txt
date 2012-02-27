@@ -7,6 +7,8 @@ INCLUDE(WTS-Package)
 INCLUDE(ConfigUtils)
 CONFIGURE_FILE(wts_version.h.in wts_version.h)
 SET(CMAKE_INCLUDE_CURRENT_DIR true)
+# this helps QtCreator's completion use generated files
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
 SET(CMAKE_AUTOMOC 1)
 FIND_PACKAGE(Qt4 REQUIRED QtCore QtGui QtNetwork Phonon)
