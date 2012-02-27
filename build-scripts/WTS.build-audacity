@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [ ! -d Audacity.xcodeproj ] ; then
+  echo You need to run this from withing 'mac' directory
+  echo inside the audacity source tree
+  exit 1
+fi
+
+WX_PREFIX=$(cd ../.. ; echo $(pwd)/wxMac)
+
+xcodebuild -target Configure -configuration "Debug Static" WX_PREFIX=$WX_PREFIX
+xcodebuild -target Audacity -configuration "Debug Static" WX_PREFIX=$WX_PREFIX
+
+
+
