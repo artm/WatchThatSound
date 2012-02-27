@@ -17,6 +17,7 @@ public slots:
     void setVideoSize(int w, int h) { m_videoWidth = w; m_videoHeight = h; }
     virtual void setCurrentTime(qint64 time);
     virtual void deleteSynced(QGraphicsItem *, WTS::Synced * synced);
+    virtual void setProject(Project * project);
 
 protected:
     float m_thumbWidth, m_thumbHeight;

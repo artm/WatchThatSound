@@ -1,5 +1,5 @@
 #include "TimeLineWidget.h"
-#include "TimeLineController.hpp"
+#include "EditController.hpp"
 #include "Project.h"
 #include "SharpLine.h"
 #include "BufferItem.h"

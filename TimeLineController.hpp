@@ -27,6 +27,8 @@ public:
     QList<WtsAudio::BufferAt *>::iterator beginCursor();
     QList<WtsAudio::BufferAt *>::iterator endCursor();
 
+    qint64 cursorTime() const { return m_cursorTime; }
+
 signals:
     void samplerSchedule(WtsAudio::BufferAt * buffer);
 
@@ -40,6 +42,8 @@ protected:
     //   this is a copy of the sequence
     QList<WtsAudio::BufferAt *> m_sequence;
     QList<WtsAudio::BufferAt *>::iterator m_sequenceCursor;
+
+    qint64 m_cursorTime;
 };
 
 }

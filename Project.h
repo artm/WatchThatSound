@@ -82,6 +82,7 @@ signals:
     // changes
     void sampleChanged(SoundBuffer * sample);
     void tensionChanged();
+    void storyBoardChanged();
 
 protected slots:
     void saveStoryboard(QXmlStreamWriter&);

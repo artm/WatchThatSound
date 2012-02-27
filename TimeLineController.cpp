@@ -4,8 +4,9 @@
 
 using namespace WTS;
 
-TimeLineController::TimeLineController(QObject *parent) :
-    QObject(parent)
+TimeLineController::TimeLineController(QObject *parent)
+    : QObject(parent)
+    , m_cursorTime(0)
 {
 }
 
@@ -13,8 +14,10 @@ void TimeLineController::setProject(Project *project)
 {
     m_project = project;
 }
+
 void TimeLineController::seek(qint64 ms)
 {
+    m_cursorTime = std::max(0ll, std::min(ms, m_project->duration()));
     start();
 }
 
@@ -26,10 +29,12 @@ void TimeLineController::start()
 
 void TimeLineController::advanceSequenceCursor(qint64 ms)
 {
+    m_cursorTime = std::max(0ll, std::min(ms, m_project->duration()));
+
     while( m_sequenceCursor != m_sequence.end()
             && ((*m_sequenceCursor)->at()
                 + WtsAudio::sampleCountToMs((*m_sequenceCursor)->buffer()
-                    ->rangeStart())) <= ms ) {
+                    ->rangeStart())) <= m_cursorTime ) {
         emit samplerSchedule( *m_sequenceCursor );
         m_sequenceCursor++;
     }

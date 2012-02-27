@@ -19,7 +19,7 @@ namespace Ui
 namespace WTS {
 
 class Exporter;
-class TimeLineController;
+class EditController;
 
 class MainWindow : public QMainWindow
 {
@@ -29,7 +29,6 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void addMarker(Project::MarkerType type, qint64 when = -1, float tension = 0.5);
     Phonon::MediaObject * mediaObject();
     QState * addPage(const QString& name, QList<QWidget*> widgets, QList<QAction*> actions = QList<QAction*>());
 
@@ -40,7 +39,7 @@ public:
     void removeBuffer(WtsAudio::BufferAt * bufferAt);
 
     Project * project() { return m_project; }
-    TimeLineController * editController() { return m_editController; }
+    EditController * editController() { return m_editController; }
 
 public slots:
     void setFullscreen(bool fs);
@@ -50,9 +49,6 @@ public slots:
     void seek(qint64 ms);
 
     void onMovieFinished();
-
-    void addSceneMark(){ addMarker(Project::SCENE); }
-    void addEventMark(){ addMarker(Project::EVENT); }
 
     void loadMovie(const QString& path);
 
@@ -100,7 +96,7 @@ protected:
     QSettings m_settings;
 
     WtsAudio::BufferAt * m_soloBuffer;
-    TimeLineController * m_editController;
+    EditController * m_editController;
 };
 
 }

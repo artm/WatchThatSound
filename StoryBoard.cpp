@@ -172,3 +172,9 @@ void StoryBoard::deleteSynced(QGraphicsItem *, WTS::Synced *synced)
     m_mainWindow->removeMark(m);
 }
 
+void StoryBoard::setProject(Project *project)
+{
+    TimeLineWidget::setProject(project);
+    connect(project, SIGNAL(storyBoardChanged()), SLOT(updateSnapshots()));
+}
+

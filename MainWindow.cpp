@@ -4,7 +4,7 @@
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
 #include "Exporter.h"
-#include "TimeLineController.hpp"
+#include "EditController.hpp"
 #include "WatchThatCode.h"
 #include "Common.h"
 
@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_muteOnRecord(true)
     , m_settings("WatchThatSound","WTS-Workshop-Tool")
     , m_soloBuffer(0)
-    , m_editController( new TimeLineController(this) )
+    , m_editController( new EditController(this) )
 {
     ui->setupUi(this);
     if (qApp)
@@ -31,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // set up controller
     connect(this, SIGNAL(projectChanged(Project*)), m_editController, SLOT(setProject(Project*)));
+    connect(ui->actionAddMarker, SIGNAL(triggered()), m_editController, SLOT(addEventMarkerAtCursor()));
+    connect(ui->actionAddScene, SIGNAL(triggered()), m_editController, SLOT(addSceneMarkerAtCursor()));
 
     // connect to the sampler
     connect(this, SIGNAL(samplerClear()), &m_audio, SLOT(samplerClear()));
@@ -90,8 +92,8 @@ void MainWindow::seek(qint64 ms)
 {
     mediaObject()->seek(ms);
     emit samplerClear();
+    m_editController->seek(ms);
     if (ui->actionPlay->isChecked()) {
-        m_editController->seek(ms);
         emit samplerClock(ms);
     }
 }
@@ -238,18 +240,6 @@ void MainWindow::tick(qint64 ms)
     if (!m_soloBuffer && ui->actionPlay->isChecked()) {
         m_editController->advanceSequenceCursor(ms);
     }
-}
-
-void MainWindow::addMarker(Project::MarkerType type, qint64 when, float tension)
-{
-    if (when < 0)
-        when = mediaObject()->currentTime();
-
-    m_project->addMarker(type, when, tension);
-
-    refreshTension();
-    emit storyBoardChanged();
-    m_project->save();
 }
 
 void MainWindow::removeMark(Project::Marker * m)

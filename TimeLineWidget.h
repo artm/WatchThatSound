@@ -11,7 +11,7 @@ namespace WTS {
 
 class Synced;
 class Project;
-class TimeLineController;
+class EditController;
 
 class TimeLineWidget : public QGraphicsView
 {
@@ -55,7 +55,7 @@ protected:
     // FIXME this one should be eventually phased out
     MainWindow * m_mainWindow;
     QPointer<Project> m_project;
-    QPointer<TimeLineController> m_controller;
+    QPointer<EditController> m_controller;
     bool m_seekOnDrag;
     qint64 m_currentTime;
 

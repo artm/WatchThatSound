@@ -142,6 +142,11 @@ void Project::addMarker(Project::MarkerType type, qint64 when, float tension)
     m_markers[when]->setTension( tension );
     m_videoFile->seek(when);
     m_markers[when]->setSnapshot( QPixmap::fromImage(m_videoFile->frame() ) );
+
+    emit storyBoardChanged();
+    emit tensionChanged();
+
+    save();
 }
 
 QList<Project::Marker *> Project::getMarkers(MarkerType type, bool forward) const
