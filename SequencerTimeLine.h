@@ -44,6 +44,7 @@ protected:
     virtual void onRemoved(WTS::Synced * synced, QGraphicsItem * item);
 
     virtual void mouseReleaseEvent ( QMouseEvent * event );
+    virtual void resizeEvent ( QResizeEvent * event );
 };
 
 }

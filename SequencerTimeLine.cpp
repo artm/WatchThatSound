@@ -40,7 +40,7 @@ void SequencerTimeLine::insertBufferAt(WtsAudio::BufferAt * bufferAt)
 {
     SoundBuffer * buffer = bufferAt->buffer();
 
-    BufferItem * item = new BufferItem(bufferAt, project()->duration(), m_sampleH);
+    BufferItem * item = new BufferItem(bufferAt, project()->duration(), m_sampleH, this);
     scene()->addItem(item);
 
     showRange(item, buffer);
@@ -100,6 +100,14 @@ void SequencerTimeLine::mouseReleaseEvent ( QMouseEvent * event )
     project()->save();
 }
 
+void SequencerTimeLine::resizeEvent(QResizeEvent *event)
+{
+    TimeLineWidget::resizeEvent(event);
+    foreach(BufferItem * item, m_bufferItems) {
+        item->update();
+    }
+}
+
 void SequencerTimeLine::showRange(QGraphicsItem * root, SoundBuffer *buffer)
 {
     float tt = (float)project()->duration();
@@ -107,21 +115,24 @@ void SequencerTimeLine::showRange(QGraphicsItem * root, SoundBuffer *buffer)
     float selX1 = (float)WtsAudio::sampleCountToMs(buffer->rangeStart()) / tt;
     float selX2 = (float)WtsAudio::sampleCountToMs(buffer->rangeEnd()) / tt;
 
-    scene()->addRect(
+    QGraphicsRectItem * recti = scene()->addRect(
                 0, 0, selX1, m_sampleH,
-                Qt::NoPen, m_muteBrush )
-            ->setParentItem(root);
+                Qt::NoPen, m_muteBrush );
+    recti->setZValue(.5);
+    recti->setParentItem(root);
 
-    scene()->addRect(
+    recti = scene()->addRect(
                 selX2, 0, relW-selX2, m_sampleH,
-                Qt::NoPen, m_muteBrush )
-            ->setParentItem(root);
+                Qt::NoPen, m_muteBrush );
+    recti->setZValue(.5);
+    recti->setParentItem(root);
 
-    scene()->addRect(
+    recti = scene()->addRect(
                 0, 0,
                 relW, m_sampleH,
-                m_pen, Qt::NoBrush )
-            ->setParentItem(root);
+                m_pen, Qt::NoBrush );
+    recti->setZValue(.5);
+    recti->setParentItem(root);
 
 }
 

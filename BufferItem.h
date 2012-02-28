@@ -3,14 +3,16 @@
 
 #include "WtsAudio.h"
 #include <QGraphicsRectItem>
+#include <QPointer>
+
+class QGraphicsView;
 
 namespace WTS {
-
 
 class BufferItem : public QGraphicsRectItem
 {
 public:
-    BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float height);
+    BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float height, QGraphicsView * view);
     WtsAudio::BufferAt * buffer() { return m_buffer; }
     void update();
 
@@ -22,6 +24,8 @@ protected:
     qint64 m_duration;
     WtsAudio::BufferAt * m_buffer;
     bool m_constrain;
+    QGraphicsPixmapItem * m_pixmap;
+    QPointer<QGraphicsView> m_view;
 };
 
 }

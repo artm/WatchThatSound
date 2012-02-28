@@ -3,24 +3,29 @@
 #include "TimeLineWidget.h"
 
 #include <QGraphicsSceneMouseEvent>
+#include <QPixmap>
 
 using namespace WTS;
 
-BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float height)
+BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float height, QGraphicsView *view)
     : QGraphicsRectItem()
     , m_duration(duration)
     , m_buffer(buffer)
     , m_constrain(false)
+    , m_view(view)
 {
     setX( (qreal) m_buffer->at() / m_duration );
     setRect(0,0, (float)m_buffer->buffer()->duration() / m_duration, height);
     setPen(Qt::NoPen);
-    setBrush(buffer->buffer()->color());
+    //setBrush(buffer->buffer()->color());
 
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemIsSelectable
              | QGraphicsItem::ItemSendsScenePositionChanges);
 
     TimeLineWidget::assignSynced(this, buffer);
+
+    m_pixmap = new QGraphicsPixmapItem(this);
+    update();
 }
 
 void BufferItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -60,4 +65,22 @@ void BufferItem::update()
     QRectF r = rect();
     r.setWidth( (float)m_buffer->buffer()->duration() / m_duration );
     setRect(r);
+
+    // convert coordinates to pixels and see if pixmap needs to be updated
+    QPolygon poly = m_view->mapFromScene(r);
+    QRect viewRect = poly.boundingRect();
+    if (m_pixmap->pixmap().size() != viewRect.size()) {
+        QPixmap pixmap(viewRect.size());
+        buffer()->buffer()->draw( pixmap );
+        m_pixmap->setPixmap(pixmap);
+        m_pixmap->setVisible(true);
+
+        // now we want the picture dimensions to be those of the parent item...
+        qreal sx, sy;
+        sx = r.width() / (qreal)m_pixmap->pixmap().width();
+        sy = r.height() / (qreal)m_pixmap->pixmap().height();
+        QTransform tr;
+        tr.scale(sx, sy);
+        m_pixmap->setTransform( tr );
+    }
 }
