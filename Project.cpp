@@ -7,28 +7,16 @@
 
 using namespace WTS;
 
-Project::Project(const QString& path, QObject * parent)
-    : QObject(parent)
-{
-    setup();
-
-    m_videoFile = new VideoFile(path, this);
-
-    QDir movieDir = QFileInfo(path).dir();
-    m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName()
-                + ".data") );
-    if (! m_dataDir.exists() )
-        movieDir.mkdir( m_dataDir.dirName() );
-}
-
 Project::Project(QObject * parent)
     : QObject(parent)
 {
     setup();
 }
 
+/* initialization common across constructors */
 void Project::setup()
 {
+    m_duration = 0;
     m_loading = false;
     m_finalTension = 0.5;
     m_videoFile = NULL;
@@ -44,6 +32,20 @@ void Project::setup()
     connect(this,SIGNAL(loadSection(QXmlStreamReader&)),
             SLOT(loadStoryboard(QXmlStreamReader&)));
 
+}
+
+Project::Project(const QString& path, QObject * parent)
+    : QObject(parent)
+{
+    setup();
+
+    m_videoFile = new VideoFile(path, this);
+
+    QDir movieDir = QFileInfo(path).dir();
+    m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName()
+                + ".data") );
+    if (! m_dataDir.exists() )
+        movieDir.mkdir( m_dataDir.dirName() );
 }
 
 void Project::saveStoryboard(QXmlStreamWriter& xml)
@@ -158,6 +160,8 @@ bool Project::loadSequence(QXmlStreamReader& xml)
 
 void Project::addMarker(Project::MarkerType type, qint64 when, float tension)
 {
+    throwIfInvalid();
+
     m_markers[when] = new Marker(type, when, this);
     m_markers[when]->setTension( tension );
     m_videoFile->seek(when);
@@ -171,6 +175,8 @@ void Project::addMarker(Project::MarkerType type, qint64 when, float tension)
 
 QList<Project::Marker *> Project::getMarkers(MarkerType type, bool forward) const
 {
+    throwIfInvalid();
+
     QList<Marker *> scenes;
     foreach(Marker * m, m_markers) {
         if (type == ANY || m->type() == type) {
@@ -196,6 +202,8 @@ void Project::removeMarkerAt(quint64 at)
 
 QPainterPath Project::tensionCurve(float width)
 {
+    throwIfInvalid();
+
     QPainterPath curve;
     QMapIterator<qint64, Project::Marker *> iter(m_markers);
     bool init = true;
@@ -424,3 +432,20 @@ QString Project::samplePath(const QString& sampleName)
     return  m_dataDir.filePath( sampleName );
 }
 
+void Project::throwIfInvalid() const
+{
+    if (!isValid()) throw InvalidProject();
+}
+
+void Project::setDuration(qint64 duration)
+{
+    if (!m_videoFile)
+        m_duration = duration;
+    else
+        throw CantChangeDuration();
+}
+
+bool Project::isValid() const
+{
+    return m_videoFile || m_duration > 0;
+}

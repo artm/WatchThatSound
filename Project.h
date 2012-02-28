@@ -41,16 +41,35 @@ public:
         void setTension(float value) { m_tension = value; }
     };
 
+    // exceptions
+    struct InvalidProject {};
+    struct CantChangeDuration {};
+
+    // testing helpers
     explicit Project(QObject * parent = 0);
+    void setDuration(qint64 duration);
+    bool isValid() const;
+
+    // normal api
     Project(const QString& path, QObject * parent = 0);
     double finalTension() const { return m_finalTension; }
     void addMarker(MarkerType type, qint64 when, float tension);
     QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
     QPainterPath tensionCurve(float width);
-    qint64 duration() const { return m_videoFile->duration(); }
-    int videoWidth() const { return m_videoFile->width(); }
-    int videoHeight() const { return m_videoFile->height(); }
-    VideoFile * videoFile() { return m_videoFile; }
+    qint64 duration() const {
+        throwIfInvalid();
+        return m_videoFile ? m_videoFile->duration() : m_duration; }
+    int videoWidth() const {
+        throwIfInvalid();
+        return m_videoFile->width();
+    }
+    int videoHeight() const {
+        throwIfInvalid();
+        return m_videoFile->height();
+    }
+    VideoFile * videoFile() {
+        return m_videoFile;
+    }
     const VideoFile * videoFile() const { return m_videoFile; }
     static QDir movDir();
     QDir dataDir() const { return m_dataDir; }
@@ -109,6 +128,8 @@ protected:
 
 private:
     void setup();
+    void throwIfInvalid() const;
+    qint64 m_duration;
 };
 
 }
