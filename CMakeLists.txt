@@ -122,3 +122,7 @@ IF(WIN32)
     "phonon_backend;codecs;iconengines;imageformats;graphicssystems")
   COLLECT_TAKEAWAY_QT_PLUGINS(WatchThatSound_QT_PLUGINS)
 ENDIF(WIN32)
+
+# BDD
+ADD_SUBDIRECTORY(bdd)
+

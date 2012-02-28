@@ -7,23 +7,43 @@
 
 using namespace WTS;
 
-    Project::Project(const QString& path, QObject * parent)
+Project::Project(const QString& path, QObject * parent)
     : QObject(parent)
-    , m_loading(false)
-    , m_finalTension(0.5)
-    , m_videoFile(new VideoFile(path, this))
-    , m_lastSampleNameNum(0)
 {
+    setup();
+
+    m_videoFile = new VideoFile(path, this);
+
     QDir movieDir = QFileInfo(path).dir();
-    m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName() + ".data") );
+    m_dataDir = QDir( movieDir.filePath( QFileInfo(path).completeBaseName()
+                + ".data") );
     if (! m_dataDir.exists() )
         movieDir.mkdir( m_dataDir.dirName() );
+}
+
+Project::Project(QObject * parent)
+    : QObject(parent)
+{
+    setup();
+}
+
+void Project::setup()
+{
+    m_loading = false;
+    m_finalTension = 0.5;
+    m_videoFile = NULL;
+    m_lastSampleNameNum = 0;
 
     // connect to itself...
-    connect(this,SIGNAL(saveSection(QXmlStreamWriter&)), SLOT(saveSequence(QXmlStreamWriter&)));
-    connect(this,SIGNAL(saveSection(QXmlStreamWriter&)), SLOT(saveStoryboard(QXmlStreamWriter&)));
-    connect(this,SIGNAL(loadSection(QXmlStreamReader&)), SLOT(loadSequence(QXmlStreamReader&)));
-    connect(this,SIGNAL(loadSection(QXmlStreamReader&)), SLOT(loadStoryboard(QXmlStreamReader&)));
+    connect(this,SIGNAL(saveSection(QXmlStreamWriter&)),
+            SLOT(saveSequence(QXmlStreamWriter&)));
+    connect(this,SIGNAL(saveSection(QXmlStreamWriter&)),
+            SLOT(saveStoryboard(QXmlStreamWriter&)));
+    connect(this,SIGNAL(loadSection(QXmlStreamReader&)),
+            SLOT(loadSequence(QXmlStreamReader&)));
+    connect(this,SIGNAL(loadSection(QXmlStreamReader&)),
+            SLOT(loadStoryboard(QXmlStreamReader&)));
+
 }
 
 void Project::saveStoryboard(QXmlStreamWriter& xml)

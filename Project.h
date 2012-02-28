@@ -3,6 +3,7 @@
 #include "VideoFile.h"
 #include "WtsAudio.h"
 
+
 namespace WTS {
 
 /** Project data container.
@@ -40,6 +41,7 @@ public:
         void setTension(float value) { m_tension = value; }
     };
 
+    explicit Project(QObject * parent = 0);
     Project(const QString& path, QObject * parent = 0);
     double finalTension() const { return m_finalTension; }
     void addMarker(MarkerType type, qint64 when, float tension);
@@ -104,6 +106,9 @@ protected:
     int m_lastSampleNameNum;
     static QDir s_movDir;
     static bool s_movDirFound;
+
+private:
+    void setup();
 };
 
 }
