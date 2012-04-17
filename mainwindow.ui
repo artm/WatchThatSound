@@ -352,6 +352,7 @@
    <addaction name="actionExport"/>
    <addaction name="separator"/>
    <addaction name="actionFullscreen"/>
+   <addaction name="actionP"/>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -474,6 +475,14 @@
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionP">
+   <property name="text">
+    <string>Print</string>
+   </property>
+   <property name="toolTip">
+    <string>Print</string>
    </property>
   </action>
  </widget>
