@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+
+<title>WTS development channel</title>
+<link>https://ftp.v2.nl/~artm/WTS3/devel.xml</link>
+<description>Most recent changes with links to updates.</description>
+<language>en</language>
+
+<item>
+<title>3.0.11a</title>
+<description><![CDATA[
+<h2>Nieuw in deze versie</h2>
+<ul>
+<li>voorlopig geen kleine </li>
+<li>deel van de mixdown crashes opgelost. De oplossing heeft echter oude selecties in samples ongeldig gemaakt
+(tijd schaal van selectie is veranderd)</li>
+</ul>
+]]>
+</description>
+<pubDate>Thu, Apr 19 2012 17:31:00 CEST</pubDate>
+<enclosure url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3.0.11a.zip" sparkle:version="3.0.11a"
+length="4533390" type="application/octet-stream"/>
+</item>
+
+</channel>
+</rss>
