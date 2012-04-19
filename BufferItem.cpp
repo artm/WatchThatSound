@@ -67,8 +67,7 @@ void BufferItem::update()
     setRect(r);
 
     // convert coordinates to pixels and see if pixmap needs to be updated
-    QPolygon poly = m_view->mapFromScene(r);
-    QRect viewRect = poly.boundingRect();
+    QRect viewRect = m_view->mapFromScene(r).boundingRect();
     if (m_pixmap->pixmap().size() != viewRect.size()) {
         QPixmap pixmap(viewRect.size());
         buffer()->buffer()->draw( pixmap );
