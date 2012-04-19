@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 #ifdef Q_WS_MAC
     AutoUpdater* updater = 0;
     CocoaInitializer initializer;
-    updater = new SparkleAutoUpdater("https://ftp.v2.nl/~artm/WTS3/appcast.xml");
+    updater = new SparkleAutoUpdater("https://ftp.v2.nl/~artm/WTS3/devel.xml");
     if (updater) {
             updater->checkForUpdates();
     }
