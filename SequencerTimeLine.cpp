@@ -152,11 +152,7 @@ void SequencerTimeLine::updateBuffer(SoundBuffer *buffer)
 
         if (bi->buffer()->buffer() == buffer) {
             scene()->clearSelection();
-            foreach(QGraphicsItem * child, bi->childItems()) {
-                scene()->removeItem(child);
-                delete child;
-            }
-            bi->update();
+            bi->bufferChanged();
             showRange(bi, buffer);
             bi->setSelected(true);
         }

@@ -16,6 +16,8 @@ public:
     WtsAudio::BufferAt * buffer() { return m_buffer; }
     void update();
 
+    void bufferChanged();
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
