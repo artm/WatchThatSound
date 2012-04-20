@@ -21,5 +21,20 @@
 length="13654236" type="application/octet-stream"/>
 </item>
 
+<item>
+<title>3.0.12</title>
+<description><![CDATA[
+<h2>Nieuw in deze versie</h2>
+<ul>
+<li>kleine waveforms zijn terug</li>
+<li>versie nummer wordt correct gebruikt door de updater</li>
+</ul>
+]]>
+</description>
+<pubDate>Thu, Apr 20 2012 17:16:00 CEST</pubDate>
+<enclosure url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3.0.12.zip" sparkle:version="3.0.12"
+length="13667127" type="application/octet-stream"/>
+</item>
+
 </channel>
 </rss>
