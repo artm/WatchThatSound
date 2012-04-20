@@ -12,15 +12,13 @@
 <description><![CDATA[
 <h2>Nieuw in deze versie</h2>
 <ul>
-<li>voorlopig geen kleine </li>
-<li>deel van de mixdown crashes opgelost. De oplossing heeft echter oude selecties in samples ongeldig gemaakt
-(tijd schaal van selectie is veranderd)</li>
+<li>voorlopig geen kleine waveforms</li>
 </ul>
 ]]>
 </description>
 <pubDate>Thu, Apr 19 2012 17:31:00 CEST</pubDate>
 <enclosure url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3.0.11a.zip" sparkle:version="3.0.11a"
-length="4533390" type="application/octet-stream"/>
+length="13654236" type="application/octet-stream"/>
 </item>
 
 </channel>
