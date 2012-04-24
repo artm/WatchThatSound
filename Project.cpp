@@ -5,7 +5,12 @@
 #include "SoundBuffer.h"
 #include "Rainbow.h"
 
+#include <QPainter>
+#include <QPrinter>
+
 using namespace WTS;
+
+const float MM_PER_INCH = 0.0393700787;
 
 Project::Project(QObject * parent)
     : QObject(parent)
@@ -200,27 +205,44 @@ void Project::removeMarkerAt(quint64 at)
     }
 }
 
-QPainterPath Project::tensionCurve(float width)
-{
+QPainterPath Project::tensionCurve(float width, float height, Marker * from, Marker * to) {
     throwIfInvalid();
 
     QPainterPath curve;
     QMapIterator<qint64, Project::Marker *> iter(m_markers);
     bool init = true;
+
+    qint64 start = from ? from->at() : 0;
+    qint64 end = to ? to->at() : duration();
+
+    // skip until 'from'
+    if (from) {
+        while(iter.hasNext()) {
+            if (iter.peekNext().value() == from)
+                break;
+            iter.next();
+        }
+    }
+
     while(iter.hasNext()){
         iter.next();
         Project::Marker * m = iter.value();
 
-        float x = width * m->at() / duration();
+        QPointF xy(width * (m->at()-start) / (end-start),
+                   height * m->tension());
 
         if (init) {
-            curve.moveTo(QPointF(x, m->tension()));
+            curve.moveTo(xy);
             init = false;
         } else
-            curve.lineTo( QPointF(x, m->tension()) );
+            curve.lineTo(xy);
+
+        if (to && iter.value() == to)
+            break;
     }
 
-    curve.lineTo( QPointF(width, finalTension()));
+    if (!to)
+        curve.lineTo( QPointF(width, height * finalTension()));
 
     return curve;
 }
@@ -448,4 +470,160 @@ void Project::setDuration(qint64 duration)
 bool Project::isValid() const
 {
     return m_videoFile || m_duration > 0;
+}
+
+QString WTS::Project::pdfPath()
+{
+    return m_dataDir.filePath( movieFilename() + ".pdf" );
+}
+
+void WTS::Project::print(QPrinter &printer)
+{
+    // setup
+    m_markerPen = QPen(QColor(127,127,127));
+
+    QPen helperPen = QPen(Qt::black);
+
+    QPainter painter;
+    painter.begin(&printer);
+    painter.setRenderHints(QPainter::Antialiasing|QPainter::TextAntialiasing|
+                           QPainter::SmoothPixmapTransform|
+                           QPainter::HighQualityAntialiasing);
+
+    QList<Marker *> sceneMarks = getMarkers(SCENE);
+
+
+    for(QList<Marker*>::iterator sceneIter = sceneMarks.begin();
+        sceneIter != sceneMarks.end();
+        ++sceneIter)
+    {
+        bool last = ( sceneIter+1== sceneMarks.end() );
+        qint64  startTime = (*sceneIter)->at(),
+                endTime = last ? duration() : (*(sceneIter+1))->at();
+
+        QRect target(0, 0, printer.pageRect().width(), printer.pageRect().height());
+        int hPart = (printer.pageRect().height()) / 9; // based on a sketch in my notebook
+
+        // first strip - thumbs
+        target.setHeight( hPart * 3 / 2 );
+        drawSceneThumbs( *sceneIter,  startTime, endTime, painter, target );
+
+        // next strip - scale
+        target.setY( target.y()+target.height() );
+        target.setHeight( 10 * MM_PER_INCH * painter.device()->logicalDpiY() );
+        painter.setPen(helperPen);
+        drawTimeScale( startTime, endTime, painter, target );
+
+        QRect frame = target;
+        frame.setHeight( printer.pageRect().height() - frame.y() );
+
+        // next strip - tension curve
+        target.setY(  target.y() + target.height() );
+        target.setHeight( hPart );
+
+        QPen tensionPen( Qt::red );
+        tensionPen.setWidth( 0.5 * MM_PER_INCH * printer.resolution() );
+        painter.setPen( tensionPen );
+        QPainterPath curve = tensionCurve( target.width(),
+                                           target.height(),
+                                           *sceneIter,
+                                           (sceneIter+1 == sceneMarks.end())?0:*(sceneIter+1) );
+        painter.save();
+        painter.translate( 0, target.y() );
+        painter.drawPath( curve );
+        painter.restore();
+
+        painter.setPen(helperPen);
+        painter.save();
+        //painter.translate( - printer.pageRect().topLeft() );
+        painter.drawRect( frame );
+        painter.restore();
+
+        if (!last)
+            printer.newPage();
+    }
+
+    painter.end();
+}
+
+void WTS::Project::drawTimeScale(qint64 start, qint64 end, QPainter &painter, const QRect &target)
+{
+    start /= 1000;//sec
+    end /= 1000;
+
+    float minTickDelta = 3.0 * MM_PER_INCH * painter.device()->logicalDpiX() ; // in dots...
+
+    QList<float> secPerTicks;
+    secPerTicks << 1 << 2 << 3 << 4 << 5 << 6 << 10 << 12 << 15 << 20 << 30 << 60 << 90 << 120;
+
+    // chose a distance...
+    qint64 duration = end - start;
+    float dotPerSec = (float)target.width() / duration;
+    float secPerTick;
+    foreach(float spt, secPerTicks) {
+        secPerTick = spt;
+        if (spt * dotPerSec > minTickDelta)
+            break;
+    }
+
+    float dotPerTick = dotPerSec * secPerTick;
+    float x = target.x();
+    float tickHeight = target.height()*0.3;
+    float longTickHeight = target.height()*0.6;
+
+    QFont oldFont = painter.font();
+    QFont smallfont(oldFont);
+    smallfont.setPointSizeF(9);
+    painter.setFont(smallfont);
+
+    float textHOffs = MM_PER_INCH * painter.device()->logicalDpiX(); // 1mm
+
+    int tickIndex = 0;
+    while( x<target.width()) {
+        float h = (tickIndex%10) ? tickHeight : longTickHeight;
+
+        painter.drawLine( QPointF(x, target.y()), QPointF(x, target.y()+h)  );
+
+        if (h==longTickHeight) {
+            // text next to long tick...
+            int time = start + tickIndex * secPerTick;
+            QString strTime = QString("%0:%1").arg(time/60).arg(time%60,2,10,QLatin1Char('0'));
+            painter.drawText( QPointF(x + textHOffs, target.y() + longTickHeight ), strTime );
+        }
+
+        x += dotPerTick;
+        tickIndex++;
+    }
+    painter.setFont(oldFont);
+}
+
+void WTS::Project::drawSceneThumbs(WTS::Project::Marker *sceneMarker,  qint64 start, qint64 end, QPainter &painter, const QRect &target)
+{
+    int gap = 3.0f * MM_PER_INCH * painter.device()->logicalDpiX(); // 3 mm in dots
+    QList<Marker*> markers = getMarkers();
+    QRect thumbRect(target.x(), target.y(), 0, target.height() * 3 / 4);
+
+    painter.setPen(m_markerPen);
+
+    for(QList<Marker*>::iterator markerIter = qFind( markers.begin(), markers.end(), sceneMarker);
+        markerIter != markers.end() && (*markerIter == sceneMarker || (*markerIter)->type() != SCENE);
+        ++markerIter)
+    {
+        Marker * marker = *markerIter;
+        m_videoFile->seek( marker->at() );
+        QImage frame = m_videoFile->frame();
+        // adjust thumb rect
+        thumbRect.setWidth( thumbRect.height() * frame.width() / frame.height() );
+        painter.drawImage( thumbRect, frame);
+
+        // a line from the thumb to it's time ...
+        float exactX = target.x() + target.width() * (marker->at() - start) / (end - start);
+        QPoint lineOrig = thumbRect.bottomLeft();
+        lineOrig.setX( lineOrig.x() + thumbRect.width() / 2 );
+        painter.drawLine( lineOrig, QPoint( exactX, target.bottom() ) );
+
+        // move thumb rect along
+        thumbRect.setX( thumbRect.x() + thumbRect.width() + gap );
+    }
+
 }

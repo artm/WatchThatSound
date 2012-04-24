@@ -352,7 +352,7 @@
    <addaction name="actionExport"/>
    <addaction name="separator"/>
    <addaction name="actionFullscreen"/>
-   <addaction name="actionP"/>
+   <addaction name="actionPrint"/>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -477,7 +477,7 @@
     <string>Preferences</string>
    </property>
   </action>
-  <action name="actionP">
+  <action name="actionPrint">
    <property name="text">
     <string>Print</string>
    </property>
@@ -678,6 +678,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionPrint</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>printAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>setFullscreen(bool)</slot>
@@ -686,5 +702,6 @@
   <slot>addEventMark()</slot>
   <slot>onRecord(bool)</slot>
   <slot>exportMovie()</slot>
+  <slot>printAction()</slot>
  </slots>
 </ui>

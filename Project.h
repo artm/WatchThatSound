@@ -55,7 +55,7 @@ public:
     double finalTension() const { return m_finalTension; }
     void addMarker(MarkerType type, qint64 when, float tension);
     QList<Marker *> getMarkers(MarkerType type = ANY, bool forward = true) const;
-    QPainterPath tensionCurve(float width);
+    QPainterPath tensionCurve(float width, float height = 1.0f, Marker * from = 0, Marker * to = 0);
     qint64 duration() const {
         throwIfInvalid();
         return m_videoFile ? m_videoFile->duration() : m_duration; }
@@ -79,6 +79,7 @@ public:
     WtsAudio::BufferAt *copyScratch(WtsAudio::BufferAt * newBuff);
     QString samplePath(const QString& sampleName);
     QString samplePath(SoundBuffer *);
+    QString pdfPath();
 
     QList<WtsAudio::BufferAt *> getSequence() const { return m_sequence; }
 
@@ -92,6 +93,7 @@ public slots:
 
     void save();
     void load();
+    void print(QPrinter&);
 
 signals:
 
@@ -116,6 +118,9 @@ protected:
     void removeMarkerAt(quint64 at);
     void removeBufferAt(WtsAudio::BufferAt * newBuff);
 
+    void drawTimeScale( qint64 start, qint64 end, QPainter& painter, const QRect& target );
+    void drawSceneThumbs( Marker * sceneMarker,  qint64 start, qint64 end, QPainter& painter, const QRect& target );
+
     bool m_loading;
     double m_finalTension;
     QMap<qint64, Project::Marker *> m_markers;
@@ -125,6 +130,9 @@ protected:
     int m_lastSampleNameNum;
     static QDir s_movDir;
     static bool s_movDirFound;
+
+    // print style
+    QPen m_markerPen;
 
 private:
     void setup();

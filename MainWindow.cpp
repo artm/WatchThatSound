@@ -12,6 +12,8 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <QHostInfo>
+#include <QPrinter>
+#include <QPainter>
 
 using namespace WTS;
 
@@ -473,3 +475,18 @@ void WTS::MainWindow::onEndOfSample(WtsAudio::BufferAt * seqBuffer)
     if (seqBuffer == m_soloBuffer)
         ui->actionPlay->setChecked(false);
 }
+
+void WTS::MainWindow::printAction()
+{
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setPaperSize( QPrinter::A4 );
+    printer.setOrientation( QPrinter::Landscape );
+
+    QPrintDialog *dialog = new QPrintDialog(&printer, this);
+    dialog->setWindowTitle(tr("Print Document"));
+    if (dialog->exec() != QDialog::Accepted)
+        return;
+
+    m_project->print(printer);
+}
+

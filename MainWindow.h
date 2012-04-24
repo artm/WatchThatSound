@@ -20,6 +20,7 @@ namespace WTS {
 
 class Exporter;
 class EditController;
+class TimeLineWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -61,6 +62,7 @@ public slots:
 
     void onEndOfSample( WtsAudio::BufferAt * );
 
+    void printAction();
 signals:
     void storyBoardChanged();
     void scratchUpdated(WtsAudio::BufferAt * bufferAt, bool recording);
