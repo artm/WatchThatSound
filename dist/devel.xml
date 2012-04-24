@@ -41,15 +41,15 @@ length="13667127" type="application/octet-stream"/>
 <description><![CDATA[
 <h2>Nieuw in deze versie</h2>
 <ul>
-<li></li>
+<li>preview van het printen, partituur werkt nog niet</li>
 </ul>
 ]]>
 </description>
-<pubDate></pubDate>
+<pubDate>Mon, Apr 24 2012, 10:38:00 CET</pubDate>
 <enclosure
 url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3.0.13.zip"
 sparkle:version="3.0.13"
-length=""
+length="13673530"
 type="application/octet-stream"/>
 </item>
 
