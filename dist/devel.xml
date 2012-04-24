@@ -53,5 +53,22 @@ length="13673530"
 type="application/octet-stream"/>
 </item>
 
+<item>
+<title>3.0.14</title>
+<description><![CDATA[
+<h2>Nieuw in deze versie</h2>
+<ul>
+<li></li>
+</ul>
+]]>
+</description>
+<pubDate>Mon, Apr 24 2012, 10:38:00 CET</pubDate>
+<enclosure
+url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3.0.14.zip"
+sparkle:version="3.0.14"
+length=""
+type="application/octet-stream"/>
+</item>
+
 </channel>
 </rss>
