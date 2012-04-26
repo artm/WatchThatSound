@@ -25,7 +25,7 @@ public slots:
     virtual void setProject(Project *project);
     void saveSection(QXmlStreamWriter& xml);
     bool loadSection(QXmlStreamReader& xml);
-
+    QList<ScoreSymbol*> scoreSymbols();
 
 protected:
     void selectPetal(QGraphicsItem * petal);

@@ -45,6 +45,12 @@ public:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
     virtual void keyReleaseEvent(QKeyEvent *event);
 
+    bool inHRange(float startTime, float endTime) const;
+    /*
+     * hUnit and vUnit are units for time-invariant sizes (symbol radii)
+     */
+    void print(QPainter& painter, float hUnit, float vUnit);
+
 protected:
 
     Shape m_shape;

@@ -169,6 +169,48 @@ void ScoreSymbol::updateGraphics()
     }
 }
 
+void WTS::ScoreSymbol::print(QPainter &painter, float hUnit, float vUnit)
+{
+    painter.save();
+    QPointF p2(x() + m_length, y());
+    painter.setPen(m_pen);
+
+    // time-invariant sizes
+    float   dx0 = m_thickness[0]*hUnit,
+            dy0 = m_thickness[0]*vUnit,
+            dx1 = m_thickness[1]*hUnit,
+            dy1 = m_thickness[1]*vUnit,
+            rx0 = 0.5 * dx0, ry0 = 0.5 * dy0,
+            rx1 = 0.5 * dx1, ry1 = 0.5 * dy1;
+
+    switch(symbolShape()) {
+    case DROPLET: {
+        QPainterPath path;
+        path.moveTo(0,-ry0);
+        path.arcTo(-rx0,-ry0,dx0,dy0,90,m_length > rx0 ? 180 : -180);
+        path.lineTo(m_length,ry1);
+        if (m_thickness[1] > 0) {
+            path.arcTo(m_length-rx1,-ry1,dx1,dy1, 270, m_length > rx0 ? 180 : -180);
+        }
+        path.closeSubpath();
+        painter.translate(pos());
+        painter.fillPath(path, m_brush);
+        painter.drawPath(path);
+        break;
+    }
+    case TAILED_CIRCLE:
+        painter.drawLine( QPointF(x() + (m_length > 0 ? rx0 : -rx0), y()), p2);
+        goto circle;
+    case FILLED_CIRCLE:
+        painter.setBrush(m_brush);
+    case CIRCLE:
+    default:
+    circle:
+        painter.drawEllipse(pos(), rx0, ry0);
+    }
+    painter.restore();
+}
+
 void ScoreSymbol::setColors(const QPen &pen, const QBrush &brush)
 {
     m_pen = pen;
@@ -237,3 +279,10 @@ void ScoreSymbol::keyReleaseEvent(QKeyEvent *event)
         break;
     }
 }
+
+bool WTS::ScoreSymbol::inHRange(float startTime, float endTime) const
+{
+    float x1 = x() + m_length;
+    return (x() >= startTime && x() <= endTime) || (x1 >= startTime && x1 <= endTime);
+}
+

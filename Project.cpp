@@ -4,6 +4,7 @@
 #include "Common.h"
 #include "SoundBuffer.h"
 #include "Rainbow.h"
+#include "ScoreSymbol.h"
 
 #include <QPainter>
 #include <QPrinter>
@@ -477,7 +478,7 @@ QString WTS::Project::pdfPath()
     return m_dataDir.filePath( movieFilename() + ".pdf" );
 }
 
-void WTS::Project::print(QPrinter &printer)
+void WTS::Project::print(QPrinter &printer, const QList<WTS::ScoreSymbol *>& score)
 {
     // setup
     m_markerPen = QPen(QColor(127,127,127));
@@ -533,9 +534,14 @@ void WTS::Project::print(QPrinter &printer)
         painter.drawPath( curve );
         painter.restore();
 
+        // last strip - score
+        target.setY( target.y() + target.height() );
+        target.setHeight( printer.pageRect().height() - target.y() );
+        drawScore( score, startTime, endTime, painter, target );
+
+        // frame
         painter.setPen(helperPen);
         painter.save();
-        //painter.translate( - printer.pageRect().topLeft() );
         painter.drawRect( frame );
         painter.restore();
 
@@ -546,7 +552,8 @@ void WTS::Project::print(QPrinter &printer)
     painter.end();
 }
 
-void WTS::Project::drawTimeScale(qint64 start, qint64 end, QPainter &painter, const QRect &target)
+void WTS::Project::drawTimeScale(qint64 start, qint64 end,
+                                 QPainter &painter, const QRect &target)
 {
     start /= 1000;//sec
     end /= 1000;
@@ -597,7 +604,9 @@ void WTS::Project::drawTimeScale(qint64 start, qint64 end, QPainter &painter, co
     painter.setFont(oldFont);
 }
 
-void WTS::Project::drawSceneThumbs(WTS::Project::Marker *sceneMarker,  qint64 start, qint64 end, QPainter &painter, const QRect &target)
+
+void WTS::Project::drawSceneThumbs(WTS::Project::Marker *sceneMarker,  qint64 start, qint64 end,
+                                   QPainter &painter, const QRect &target)
 {
     int gap = 3.0f * MM_PER_INCH * painter.device()->logicalDpiX(); // 3 mm in dots
     QList<Marker*> markers = getMarkers();
@@ -626,4 +635,28 @@ void WTS::Project::drawSceneThumbs(WTS::Project::Marker *sceneMarker,  qint64 st
         thumbRect.setX( thumbRect.x() + thumbRect.width() + gap );
     }
 
+}
+
+void WTS::Project::drawScore( const QList<WTS::ScoreSymbol *>& score, qint64 startTime, qint64 endTime,
+                              QPainter &painter, const QRect &target)
+{
+    painter.save();
+
+    // translate to target
+    painter.translate(target.topLeft());
+    // scale so that scene duration fits inside target width and (0;1) inside target height:
+    painter.scale( (float)target.width() * (float)duration() / (float)(endTime-startTime), target.height() );
+    // translate to the start of the current scene
+    painter.translate(-(float)startTime / duration(), 0);
+
+    float startX = (float)startTime/duration(), endX = (float)endTime/duration();
+    foreach(ScoreSymbol * sym, score) {
+
+        if (!sym->inHRange(startX, endX))
+            continue;
+        sym->print( painter,
+                    MM_PER_INCH * painter.device()->logicalDpiX() * (float)(endX - startX) / target.width(),
+                    MM_PER_INCH * painter.device()->logicalDpiY() / target.height());
+    }
+    painter.restore();
 }

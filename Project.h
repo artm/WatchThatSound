@@ -6,6 +6,8 @@
 
 namespace WTS {
 
+class ScoreSymbol;
+
 /** Project data container.
  * Eventually all project specific data should end up here.
  */
@@ -93,7 +95,7 @@ public slots:
 
     void save();
     void load();
-    void print(QPrinter&);
+    void print(QPrinter&, const QList<WTS::ScoreSymbol *>&);
 
 signals:
 
@@ -119,7 +121,8 @@ protected:
     void removeBufferAt(WtsAudio::BufferAt * newBuff);
 
     void drawTimeScale( qint64 start, qint64 end, QPainter& painter, const QRect& target );
-    void drawSceneThumbs( Marker * sceneMarker,  qint64 start, qint64 end, QPainter& painter, const QRect& target );
+    void drawSceneThumbs( Marker * sceneMarker, qint64 start, qint64 end, QPainter& painter, const QRect& target );
+    void drawScore( const QList<WTS::ScoreSymbol *>& score, qint64 start, qint64 end, QPainter& painter, const QRect& target );
 
     bool m_loading;
     double m_finalTension;

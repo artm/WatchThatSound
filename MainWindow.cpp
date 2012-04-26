@@ -487,6 +487,6 @@ void WTS::MainWindow::printAction()
     if (dialog->exec() != QDialog::Accepted)
         return;
 
-    m_project->print(printer);
+    m_project->print(printer, ui->score->scoreSymbols());
 }
 

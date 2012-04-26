@@ -206,3 +206,14 @@ void ScoreEditor::setProject(Project *project)
     connect(project, SIGNAL(saveSection(QXmlStreamWriter&)), SLOT(saveSection(QXmlStreamWriter&)));
 }
 
+QList<WTS::ScoreSymbol *> WTS::ScoreEditor::scoreSymbols()
+{
+    QList<WTS::ScoreSymbol *> list;
+    foreach(QGraphicsItem * item, scene()->items()) {
+        ScoreSymbol * symbol = dynamic_cast<ScoreSymbol *>(item);
+        if (!symbol || symbol == m_newSymbol) continue;
+        list << symbol;
+    }
+    return list;
+}
+
