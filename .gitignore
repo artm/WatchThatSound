@@ -1,2 +1,6 @@
 WTS3.pro.user*
 CMakeLists.txt.user*
+.bundle
+.rbenv-version
+bin
+vendor
