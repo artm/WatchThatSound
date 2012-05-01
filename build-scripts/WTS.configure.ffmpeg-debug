@@ -19,7 +19,7 @@ echo MUX: $MUX
   --enable-muxer=$MUX \
   --enable-demuxer=$MUX \
   --enable-encoder=mjpeg \
-  --enable-encoder=aac \
+  --enable-encoder=pcm_s16le \
   --enable-protocol=file \
   \
   --enable-ffprobe \
