@@ -105,8 +105,10 @@ void Exporter::performExport()
 
     av_write_header(m_container);
 
+    start();
     m_originalVideoFile->seek(0);
     m_audio->samplerClear();
+    QList<WtsAudio::BufferAt *>::iterator sequenceCursor = beginCursor();
 
     double duration = (double)m_videoStream->duration
             * m_videoStream->time_base.num
@@ -137,7 +139,6 @@ void Exporter::performExport()
 
             qint64 ms = (qint64)(audio_pts * 1000.0);
 
-            QList<WtsAudio::BufferAt *>::iterator sequenceCursor = beginCursor();
             while( sequenceCursor != endCursor()
                   && ((*sequenceCursor)->at()
                       + WtsAudio::sampleCountToMs((*sequenceCursor)->buffer()->rangeStart())) <= ms ) {
