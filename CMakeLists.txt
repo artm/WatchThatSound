@@ -29,6 +29,22 @@ ENDIF(APPLE)
 FIND_PACKAGE(Portaudio REQUIRED)
 INCLUDE_DIRECTORIES(${Portaudio_INCLUDE_DIRS})
 
+FIND_PATH(SndFile_hh_INCLUDE_PATH sndfile.hh HINTS ${SndFile_hh_INCLUDE_PATH})
+MESSAGE("SndFile include: ${SndFile_hh_INCLUDE_PATH}")
+IF(${SndFile_hh_INCLUDE_PATH} STREQUAL "")
+  MESSAGE(FATAL_ERROR "Can't find required header file sndfile.hh")
+ELSE(${SndFile_hh_INCLUDE_PATH} STREQUAL "")
+  INCLUDE_DIRECTORIES(${SndFile_hh_INCLUDE_PATH})
+ENDIF(${SndFile_hh_INCLUDE_PATH} STREQUAL "")
+
+FIND_PATH(SndFile_h_INCLUDE_PATH sndfile.h HINTS ${SndFile_h_INCLUDE_PATH})
+MESSAGE("SndFile include: ${SndFile_h_INCLUDE_PATH}")
+IF(${SndFile_h_INCLUDE_PATH} STREQUAL "")
+  MESSAGE(FATAL_ERROR "Can't find required header file sndfile.h")
+ELSE(${SndFile_h_INCLUDE_PATH} STREQUAL "")
+  INCLUDE_DIRECTORIES(${SndFile_h_INCLUDE_PATH})
+ENDIF(${SndFile_h_INCLUDE_PATH} STREQUAL "")
+
 FIND_LIBRARY_VERBOSE(SndFile sndfile)
 
 INCLUDE(SrcScan)
