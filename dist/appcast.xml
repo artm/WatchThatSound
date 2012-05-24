@@ -187,5 +187,19 @@ length="13562913"
 type="application/octet-stream"/>
 </item>
 
+<item>
+<title>3.0.18</title>
+<sparkle:releaseNotesLink>
+https://ftp.v2.nl/~artm/WTS3/ReleaseNotes-3.0.18.html
+</sparkle:releaseNotesLink>
+<pubDate>Thu 24 May 2012 14:30:07 CEST
+</pubDate>
+<enclosure
+url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3.0.18.zip"
+sparkle:version="3.0.18"
+length="13562913"
+type="application/octet-stream"/>
+</item>
+
 </channel>
 </rss>
