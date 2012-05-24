@@ -1,5 +1,6 @@
 #include <QApplication>
 #include "MainWindow.h"
+#include "wts_version.h"
 
 #ifdef Q_WS_MAC
 #include "CocoaInitializer.h"
@@ -23,7 +24,7 @@ int main(int argc, char *argv[])
 #ifdef Q_WS_MAC
     AutoUpdater* updater = 0;
     CocoaInitializer initializer;
-    updater = new SparkleAutoUpdater("https://ftp.v2.nl/~artm/WTS3/devel.xml");
+    updater = new SparkleAutoUpdater(WTS_UPDATE_CHANNEL);
     if (updater) {
             updater->checkForUpdates();
     }
