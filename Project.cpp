@@ -27,6 +27,7 @@ void Project::setup()
     m_finalTension = 0.5;
     m_videoFile = NULL;
     m_lastSampleNameNum = 0;
+    m_msPerPage = 15000;
 
     // connect to itself...
     connect(this,SIGNAL(saveSection(QXmlStreamWriter&)),
@@ -481,10 +482,6 @@ QString WTS::Project::pdfPath()
 void WTS::Project::print(QPrinter &printer, const QList<WTS::ScoreSymbol *>& score)
 {
     // setup
-    m_markerPen = QPen(QColor(127,127,127));
-
-    QPen helperPen = QPen(Qt::black);
-
     QPainter painter;
     painter.begin(&printer);
     painter.setRenderHints(QPainter::Antialiasing|QPainter::TextAntialiasing|
@@ -493,60 +490,83 @@ void WTS::Project::print(QPrinter &printer, const QList<WTS::ScoreSymbol *>& sco
 
     QList<Marker *> sceneMarks = getMarkers(SCENE);
 
+    m_markerPen = QPen(QColor(127,127,127));
+    QPen helperPen = QPen(Qt::black);
+    QPen tensionPen( Qt::red );
+    tensionPen.setWidth( 0.5 * MM_PER_INCH * printer.resolution() );
+
+    int staveMargin = printer.pageRect().height() / 10;
+    int staveH = (printer.pageRect().height() - staveMargin) / 2, staveW = printer.pageRect().width();
+    int hPart = staveH / 9;
 
     for(QList<Marker*>::iterator sceneIter = sceneMarks.begin();
         sceneIter != sceneMarks.end();
         ++sceneIter)
     {
         bool last = ( sceneIter+1== sceneMarks.end() );
-        qint64  startTime = (*sceneIter)->at(),
-                endTime = last ? duration() : (*(sceneIter+1))->at();
+        qint64  sceneStartTime = (*sceneIter)->at(),
+                sceneEndTime = last ? duration() : (*(sceneIter+1))->at();
 
-        QRect target(0, 0, printer.pageRect().width(), printer.pageRect().height());
-        int hPart = (printer.pageRect().height()) / 9; // based on a sketch in my notebook
+        qint64 startTime = sceneStartTime, endTime;
+        int scenePage = 0, staveIdx = 0;
 
-        // first strip - thumbs
-        target.setHeight( hPart * 3 / 2 );
-        drawSceneThumbs( *sceneIter,  startTime, endTime, painter, target );
+        while( startTime < sceneEndTime ) {
+            endTime = std::min( sceneEndTime, startTime + m_msPerPage );
+            // print portion ....
+            QRect target = QRect(0, 0, staveW * (endTime-startTime) / m_msPerPage, staveH);
+            painter.resetTransform();
+            if (staveIdx) painter.translate(0, staveIdx* (staveH+staveMargin));
 
-        // next strip - scale
-        target.setY( target.y()+target.height() );
-        target.setHeight( 10 * MM_PER_INCH * painter.device()->logicalDpiY() );
-        painter.setPen(helperPen);
-        drawTimeScale( startTime, endTime, painter, target );
+            // first strip - thumbs
+            target.setHeight( hPart * 3 / 2 );
+            drawSceneThumbs( *sceneIter,  startTime, endTime, painter, target );
 
-        QRect frame = target;
-        frame.setHeight( printer.pageRect().height() - frame.y() );
+            // next strip - scale
+            target.setY( target.y()+target.height() );
+            target.setHeight( 10 * MM_PER_INCH * painter.device()->logicalDpiY() );
+            painter.setPen(helperPen);
+            drawTimeScale( startTime, endTime, painter, target );
 
-        // next strip - tension curve
-        target.setY(  target.y() + target.height() );
-        target.setHeight( hPart );
+            QRect frame = target;
+            frame.setHeight( staveH - frame.y() );
 
-        QPen tensionPen( Qt::red );
-        tensionPen.setWidth( 0.5 * MM_PER_INCH * printer.resolution() );
-        painter.setPen( tensionPen );
-        QPainterPath curve = tensionCurve( target.width(),
-                                           target.height(),
-                                           *sceneIter,
-                                           (sceneIter+1 == sceneMarks.end())?0:*(sceneIter+1) );
-        painter.save();
-        painter.translate( 0, target.y() );
-        painter.drawPath( curve );
-        painter.restore();
+            // next strip - tension curve AND score
+            target.setY(  target.y() + target.height() );
+            target.setHeight( staveH - target.y() );
 
-        // last strip - score
-        target.setY( target.y() + target.height() );
-        target.setHeight( printer.pageRect().height() - target.y() );
-        drawScore( score, startTime, endTime, painter, target );
+            // draw the tension curve
+            // curve fragment for the whole scene...
+            QPainterPath curve = tensionCurve( staveW,
+                                               target.height(),
+                                               *sceneIter,
+                                               (sceneIter+1 == sceneMarks.end())?0:*(sceneIter+1) );
+            painter.setPen( tensionPen );
+            painter.save();
+            painter.setClipRect(target);
+            painter.translate( - staveW * scenePage, target.y() );
+            painter.scale( (double)(sceneEndTime - sceneStartTime) / m_msPerPage, 1.0);
+            painter.drawPath( curve );
+            painter.restore();
 
-        // frame
-        painter.setPen(helperPen);
-        painter.save();
-        painter.drawRect( frame );
-        painter.restore();
+            // last strip - score
+            painter.save();
+            painter.setClipRect(target);
+            drawScore( score, startTime, endTime, painter, target );
+            painter.restore();
 
-        if (!last)
-            printer.newPage();
+            // frame
+            painter.setPen(helperPen);
+            painter.save();
+            painter.drawRect( frame );
+            painter.restore();
+
+            if (staveIdx || (endTime==sceneEndTime && !last))
+                printer.newPage();
+
+            startTime = endTime;
+            scenePage ++;
+            staveIdx = staveIdx ? 0 : 1 ;
+        }
     }
 
     painter.end();
@@ -619,6 +639,10 @@ void WTS::Project::drawSceneThumbs(WTS::Project::Marker *sceneMarker,  qint64 st
         ++markerIter)
     {
         Marker * marker = *markerIter;
+
+        if (marker->at() < start || marker->at() > end)
+            continue;
+
         m_videoFile->seek( marker->at() );
         QImage frame = m_videoFile->frame();
         // adjust thumb rect

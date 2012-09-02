@@ -97,6 +97,9 @@ public slots:
     void load();
     void print(QPrinter&, const QList<WTS::ScoreSymbol *>&);
 
+    void setSecPerPage( int sec ) { setMsPerPage( (qint64)sec * 1000 ); }
+    void setMsPerPage( qint64 ms ) { m_msPerPage = ms; }
+
 signals:
 
     void saveSection(QXmlStreamWriter& writer);
@@ -136,6 +139,7 @@ protected:
 
     // print style
     QPen m_markerPen;
+    qint64 m_msPerPage;
 
 private:
     void setup();
