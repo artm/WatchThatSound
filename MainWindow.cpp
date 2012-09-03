@@ -23,7 +23,6 @@ MainWindow::MainWindow(QWidget *parent)
     , m_project(0)
     , m_exporter(new Exporter(this))
     , m_muteOnRecord(true)
-    , m_settings("WatchThatSound","WTS-Workshop-Tool")
     , m_soloBuffer(0)
     , m_editController( new EditController(this) )
 {
@@ -76,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_preferences->ui->muteOnRecord, SIGNAL(toggled(bool)), SLOT(setMuteOnRecord(bool)));
 
     m_preferences->ui->muteOnRecord->setChecked( m_settings.value("muteOnRecord", true).toBool() );
+    m_preferences->ui->secPPage->setValue( m_settings.value("secPerPage", 15).toInt() );
     m_muteOnRecord = m_preferences->ui->muteOnRecord->isChecked();
 
 }
@@ -84,8 +84,6 @@ MainWindow::~MainWindow()
 {
     // this is necessary to ensure widgets won't get tick'ed after player is deaded
     ui->videoPlayer->stop();
-
-    m_settings.setValue("muteOnRecord", m_muteOnRecord);
 
     delete ui;
 }
@@ -124,6 +122,9 @@ void MainWindow::loadMovie(const QString& path)
     // access to thumbnails
     m_project = new Project(path, this);
     emit projectChanged(m_project);
+    connect(m_preferences->ui->secPPage, SIGNAL(valueChanged(int)), m_project, SLOT(setSecPerPage(int)));
+    m_project->setSecPerPage(m_preferences->ui->secPPage->value());
+
     connect(m_editController, SIGNAL(samplerSchedule(WtsAudio::BufferAt*)),
             &m_audio, SLOT(samplerSchedule(WtsAudio::BufferAt*)));
 
@@ -490,3 +491,15 @@ void WTS::MainWindow::printAction()
     m_project->print(printer, ui->score->scoreSymbols());
 }
 
+void WTS::MainWindow::closeEvent(QCloseEvent *event)
+{
+    writeSettings();
+    event->accept();
+}
+
+void WTS::MainWindow::writeSettings()
+{
+    m_settings.setValue("muteOnRecord", m_muteOnRecord);
+    m_settings.setValue("secPerPage", m_preferences->ui->secPPage->value());
+    m_settings.sync();
+}

@@ -63,6 +63,8 @@ public slots:
     void onEndOfSample( WtsAudio::BufferAt * );
 
     void printAction();
+    void writeSettings();
+
 signals:
     void storyBoardChanged();
     void scratchUpdated(WtsAudio::BufferAt * bufferAt, bool recording);
@@ -78,6 +80,7 @@ signals:
 protected:
     void constructStateMachine();
     bool eventFilter( QObject * watched, QEvent * event );
+    void closeEvent(QCloseEvent *event);
 
     Project * m_project;
 

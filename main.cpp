@@ -12,7 +12,8 @@ using namespace WTS;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setApplicationName("Watch That Sound");
+    a.setOrganizationDomain("watchthatsound.nl");
+    a.setApplicationName("WorkshopTool");
     a.setQuitOnLastWindowClosed(true);
 
 #ifdef Q_WS_WIN
