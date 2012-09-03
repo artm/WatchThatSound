@@ -29,28 +29,25 @@ struct Spread {
     Spread( int _total_width, int _item_width, const Array& anchors )
         : N(anchors.size()), total_width(_total_width), item_width(_item_width)
         , max_pressure( std::max(0, N*item_width - total_width) )
-        , items(N), gaps(N)
+        , items(N), gaps(N-1)
     {
         for(int i = 0; i<N; i++) {
             items[i].anchor = items[i].pos = anchors[i];
         }
-        for(int i = 0; i<N+1; i++) {
-            if (i>0) {
-                gaps[i].left = &items[i-1];
-                items[i-1].right = &gaps[i];
-            }
-            if (i<N) {
-                gaps[i].right = &items[i];
-                items[i].left = &gaps[i];
-            }
+        for(int i = 0; i<N-1; i++) {
+                gaps[i].left = &items[i];
+                gaps[i].right = &items[i+1];
+                items[i].right = &gaps[i];
+                items[i+1].left = &gaps[i];
         }
-        qDebug() << "Max pressure" << max_pressure;
     }
 
     void apply_hard_limits()
     {
-        for(int i = 0; i<N; i++)
-            items[i].pos = std::max( item_width/2, std::min( items[i].pos, total_width-item_width/2) );
+        for(int i=0; i< items.size(); i++) {
+            Item& item = items[i];
+            item.pos = std::max( item_width/2, std::min( item.pos, total_width-item_width/2) );
+        }
     }
 
     int measure_gaps()
@@ -58,21 +55,28 @@ struct Spread {
         apply_hard_limits();
         int total = 0;
         // measure gaps
-        for(int i = 0; i<N+1; i++) {
-            int x1 = gaps[i].left ? gaps[i].left->pos + item_width/2 : 0;
-            int x2 = gaps[i].right ? gaps[i].right->pos - item_width/2 : total_width;
-            total += gaps[i].pressure = std::max( 0, x1 - x2 );
+        for(int i = 0; i<gaps.size(); i++) {
+            Gap& gap = gaps[i];
+            int x1 = gap.left->pos + item_width/2;
+            int x2 = gap.right->pos - item_width/2;
+            total += gap.pressure = std::max( 0, x1 - x2 );
         }
         return total;
     }
 
     void run(double k)
     {
+        int iterations = 0;
+
         int tot;
-        while( (tot=measure_gaps()) > max_pressure ) {
-            qDebug() << "total pressure" << tot;
-            for(int i=0; i<N; i++) {
-                int pressure = items[i].left->pressure - items[i].right->pressure;
+        while( (tot=measure_gaps()) > max_pressure  && iterations++ < 100) {
+            for(int i = 0; i<items.size(); i++) {
+                Item& item = items[i];
+                double pressure = 0.0;
+                if (item.left)
+                    pressure += item.left->pressure;
+                if (item.right)
+                    pressure -= item.right->pressure;
                 items[i].pos = floor( 0.5 + k * pressure + items[i].pos );
             }
         }
@@ -88,18 +92,24 @@ struct Spread {
 template<class Array>
 void spread( int total_width, int item_width, const Array& anchors, Array& result )
 {
-    foreach( int cx, anchors ) {
-        result << std::max(0, std::min( total_width - item_width, cx - item_width/2));
-    }
+#define USE_SPREAD
 
-    /*
+#ifdef USE_SPREAD
+
+    if (anchors.size() < 1)
+        return;
+
     detail::Spread spreader( total_width, item_width, anchors );
     spreader.run(0.5);
-    for(int i = 0; i<spreader.N; i++) {
+    for(int i = 0; i<spreader.items.size(); i++) {
         int x = spreader.items[i].pos - item_width/2;
         result << x;
     }
-    */
+#else
+    foreach( int cx, anchors ) {
+        result << std::max(0, std::min( total_width - item_width, cx - item_width/2));
+    }
+#endif
 
 }
 

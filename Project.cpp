@@ -654,10 +654,12 @@ void WTS::Project::drawSceneThumbs(WTS::Project::Marker *sceneMarker,  qint64 st
     }
 
     // 3. spread the thumbnails...
-    int thumb_height = target.height() * 3 / 4;
+    int thumb_height = target.height() * 4 / 5;
+    int thumb_margin = thumb_height / 7;
+
     int thumb_width = thumb_height * m_videoFile->width() / m_videoFile->height();
     QList< int > offsets;
-    WTS::spread( target.width(), thumb_width, anchers, offsets );
+    WTS::spread( target.width(), thumb_width + 2*thumb_margin, anchers, offsets );
 
     // 4. draw
     for(int i = 0; i<drawMarkers.count(); i++)
@@ -666,7 +668,7 @@ void WTS::Project::drawSceneThumbs(WTS::Project::Marker *sceneMarker,  qint64 st
 
         m_videoFile->seek( marker->at() );
         QImage frame = m_videoFile->frame();
-        QRect thumbRect(target.x() + offsets[i], target.y(), thumb_width, thumb_height);
+        QRect thumbRect(target.x() + offsets[i] + thumb_margin, target.y(), thumb_width, thumb_height);
         painter.drawImage( thumbRect, frame);
 
         // a line from the thumb to it's time ...
