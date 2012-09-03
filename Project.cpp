@@ -6,6 +6,8 @@
 #include "Rainbow.h"
 #include "ScoreSymbol.h"
 
+#include "ThumbsSpread.h"
+
 #include <QPainter>
 #include <QPrinter>
 
@@ -630,10 +632,13 @@ void WTS::Project::drawSceneThumbs(WTS::Project::Marker *sceneMarker,  qint64 st
 {
     int gap = 3.0f * MM_PER_INCH * painter.device()->logicalDpiX(); // 3 mm in dots
     QList<Marker*> markers = getMarkers();
-    QRect thumbRect(target.x(), target.y(), 0, target.height() * 3 / 4);
 
     painter.setPen(m_markerPen);
 
+    // 1. collect markers to draw
+    // and 2. find desired centers
+    QList<Marker*> drawMarkers;
+    QList< int > anchers;
     for(QList<Marker*>::iterator markerIter = qFind( markers.begin(), markers.end(), sceneMarker);
         markerIter != markers.end() && (*markerIter == sceneMarker || (*markerIter)->type() != SCENE);
         ++markerIter)
@@ -642,23 +647,32 @@ void WTS::Project::drawSceneThumbs(WTS::Project::Marker *sceneMarker,  qint64 st
 
         if (marker->at() < start || marker->at() > end)
             continue;
+        else {
+            drawMarkers << marker;
+            anchers << target.width() * (marker->at() - start) / (end - start);
+        }
+    }
+
+    // 3. spread the thumbnails...
+    int thumb_height = target.height() * 3 / 4;
+    int thumb_width = thumb_height * m_videoFile->width() / m_videoFile->height();
+    QList< int > offsets;
+    WTS::spread( target.width(), thumb_width, anchers, offsets );
+
+    // 4. draw
+    for(int i = 0; i<drawMarkers.count(); i++)
+    {
+        Marker * marker = drawMarkers[i];
 
         m_videoFile->seek( marker->at() );
         QImage frame = m_videoFile->frame();
-        // adjust thumb rect
-        thumbRect.setWidth( thumbRect.height() * frame.width() / frame.height() );
+        QRect thumbRect(target.x() + offsets[i], target.y(), thumb_width, thumb_height);
         painter.drawImage( thumbRect, frame);
 
         // a line from the thumb to it's time ...
-        float exactX = target.x() + target.width() * (marker->at() - start) / (end - start);
-        QPoint lineOrig = thumbRect.bottomLeft();
-        lineOrig.setX( lineOrig.x() + thumbRect.width() / 2 );
-        painter.drawLine( lineOrig, QPoint( exactX, target.bottom() ) );
-
-        // move thumb rect along
-        thumbRect.setX( thumbRect.x() + thumbRect.width() + gap );
+        QPoint lineOrig( thumbRect.center().x(), thumbRect.bottom() );
+        painter.drawLine( lineOrig, QPoint( target.x() + anchers[i], target.bottom() ) );
     }
-
 }
 
 void WTS::Project::drawScore( const QList<WTS::ScoreSymbol *>& score, qint64 startTime, qint64 endTime,
