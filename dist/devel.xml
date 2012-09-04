@@ -154,5 +154,33 @@ length="13628001"
 type="application/octet-stream"/>
 </item>
 
+<item>
+<title>3.0.20</title>
+<sparkle:releaseNotesLink>
+https://ftp.v2.nl/~artm/WTS3/ReleaseNotes-3.0.20.html
+</sparkle:releaseNotesLink>
+<pubDate>Mon  3 Sep 2012 21:24:59 CEST
+</pubDate>
+<enclosure
+url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3.0.20.zip"
+sparkle:version="3.0.20"
+length="13636162"
+type="application/octet-stream"/>
+</item>
+
+<item>
+<title>3.0.20</title>
+<sparkle:releaseNotesLink>
+https://ftp.v2.nl/~artm/WTS3/ReleaseNotes-3.0.20.html
+</sparkle:releaseNotesLink>
+<pubDate>Tue  4 Sep 2012 14:43:11 CEST
+</pubDate>
+<enclosure
+url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3.0.20.zip"
+sparkle:version="3.0.20"
+length="13636165"
+type="application/octet-stream"/>
+</item>
+
 </channel>
 </rss>
