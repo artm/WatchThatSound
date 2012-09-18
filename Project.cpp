@@ -5,6 +5,7 @@
 #include "SoundBuffer.h"
 #include "Rainbow.h"
 #include "ScoreSymbol.h"
+#include "ScoreEditor.h"
 
 #include "ThumbsSpread.h"
 
@@ -690,13 +691,25 @@ void WTS::Project::drawScore( const QList<WTS::ScoreSymbol *>& score, qint64 sta
     painter.translate(-(float)startTime / duration(), 0);
 
     float startX = (float)startTime/duration(), endX = (float)endTime/duration();
+
+    QWidget * widget = parent()->findChild<QWidget *>("score");
+
+    if (!widget->isVisible()) {
+        // very sneaky of me, but storyboard is always visible and is the same height as the score
+        widget = parent()->findChild<QWidget *>("storyboard");
+    }
+
+    float unit = (float)target.height() / (float)widget->height();
+    qDebug() << target.height() << widget->height() << unit;
+
     foreach(ScoreSymbol * sym, score) {
 
         if (!sym->inHRange(startX, endX))
             continue;
+
         sym->print( painter,
-                    MM_PER_INCH * painter.device()->logicalDpiX() * (float)(endX - startX) / target.width(),
-                    MM_PER_INCH * painter.device()->logicalDpiY() / target.height());
+                    unit * (float)(endX - startX) / target.width(),
+                    unit / target.height());
     }
     painter.restore();
 }
