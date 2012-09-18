@@ -182,5 +182,19 @@ length="13636165"
 type="application/octet-stream"/>
 </item>
 
+<item>
+<title>3.0.21</title>
+<sparkle:releaseNotesLink>
+https://ftp.v2.nl/~artm/WTS3/ReleaseNotes-3.0.21.html
+</sparkle:releaseNotesLink>
+<pubDate>Tue 18 Sep 2012 19:55:48 CEST
+</pubDate>
+<enclosure
+url="https://ftp.v2.nl/~artm/WTS3/WatchThatSound-3.0.21.zip"
+sparkle:version="3.0.21"
+length="13635406"
+type="application/octet-stream"/>
+</item>
+
 </channel>
 </rss>
