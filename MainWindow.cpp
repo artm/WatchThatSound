@@ -169,6 +169,8 @@ void MainWindow::setFullscreen(bool fs) {
 
 void MainWindow::onPlay(bool play)
 {
+    if (!m_project) return;
+
     if (play) {
         emit samplerClear();
 
