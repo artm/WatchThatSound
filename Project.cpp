@@ -693,14 +693,16 @@ void WTS::Project::drawScore( const QList<WTS::ScoreSymbol *>& score, qint64 sta
     float startX = (float)startTime/duration(), endX = (float)endTime/duration();
 
     QWidget * widget = parent()->findChild<QWidget *>("score");
+    ScoreEditor * scoreEditor = qobject_cast<ScoreEditor *>(widget);
 
     if (!widget->isVisible()) {
         // very sneaky of me, but storyboard is always visible and is the same height as the score
         widget = parent()->findChild<QWidget *>("storyboard");
     }
 
+    scoreEditor->drawBackground( &painter, target );
+
     float unit = (float)target.height() / (float)widget->height();
-    qDebug() << target.height() << widget->height() << unit;
 
     foreach(ScoreSymbol * sym, score) {
 

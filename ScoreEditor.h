@@ -35,7 +35,8 @@ protected:
         PetalIndex = 100
     };
 
-    unsigned m_gridStep;
+    // thin lines are # of lines in each strip cut by the thick line
+    unsigned m_gridThinLines, m_gridThickLines, m_gridVerticalLines;
     ScoreSymbol * m_newSymbol;
     QGraphicsItemGroup * m_colorWheel;
     QGraphicsEllipseItem * m_colorSelCircle;

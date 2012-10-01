@@ -10,7 +10,9 @@ const float ScoreEditor::s_wheelOuterRadius = 18;
 
 ScoreEditor::ScoreEditor(QWidget *parent)
     : TimeLineWidget(parent)
-    , m_gridStep(5)
+    , m_gridThinLines(4)
+    , m_gridThickLines(2)
+    , m_gridVerticalLines(100)
     , m_newSymbol(0)
     , m_colorSelCircle(0)
 {
@@ -53,16 +55,25 @@ ScoreEditor::ScoreEditor(QWidget *parent)
 void ScoreEditor::drawBackground(QPainter *painter, const QRectF &rect)
 {
     TimeLineWidget::drawBackground(painter, rect);
-    painter->setPen(QColor(0,64,0,16));
+    QPen thinPen( QColor(10,64,10,16), 0 ), thickPen( QColor(0,32,0,60), 0 );
 
-    /* FIXME restrict to rect? */
-    for(int i=0; i<width(); i+=m_gridStep) {
-        float x = (float)i/width();
-        painter->drawLine(QPointF(x,0.0),QPointF(x,1.0));
+    /* grid lines */
+    int n_strips = m_gridThickLines + 1;
+    int n_lines = m_gridThickLines + n_strips * m_gridThinLines;
+    float gridStep = sceneRect().height() / (n_lines + 1);
+    for(int i = 0; i<n_lines; ++i) {
+        int rem = i%(m_gridThinLines+1);
+        if (rem==0) painter->setPen(thinPen);
+        else if(rem==m_gridThinLines) painter->setPen(thickPen);
+        float y = (i+1) * gridStep;
+        painter->drawLine(QPointF(rect.x(),y),QPointF(rect.x()+rect.width(),y));
     }
-    for(int j=0; j<height(); j+=m_gridStep) {
-        float y = (float)j/height();
-        painter->drawLine(QPointF(0.0,y),QPointF(1.0,y));
+
+    painter->setPen(thinPen);
+    float step = (float)sceneRect().width() / m_gridVerticalLines;
+    for(int i=1; i<m_gridVerticalLines+1; ++i) {
+        float x = step * i;
+        painter->drawLine(QPointF(x,0.0),QPointF(x,1.0));
     }
 }
 
