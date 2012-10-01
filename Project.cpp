@@ -501,6 +501,8 @@ void WTS::Project::print(QPrinter &printer, const QList<WTS::ScoreSymbol *>& sco
     int staveMargin = printer.pageRect().height() / 10;
     int staveH = (printer.pageRect().height() - staveMargin) / 2, staveW = printer.pageRect().width();
     int hPart = staveH / 9;
+    int staveIdx = 0;
+    bool printStart = true;
 
     for(QList<Marker*>::iterator sceneIter = sceneMarks.begin();
         sceneIter != sceneMarks.end();
@@ -511,9 +513,13 @@ void WTS::Project::print(QPrinter &printer, const QList<WTS::ScoreSymbol *>& sco
                 sceneEndTime = last ? duration() : (*(sceneIter+1))->at();
 
         qint64 startTime = sceneStartTime, endTime;
-        int scenePage = 0, staveIdx = 0;
+        int sceneStave = 0;
 
         while( startTime < sceneEndTime ) {
+            if (staveIdx==0 && !printStart)
+                printer.newPage();
+            printStart = false;
+
             endTime = std::min( sceneEndTime, startTime + m_msPerPage );
             // print portion ....
             QRect target = QRect(0, 0, staveW * (endTime-startTime) / m_msPerPage, staveH);
@@ -546,7 +552,7 @@ void WTS::Project::print(QPrinter &printer, const QList<WTS::ScoreSymbol *>& sco
             painter.setPen( tensionPen );
             painter.save();
             painter.setClipRect(target);
-            painter.translate( - staveW * scenePage, target.y() );
+            painter.translate( - staveW * sceneStave, target.y() );
             painter.scale( (double)(sceneEndTime - sceneStartTime) / m_msPerPage, 1.0);
             painter.drawPath( curve );
             painter.restore();
@@ -563,11 +569,8 @@ void WTS::Project::print(QPrinter &printer, const QList<WTS::ScoreSymbol *>& sco
             painter.drawRect( frame );
             painter.restore();
 
-            if (staveIdx || (endTime==sceneEndTime && !last))
-                printer.newPage();
-
             startTime = endTime;
-            scenePage ++;
+            sceneStave ++;
             staveIdx = staveIdx ? 0 : 1 ;
         }
     }
