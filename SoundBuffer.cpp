@@ -79,29 +79,11 @@ void SoundBuffer::save(const QString& path)
 
 void SoundBuffer::load(const QString& path)
 {
-    // load either wav or raw
-    if (path.contains(QRegExp("\\.wav$")) && QFile(path).exists()) {
-        // load wav
+    if (QFile(path).exists()) {
         SndfileHandle snd(qPrintable(path));
         m_data.resize(snd.frames());
         snd.readf(m_data.data(),m_data.size());
-        // only samples read from wav files are considered saved
         m_saved = true;
-    } else {
-        // load raw
-        QString rawpath(path);
-        rawpath.replace(QRegExp("[^\\.]+$"),"raw");
-        qDebug() << "Upgrading sample from " << rawpath;
-        QFile file(rawpath);
-
-        FileNotFoundError::test(file);
-
-        file.open(QFile::ReadOnly);
-        int64_t sampleCount = file.size() / sizeof(float);
-        m_data.resize(sampleCount);
-        file.read(reinterpret_cast<char *>(m_data.data()),
-                sampleCount*sizeof(float));
-        file.close();
     }
 
     m_readPos = 0;
