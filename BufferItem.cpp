@@ -14,11 +14,11 @@ BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float heigh
     , m_constrain(false)
     , m_view(view)
     , m_pixmap(0)
+    , m_title(0)
 {
     setX( (qreal) m_buffer->at() / m_duration );
     setRect(0,0, (float)m_buffer->buffer()->duration() / m_duration, height);
     setPen(Qt::NoPen);
-    //setBrush(buffer->buffer()->color());
 
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemIsSelectable
              | QGraphicsItem::ItemSendsScenePositionChanges);
@@ -85,6 +85,19 @@ void BufferItem::update()
         tr.scale(sx, sy);
         m_pixmap->setTransform( tr );
     }
+
+    // the title
+    if (!m_title) {
+        m_title = new QGraphicsSimpleTextItem(this);
+        m_title->setPos(0, 0);
+        m_title->setBrush( Qt::black );
+        m_title->setFont( QFont("Helvetica", 10) );
+        m_title->setFlags( QGraphicsItem::ItemIgnoresTransformations );
+    }
+    QString name = m_buffer->buffer()->name();
+    name.replace(".wav","");
+    m_title->setText( name );
+    m_title->setPos( 0, 1.1 * r.height() );
 }
 
 void WTS::BufferItem::bufferChanged()
@@ -94,5 +107,6 @@ void WTS::BufferItem::bufferChanged()
         delete child;
     }
     m_pixmap = 0;
+    m_title = 0;
     update();
 }

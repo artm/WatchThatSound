@@ -27,6 +27,7 @@ protected:
     WtsAudio::BufferAt * m_buffer;
     bool m_constrain;
     QGraphicsPixmapItem * m_pixmap;
+    QGraphicsSimpleTextItem * m_title;
     QPointer<QGraphicsView> m_view;
 };
 
