@@ -219,9 +219,9 @@ float WTS::SoundBuffer::draw(QPixmap& surface, bool recording, float scaleMax)
 QString WTS::SoundBuffer::makeFileName(const QString &name)
 {
     QString badsyms = "[^a-z0-9_]+";
-    QRegExp lead( "^"+ badsyms );
-    QRegExp tail( badsyms + "$" );
-    QRegExp mid(badsyms);
+    QRegExp lead( "^"+ badsyms, Qt::CaseInsensitive );
+    QRegExp tail( badsyms + "$", Qt::CaseInsensitive );
+    QRegExp  mid( badsyms, Qt::CaseInsensitive );
     QString result = name;
     result.remove(lead).remove(tail).replace(mid,"_").append(".wav");
     return result;
