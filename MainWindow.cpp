@@ -453,18 +453,11 @@ void MainWindow::onMovieFinished()
 
 bool MainWindow::eventFilter( QObject * watched, QEvent * event )
 {
-    if ( watched != qApp )
-        goto finished;
+    if ( watched == qApp && event->type() == QEvent::ApplicationActivate ) {
+        if (m_project) m_project->reScanSamples();
+    }
 
-    if ( event->type() != QEvent::ApplicationActivate )
-        goto finished;
-
-    if (m_project)
-        m_project->reScanSamples();
-
-finished:
     return QMainWindow::eventFilter( watched, event );
-
 }
 
 void MainWindow::startSolo(WtsAudio::BufferAt * bufferAt)
