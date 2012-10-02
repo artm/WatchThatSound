@@ -37,12 +37,23 @@ void WaveformWidget::updateWaveform(WtsAudio::BufferAt * bufferAt, bool recordin
                 m_scaleMax = buffer->draw(m_img, true, m_scaleMax);
             else
                 buffer->draw(m_img);
+
+            QLineEdit* nameEdit = findChild<QLineEdit*>("sampleNameEdit");
+            if (nameEdit) {
+                nameEdit->setText( m_buffer->buffer()->name() );
+            }
+
         } else {
             // became none
             clearWaveform();
+            QLineEdit* nameEdit = findChild<QLineEdit*>("sampleNameEdit");
+            if (nameEdit) {
+                nameEdit->setText( "" );
+            }
         }
     }
 
+    setDisabled(m_buffer == NULL);
     emit enableWaveformControls(m_buffer != NULL);
 
     update();

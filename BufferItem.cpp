@@ -1,9 +1,8 @@
+#include "stable.h"
+
 #include "BufferItem.h"
 #include "SoundBuffer.h"
 #include "TimeLineWidget.h"
-
-#include <QGraphicsSceneMouseEvent>
-#include <QPixmap>
 
 using namespace WTS;
 
@@ -26,10 +25,15 @@ BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float heigh
     TimeLineWidget::assignSynced(this, buffer);
 
     // title display
-    m_title->setBrush( Qt::black );
-    m_title->setFont( QFont("Helvetica", 10) );
+    m_title->setBrush( Qt::white );
+    m_title->setFont( QFont("Helvetica", 10, QFont::Bold) );
     m_title->setFlags( QGraphicsItem::ItemIgnoresTransformations );
     m_title->setPos( 0, 1.1 * height );
+    QGraphicsDropShadowEffect * shadow = new QGraphicsDropShadowEffect();
+    shadow->setOffset( 0 );
+    shadow->setBlurRadius( 4 );
+    shadow->setColor(Qt::black);
+    m_title->setGraphicsEffect( shadow );
 
     update();
 }
@@ -42,6 +46,7 @@ void BufferItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         setFocus(Qt::MouseFocusReason);
         scene()->clearSelection();
         setSelected( true );
+
         m_constrain = true;
     }
     QGraphicsRectItem::mousePressEvent(event);
@@ -56,6 +61,8 @@ QVariant BufferItem::itemChange(QGraphicsItem::GraphicsItemChange change, const 
         if (m_constrain) newPos.setY(y());
         m_buffer->setAt( newPos.x() * m_duration );
         return newPos;
+    } else if (change == ItemSelectedHasChanged) {
+        setZValue(value.toBool() ? 5 : 0);
     }
     return QGraphicsItem::itemChange(change, value);
 }
@@ -90,9 +97,7 @@ void BufferItem::update()
     }
 
     // the title
-    QString name = m_buffer->buffer()->name();
-    name.replace(".wav","");
-    m_title->setText( name );
+    m_title->setText( m_buffer->buffer()->name() );
 }
 
 void WTS::BufferItem::bufferChanged()
