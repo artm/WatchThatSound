@@ -13,8 +13,8 @@ BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float heigh
     , m_buffer(buffer)
     , m_constrain(false)
     , m_view(view)
-    , m_pixmap(0)
-    , m_title(0)
+    , m_pixmap(new QGraphicsPixmapItem(this))
+    , m_title(new QGraphicsSimpleTextItem(this))
 {
     setX( (qreal) m_buffer->at() / m_duration );
     setRect(0,0, (float)m_buffer->buffer()->duration() / m_duration, height);
@@ -24,6 +24,12 @@ BufferItem::BufferItem(WtsAudio::BufferAt * buffer, qint64 duration, float heigh
              | QGraphicsItem::ItemSendsScenePositionChanges);
 
     TimeLineWidget::assignSynced(this, buffer);
+
+    // title display
+    m_title->setBrush( Qt::black );
+    m_title->setFont( QFont("Helvetica", 10) );
+    m_title->setFlags( QGraphicsItem::ItemIgnoresTransformations );
+    m_title->setPos( 0, 1.1 * height );
 
     update();
 }
@@ -66,9 +72,6 @@ void BufferItem::update()
     r.setWidth( (float)m_buffer->buffer()->duration() / m_duration );
     setRect(r);
 
-    if (!m_pixmap)
-        m_pixmap = new QGraphicsPixmapItem(this);
-
     // convert coordinates to pixels and see if pixmap needs to be updated
     QRect viewRect = m_view->mapFromScene(r).boundingRect();
     if (m_pixmap->pixmap().size() != viewRect.size()) {
@@ -87,26 +90,12 @@ void BufferItem::update()
     }
 
     // the title
-    if (!m_title) {
-        m_title = new QGraphicsSimpleTextItem(this);
-        m_title->setPos(0, 0);
-        m_title->setBrush( Qt::black );
-        m_title->setFont( QFont("Helvetica", 10) );
-        m_title->setFlags( QGraphicsItem::ItemIgnoresTransformations );
-    }
     QString name = m_buffer->buffer()->name();
     name.replace(".wav","");
     m_title->setText( name );
-    m_title->setPos( 0, 1.1 * r.height() );
 }
 
 void WTS::BufferItem::bufferChanged()
 {
-    foreach(QGraphicsItem * child, childItems()) {
-        scene()->removeItem(child);
-        delete child;
-    }
-    m_pixmap = 0;
-    m_title = 0;
     update();
 }
