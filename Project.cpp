@@ -429,7 +429,7 @@ void Project::removeBufferAt(WtsAudio::BufferAt * bufferAt)
 
 QString Project::makeSampleName()
 {
-    return QString("sample_%1.wav").arg(++m_lastSampleNameNum);
+    return QString("sample_%1").arg(++m_lastSampleNameNum);
 }
 
 void Project::reScanSamples()
@@ -444,9 +444,8 @@ void Project::reScanSamples()
 
 void Project::openInExternalApp(SoundBuffer * buffer)
 {
-    QString path = m_dataDir.filePath( buffer->savedAs() );
-    if (QFile(path).exists() &&
-            QRegExp("\\.wav$").indexIn(path) > -1) {
+    QString path = buffer->savedAs();
+    if (QFile(path).exists()) {
         QDesktopServices::openUrl( QUrl( QString("file:///%0").arg(path)));
     }
 }

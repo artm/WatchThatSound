@@ -62,16 +62,22 @@ SoundBuffer& SoundBuffer::operator= (const SoundBuffer& other)
 
 void SoundBuffer::save( const QDir& dir )
 {
-    if (m_saved)
-        return;
-
     QString path = dir.filePath( makeFileName( m_name ) );
 
     if (m_savedAs != path) {
         QFileInfo fi(m_savedAs);
-        if (fi.exists())
-            fi.dir().remove( fi.fileName() );
+        if (fi.exists()) {
+            if (m_saved && fi.dir().rename( m_savedAs, path )) {
+                qDebug() << "Renamed" << m_savedAs << "to" << path;
+                m_savedAs = path;
+                return;
+            } else
+                fi.dir().remove( fi.fileName() );
+        }
     }
+
+    if (m_saved)
+        return;
 
     qDebug() << "Save sample to" << path;
     { // block to ensure file is closed by the moment we ask its modification time

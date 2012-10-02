@@ -46,6 +46,7 @@ public:
     void paste(const SoundBuffer * other);
     QString name() const { return m_name; }
     QString savedAs() const { return m_savedAs; }
+    void setName(const QString& name ) { m_name = name; }
 
     static QString makeFileName(const QString& name);
     void save( const QDir& dir );

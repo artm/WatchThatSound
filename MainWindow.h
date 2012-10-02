@@ -65,6 +65,8 @@ public slots:
     void printAction();
     void writeSettings();
 
+    void on_sampleNameEdit_editingFinished();
+
 signals:
     void storyBoardChanged();
     void scratchUpdated(WtsAudio::BufferAt * bufferAt, bool recording);

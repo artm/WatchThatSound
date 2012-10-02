@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent)
     if (qApp)
         qApp->installEventFilter(this);
 
+    QMetaObject::connectSlotsByName( this );
+
     // set up controller
     connect(this, SIGNAL(projectChanged(Project*)), m_editController, SLOT(setProject(Project*)));
     connect(ui->actionAddMarker, SIGNAL(triggered()), m_editController, SLOT(addEventMarkerAtCursor()));
@@ -504,4 +506,15 @@ void WTS::MainWindow::writeSettings()
     m_settings.setValue("muteOnRecord", m_muteOnRecord);
     m_settings.setValue("secPerPage", m_preferences->ui->secPPage->value());
     m_settings.sync();
+}
+
+void MainWindow::on_sampleNameEdit_editingFinished()
+{
+    QLineEdit * widget = qobject_cast<QLineEdit *>(sender());
+    WtsAudio::BufferAt * bat = ui->timeLine->selectedBufferAt();
+    if (!bat) return;
+    bat->buffer()->setName( widget->text() );
+    ui->timeLine->updateBuffer( bat->buffer() );
+
+    m_project->save();
 }
