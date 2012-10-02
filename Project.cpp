@@ -114,6 +114,7 @@ void Project::saveSequence(QXmlStreamWriter& xml)
         xml.writeAttribute("range_start", QString("%1").arg(buffer->buffer()->rangeStart()));
         xml.writeAttribute("range_end", QString("%1").arg(buffer->buffer()->rangeEnd()));
         xml.writeAttribute("gain", QString("%1").arg( buffer->buffer()->gain() ));
+        xml.writeAttribute("color", QString("%1").arg(buffer->buffer()->color().name() ));
         xml.writeEndElement();
 
         buffer->buffer()->save( m_dataDir );
@@ -149,11 +150,13 @@ bool Project::loadSequence(QXmlStreamReader& xml)
             m_sequence.append( buffer );
 
             // find out original number / color
-            if (idRe.indexIn(id) > -1) {
+            if (xml.attributes().hasAttribute("color")) {
+                buffer->buffer()->setColor( QColor( xml.attributes().value("color").toString() ) );
+            } else if (idRe.indexIn(id) > -1) {
                 int color_index = idRe.cap(1).toInt();
                 buffer->buffer()->setColor( Rainbow::getColor( color_index ) );
             } else {
-                qDebug() << "Color index didn't parse...";
+                buffer->buffer()->setColor( Rainbow::getColor( rand() ) );
             }
 
             buffer->buffer()->initGains();
