@@ -1,20 +1,16 @@
 #ifndef SOUNDBUFFER_H
 #define SOUNDBUFFER_H
 
+#include "stable.h"
 #include "Exception.h"
-
-#include <QVector>
-#include <QFile>
-#include <QIODevice>
-#include <QColor>
 
 namespace WTS {
 
 class SoundBuffer
 {
 public:
-    SoundBuffer();
-    SoundBuffer(qint64 sampleCount);
+    SoundBuffer(const QString& name = QString("scratch"));
+    SoundBuffer(qint64 sampleCount, const QString& name = QString("scratch"));
     SoundBuffer(const QString& name, const SoundBuffer& other, qint64 sampleCount = 0);
     SoundBuffer& operator= (const SoundBuffer& other);
 
@@ -49,11 +45,13 @@ public:
 
     void paste(const SoundBuffer * other);
     QString name() const { return m_name; }
+    QString savedAs() const { return m_savedAs; }
 
-    void save(const QString& path);
-    void load(const QString& path);
+    static QString makeFileName(const QString& name);
+    void save( const QDir& dir );
+    void load( const QDir& dir );
     // return true if sample has changed
-    bool maybeReload(const QString& path);
+    bool maybeReload( const QDir& dir );
 
     QColor color() const { return m_color; }
     void setColor(QColor color) { m_color = color; }
@@ -75,7 +73,7 @@ public:
     float draw(QPixmap& surface, bool recording = false, float scaleMax = s_minScaleMax);
 
 protected:
-    QString m_name;
+    QString m_name, m_savedAs;
     bool m_saved;
 
     QVector<float> m_data;

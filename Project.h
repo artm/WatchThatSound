@@ -79,8 +79,6 @@ public:
     QString movieFilename() const { return QFileInfo(moviePath()).fileName(); }
     void addBufferAt(WtsAudio::BufferAt * newBuff);
     WtsAudio::BufferAt *copyScratch(WtsAudio::BufferAt * newBuff);
-    QString samplePath(const QString& sampleName);
-    QString samplePath(SoundBuffer *);
     QString pdfPath();
 
     QList<WtsAudio::BufferAt *> getSequence() const { return m_sequence; }

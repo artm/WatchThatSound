@@ -1,15 +1,16 @@
+#include "stable.h"
+
 #include "SoundBuffer.h"
 #include "WtsAudio.h"
 
 #include <cmath>
-#include <QFileInfo>
 
 #include <sndfile.hh>
 
 using namespace WTS;
 
-SoundBuffer::SoundBuffer()
-    : m_name("scratch")
+SoundBuffer::SoundBuffer(const QString& name)
+    : m_name(name)
     , m_saved(true)
     , m_writePos(0)
     , m_readPos(0)
@@ -19,8 +20,8 @@ SoundBuffer::SoundBuffer()
     setRange(0,0);
 }
 
-SoundBuffer::SoundBuffer(qint64 sampleCount)
-    : m_name("scratch")
+SoundBuffer::SoundBuffer(qint64 sampleCount, const QString& name)
+    : m_name(name)
     , m_saved(true)
     , m_data(sampleCount, 0)
     , m_writePos(0)
@@ -59,10 +60,18 @@ SoundBuffer& SoundBuffer::operator= (const SoundBuffer& other)
     return *this;
 }
 
-void SoundBuffer::save(const QString& path)
+void SoundBuffer::save( const QDir& dir )
 {
     if (m_saved)
         return;
+
+    QString path = dir.filePath( makeFileName( m_name ) );
+
+    if (m_savedAs != path) {
+        QFileInfo fi(m_savedAs);
+        if (fi.exists())
+            fi.dir().remove( fi.fileName() );
+    }
 
     qDebug() << "Save sample to" << path;
     { // block to ensure file is closed by the moment we ask its modification time
@@ -75,31 +84,38 @@ void SoundBuffer::save(const QString& path)
     }
     m_timestamp = QFileInfo(path).lastModified();
     m_saved = true;
+    m_savedAs = path;
 }
 
-void SoundBuffer::load(const QString& path)
+void SoundBuffer::load( const QDir& dir )
 {
+    QString path = dir.filePath( makeFileName( m_name ) );
+
+    qDebug() << "loading sample from" << path;
+
     if (QFile(path).exists()) {
         SndfileHandle snd(qPrintable(path));
         m_data.resize(snd.frames());
         snd.readf(m_data.data(),m_data.size());
         m_saved = true;
+        m_savedAs = path;
     }
 
     m_readPos = 0;
     m_writePos = 0;
-    m_name = QFileInfo(path).fileName();
     m_timestamp = QFileInfo(path).lastModified();
 }
 
-bool SoundBuffer::maybeReload(const QString& path)
+bool SoundBuffer::maybeReload( const QDir& dir )
 {
+    QString path = dir.filePath( makeFileName( m_name ) );
+
     if (QFileInfo(path).lastModified() > m_timestamp) {
         qDebug() << "Sample " << m_name << " has changed on disk";
 
         qint64 old_length = m_data.size();
 
-        load(path);
+        load(dir);
         /*
          * if length has changed - select all
          */
@@ -192,4 +208,15 @@ float WTS::SoundBuffer::draw(QPixmap& surface, bool recording, float scaleMax)
 
     painter.drawLine(lineCount, midY, surface.width(), midY);
     return scaleMax;
+}
+
+QString WTS::SoundBuffer::makeFileName(const QString &name)
+{
+    QString badsyms = "[^a-z0-9_]+";
+    QRegExp lead( "^"+ badsyms );
+    QRegExp tail( badsyms + "$" );
+    QRegExp mid(badsyms);
+    QString result = name;
+    result.remove(lead).remove(tail).replace(mid,"_").append(".wav");
+    return result;
 }
