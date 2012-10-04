@@ -7,6 +7,7 @@
 #include "EditController.hpp"
 #include "WatchThatCode.h"
 #include "Common.h"
+#include "SampleNameValidator.hpp"
 
 #include <QLabel>
 #include <QXmlStreamReader>
@@ -139,7 +140,16 @@ void MainWindow::loadMovie(const QString& path)
 
     m_project->load();
 
+    SampleNameValidator * validator = new SampleNameValidator(m_project, ui->waveform );
+    ui->sampleNameEdit->setValidator( validator );
+
     emit loaded();
+}
+
+void MainWindow::on_sampleNameEdit_textEdited()
+{
+    ui->sampleNameEdit->style()->unpolish( ui->sampleNameEdit );
+    ui->sampleNameEdit->ensurePolished();
 }
 
 void MainWindow::resetData()

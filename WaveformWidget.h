@@ -13,6 +13,8 @@ class WaveformWidget : public QWidget
 public:
     explicit WaveformWidget(QWidget *parent = 0);
 
+    SoundBuffer * soundBuffer();
+
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
 

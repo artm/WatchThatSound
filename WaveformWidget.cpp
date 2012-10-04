@@ -155,3 +155,8 @@ void WTS::WaveformWidget::tick(qint64 ms)
     // TODO check if update is really necessary
     update();
 }
+
+WTS::SoundBuffer * WTS::WaveformWidget::soundBuffer()
+{
+    return m_buffer ? m_buffer->buffer() : NULL;
+}

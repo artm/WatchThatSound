@@ -66,6 +66,7 @@ public slots:
     void writeSettings();
 
     void on_sampleNameEdit_editingFinished();
+    void on_sampleNameEdit_textEdited();
 
 signals:
     void storyBoardChanged();

@@ -157,8 +157,19 @@
              <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">background: rgba(0,0,0,50);
-color: rgba(255,255,255,255);</string>
+             <string notr="true">QLineEdit {
+background: rgba(0,0,0,50);
+color: rgba(255,255,255,255);
+border: 2px solid rgba(255,255,255,200);
+border-radius: 6px;
+}
+
+QLineEdit[acceptableInput=&quot;false&quot;] {
+background: rgba(255,0,0,100);
+color: rgba(0,0,0,255);
+}
+
+</string>
             </property>
             <property name="frame">
              <bool>false</bool>
