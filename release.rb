@@ -47,6 +47,8 @@ if r.bump_needed cur_version_list
   File.rename(tmp.path,wts_package_cmake)
 end
 
+# this is necessary to update wts_version.h
+system 'cmake .'
 
 puts "TODO insert change log from devel versions to the public release"
 tmp = Tempfile.new 'release.html'
